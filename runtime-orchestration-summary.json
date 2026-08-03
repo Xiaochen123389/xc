@@ -1,0 +1,12 @@
+{
+  "project": {
+    "resolvedLane": "complex_html_page",
+    "selectedIntentWorkflowRead": true,
+    "contextRequirementsLoaded": [],
+    "contextReadScope": "new-project:tms-redesign",
+    "validationRunDiscipline": "default",
+    "lowValueCallWatchdog": { "noProgressNextAction": "readiness" },
+    "deviceType": "desktop",
+    "viewportMode": "app-shell"
+  }
+}

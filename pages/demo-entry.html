@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>正在进入演示...</title>
+  <style>
+    body { margin:0; height:100vh; display:flex; align-items:center; justify-content:center; background:#f5f7fa; font-family:system-ui,-apple-system,sans-serif; color:#4b5563; }
+    .box { text-align:center; }
+    .spinner { width:36px; height:36px; border:3px solid rgba(22,119,255,.2); border-top-color:#1677ff; border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 16px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <div>正在进入 TMS 演示环境...</div>
+  </div>
+  <script>
+    localStorage.setItem('tms_auth_token', 'demo_' + Date.now());
+    localStorage.setItem('tms_user_name', '演示用户');
+    localStorage.setItem('tms_user_role', '主管');
+    window.location.replace('dashboard.html');
+  </script>
+</body>
+</html>
