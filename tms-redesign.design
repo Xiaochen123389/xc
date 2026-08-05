@@ -221,6 +221,7 @@
     "autoLayout": true,
     "deviceType": "desktop",
     "viewportMode": "app-shell",
-    "showEdge": false
+    "showEdge": false,
+    "visualEditorEnabled": true
   }
 }

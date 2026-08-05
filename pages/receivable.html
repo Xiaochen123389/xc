@@ -1352,6 +1352,43 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
 </main>
 
+<!-- Modal: 订单部门数据上传 -->
+<div class="modal-mask" id="detailDeptUploadModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title" id="detailUploadTitle">上传部门数据</span>
+      <button class="modal-close" data-close="detailDeptUploadModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">所属部门</label>
+        <div><span class="tag tag-dot tag-blue" id="detailUploadDeptTag">客服</span></div>
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">费用项目 <span style="color:var(--tms-error);">*</span></label>
+        <input type="text" class="form-control" id="detailUploadItem" placeholder="如：运费补差">
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">金额 <span style="color:var(--tms-error);">*</span></label>
+        <input type="number" class="form-control" id="detailUploadAmount" placeholder="0.00">
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">备注</label>
+        <input type="text" class="form-control" id="detailUploadRemark" placeholder="可选">
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">上传文件 <span style="color:var(--tms-error);">*</span></label>
+        <input type="file" id="detailUploadFile" class="form-control" accept=".xlsx,.xls,.csv" style="padding:6px 12px;height:auto;">
+        <div class="form-help">支持 Excel（.xlsx / .xls）或 CSV 格式，文件大小不超过 10MB</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="detailDeptUploadModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmDetailUpload()">确认上传</button>
+    </div>
+  </div>
+</div>
+
 <!-- 批量操作栏 -->
 <div class="batch-bar" data-batch-bar>
   <span class="batch-count">已选择 0 项</span>
@@ -1384,6 +1421,19 @@ th.sortable:hover { color: var(--tms-primary); }
         <div class="desc-item"><span class="desc-label">业务员</span><span class="desc-value">张经理</span></div>
       </div>
 
+      <!-- 部门上传数据 -->
+      <div class="desc-section-title">🏢 部门上传数据</div>
+      <div id="deptDataSection"></div>
+      <div id="deptIntegrateResult" style="display:none;margin-top:16px;">
+        <div class="desc-section-title">🔀 整合结果</div>
+        <div class="summary-card">
+          <div class="summary-row total"><span>整合后合计应收</span><span class="summary-value" id="integratedTotal">¥0</span></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="integrateDeptData()">整合全部部门数据</button>
+      </div>
+
       <!-- 关联运单列表 -->
       <div class="desc-section-title">🚛 关联运单列表</div>
       <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:4px;">
@@ -1414,8 +1464,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <div class="summary-row"><span class="summary-label">保险费</span><span class="summary-value">¥4,500</span></div>
         <div class="summary-row total"><span>合计应收</span><span class="summary-value">¥128,500</span></div>
       </div>
-
-      <!-- 收款记录 -->
+<!-- 收款记录 -->
       <div class="desc-section-title">📝 收款记录</div>
       <div class="timeline">
         <div class="timeline-item done">
@@ -1684,6 +1733,111 @@ function collectOpen() {
   }
 }
 
+// ========== 订单部门数据管理 ==========
+var currentArNo = '';
+var currentUploadDept = '';
+var defaultDeptData = {
+  '客服': [{item:'运费补差', amount:1200, remark:'客户加急', time:'2026-08-01 10:30'}],
+  '单证': [{item:'报关服务费', amount:3500, remark:'', time:'2026-08-01 11:00'}],
+  '海外仓': [{item:'海外仓储费', amount:1800, remark:'3天仓储', time:'2026-08-01 09:00'}]
+};
+var deptData = {};
+
+function ensureDeptData(arNo) {
+  if (!deptData[arNo]) {
+    deptData[arNo] = JSON.parse(JSON.stringify(defaultDeptData));
+  }
+}
+
+function formatMoney(n) {
+  return Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+
+function renderDeptData() {
+  var container = document.getElementById('deptDataSection');
+  if (!container) return;
+  ensureDeptData(currentArNo);
+  var data = deptData[currentArNo];
+  var depts = ['客服','单证','海外仓'];
+  var colors = {'客服':'tag-blue','单证':'tag-purple','海外仓':'tag-cyan'};
+  var html = '<div class="dept-cards">';
+  depts.forEach(function(dept){
+    var rows = data[dept] || [];
+    html += '<div class="dept-card">';
+    html += '<div class="dept-card-header"><span class="tag ' + colors[dept] + ' tag-dot">' + dept + '</span><button class="btn btn-sm" onclick="openDetailUpload(\'' + dept + '\')">上传数据</button></div>';
+    if (rows.length === 0) {
+      html += '<div class="dept-empty">暂无 ' + dept + ' 上传数据</div>';
+    } else {
+      html += '<table class="data-table"><thead><tr><th>费用项目</th><th class="text-right">金额</th><th>备注</th></tr></thead><tbody>';
+      rows.forEach(function(r){
+        html += '<tr><td>' + r.item + '</td><td class="text-right" style="font-weight:600;">¥' + formatMoney(r.amount) + '</td><td>' + (r.remark || '—') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function openDetail(arNo) {
+  currentArNo = arNo;
+  document.getElementById('detailArNo').textContent = arNo;
+  document.getElementById('dArNo').textContent = arNo;
+  ensureDeptData(arNo);
+  renderDeptData();
+  var integrateResult = document.getElementById('deptIntegrateResult');
+  if (integrateResult) integrateResult.style.display = 'none';
+  document.getElementById('receivableDetail').classList.add('show');
+  setTimeout(function(){ openDetailUpload('客服'); }, 100);
+}
+
+function openDetailUpload(dept) {
+  currentUploadDept = dept;
+  document.getElementById('detailUploadTitle').textContent = dept + '上传应收数据';
+  var tag = document.getElementById('detailUploadDeptTag');
+  tag.textContent = dept;
+  tag.className = 'tag tag-dot ' + (dept === '客服' ? 'tag-blue' : dept === '单证' ? 'tag-purple' : 'tag-cyan');
+  document.getElementById('detailUploadItem').value = '';
+  document.getElementById('detailUploadAmount').value = '';
+  document.getElementById('detailUploadRemark').value = '';
+  document.getElementById('detailUploadFile').value = '';
+  document.getElementById('detailDeptUploadModal').classList.add('show');
+}
+
+function confirmDetailUpload() {
+  var item = document.getElementById('detailUploadItem').value.trim();
+  var amount = parseFloat(document.getElementById('detailUploadAmount').value);
+  var remark = document.getElementById('detailUploadRemark').value.trim();
+  var fileInput = document.getElementById('detailUploadFile');
+  var file = fileInput.files[0];
+  if (!item) { toast('请输入费用项目', 'warning'); return; }
+  if (isNaN(amount) || amount <= 0) { toast('请输入有效金额', 'warning'); return; }
+  if (!file) { toast('请选择要上传的文件', 'warning'); return; }
+  if (!/\.(xlsx|xls|csv)$/i.test(file.name)) { toast('仅支持 .xlsx / .xls / .csv 格式的文件', 'error'); return; }
+  if (file.size > 10 * 1024 * 1024) { toast('文件大小不能超过 10MB', 'error'); return; }
+
+  var now = new Date();
+  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  ensureDeptData(currentArNo);
+  deptData[currentArNo][currentUploadDept].push({ item: item, amount: amount, remark: remark, time: timeStr });
+  document.getElementById('detailDeptUploadModal').classList.remove('show');
+  renderDeptData();
+  toast(currentUploadDept + '数据上传成功：' + item + ' ¥' + formatMoney(amount), 'success');
+}
+
+function integrateDeptData() {
+  ensureDeptData(currentArNo);
+  var data = deptData[currentArNo];
+  var total = 0;
+  ['客服','单证','海外仓'].forEach(function(dept){
+    (data[dept] || []).forEach(function(r){ total += Number(r.amount) || 0; });
+  });
+  document.getElementById('integratedTotal').textContent = '¥' + formatMoney(total);
+  document.getElementById('deptIntegrateResult').style.display = 'block';
+  toast('已整合全部部门数据，合计应收 ¥' + formatMoney(total), 'success');
+}
+
 // ========== Search ==========
 document.addEventListener('input', function(e) {
   if (e.target.matches('[data-search]')) {
@@ -1724,6 +1878,16 @@ document.addEventListener('input', function(e) {
       .date-range { display: flex; align-items: center; gap: 6px; }
       .date-range .form-control { flex: 1; min-width: 0; }
       .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
+
+      .dept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .dept-card { border:1px solid var(--tms-border-2); border-radius: var(--tms-radius); padding: 12px; background: #fff; }
+      .dept-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+      .dept-empty { font-size:13px; color:var(--tms-text-3); padding:12px 0; text-align:center; }
+      .dept-card .data-table { font-size:12.5px; }
+      .dept-card .data-table th { padding: 6px 8px; }
+      .dept-card .data-table td { padding: 6px 8px; }
+      .text-right { text-align:right; }
+
     </style>
 <script>
 // Fallback: if lucide doesn't load, show emoji/text placeholders
