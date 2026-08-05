@@ -812,6 +812,13 @@ th.sortable:hover { color: var(--tms-primary); }
       .data-table thead th.col-check,
       .data-table thead th.col-move { z-index: 3; }
       .modal-footer .form-control { height: 34px; min-width: 120px; }
+      #detailDeptUploadModal { z-index: 1001; }
+      .dept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .dept-card { border:1px solid var(--tms-border-2); border-radius: var(--tms-radius); padding: 12px; background: #fff; }
+      .dept-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+      .dept-empty { font-size:13px; color:var(--tms-text-3); padding:12px 0; text-align:center; }
+      .dept-card .data-table { font-size:12.5px; }
+      .dept-card .data-table th, .dept-card .data-table td { padding: 6px 8px; }
     </style>
 </head>
 <body>
@@ -1487,6 +1494,43 @@ th.sortable:hover { color: var(--tms-primary); }
   <span class="batch-close batch-clear" title="关闭">✕</span>
 </div>
 
+<!-- Modal: 订单部门数据上传 -->
+<div class="modal-mask" id="detailDeptUploadModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title" id="detailUploadTitle">上传部门数据</span>
+      <button class="modal-close" data-close="detailDeptUploadModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">所属部门</label>
+        <div><span class="tag tag-dot tag-blue" id="detailUploadDeptTag">客服</span></div>
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">费用项目 <span style="color:var(--tms-error);">*</span></label>
+        <input type="text" class="form-control" id="detailUploadItem" placeholder="如：运费补差">
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">金额 <span style="color:var(--tms-error);">*</span></label>
+        <input type="number" class="form-control" id="detailUploadAmount" placeholder="0.00">
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">备注</label>
+        <input type="text" class="form-control" id="detailUploadRemark" placeholder="可选">
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">上传文件 <span style="color:var(--tms-error);">*</span></label>
+        <input type="file" id="detailUploadFile" class="form-control" accept=".xlsx,.xls,.csv" style="padding:6px 12px;height:auto;">
+        <div class="form-help">支持 Excel（.xlsx / .xls）或 CSV 格式，文件大小不超过 10MB</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="detailDeptUploadModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmDetailUpload()">确认上传</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal: 应付账单详情 -->
 <div class="modal-mask" id="payableDetail">
   <div class="modal modal-lg">
@@ -1515,13 +1559,27 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
 
       <div class="detail-tabs" id="detailTabs" style="margin:20px 0 16px;">
-        <div class="tab-item active" data-detail-tab="feeSubject" onclick="switchDetailTab(this)">费用科目设置</div>
+        <div class="tab-item active" data-detail-tab="dept" onclick="switchDetailTab(this)">部门上传数据</div>
+        <div class="tab-item" data-detail-tab="feeSubject" onclick="switchDetailTab(this)">费用科目设置</div>
         <div class="tab-item" data-detail-tab="pod" onclick="switchDetailTab(this)">POD 数据</div>
         <div class="tab-item" data-detail-tab="writeOff" onclick="switchDetailTab(this)">核销记录</div>
         <div class="tab-item" data-detail-tab="flow" onclick="switchDetailTab(this)">账单流水</div>
       </div>
 
-      <div id="detailTab-feeSubject" class="detail-tab-panel">
+      <div id="detailTab-dept" class="detail-tab-panel">
+        <div id="deptDataSection"></div>
+        <div id="deptIntegrateResult" style="display:none;margin-top:16px;">
+          <div class="desc-section-title">🔀 整合结果</div>
+          <div class="summary-card">
+            <div class="summary-row total"><span>整合后合计应付</span><span class="summary-value" id="integratedTotal">¥0</span></div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn btn-primary" onclick="integrateDeptData()">整合全部部门数据</button>
+        </div>
+      </div>
+
+      <div id="detailTab-feeSubject" class="detail-tab-panel hidden">
         <div class="desc-section-title">⚙️ 费用科目设置</div>
         <div style="display:flex;gap:8px;margin-bottom:12px;">
           <input type="text" class="form-control" id="newFeeSubjectInput" placeholder="输入新费用科目，如：偏远地区附加费" style="flex:1;">
@@ -1834,91 +1892,6 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
-<div class="batch-bar" data-batch-bar>
-  <span class="batch-count">已选择 0 项</span>
-  <button class="btn" onclick="batchAction('confirm')">批量确认</button>
-  <button class="btn" onclick="batchAction('export')">批量导出</button>
-  <button class="btn" onclick="openBatchAddFeeModal()">批量增加费用</button>
-  <button class="btn" onclick="openBatchEditFeeModal()">批量修改费用</button>
-  <button class="btn" onclick="openBatchOffsetModal()">批量对冲费用</button>
-  <button class="btn" onclick="openBatchAssignRepModal()">批量修改供应商财务代表</button>
-  <button class="btn btn-danger" onclick="batchAction('delete')">批量删除</button>
-  <span class="batch-close batch-clear" title="关闭">✕</span>
-</div>
-
-<div class="modal-mask" id="payableDetail">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="modal-title">💸 应付账单详情</span>
-        <span class="mono" id="detailApNo" style="font-size:14px;color:var(--tms-primary);font-weight:600;">AP202607-0089</span>
-        <span class="tag tag-gray tag-dot" id="detailStatus">待确认</span>
-      </div>
-      <button class="modal-close" data-close="payableDetail">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="desc-section-title">📋 账单基本信息</div>
-      <div class="desc-list cols-3">
-        <div class="desc-item"><span class="desc-label">结算单号</span><span class="desc-value mono" id="dApNo">AP202607-0089</span></div>
-        <div class="desc-item"><span class="desc-label">供应商/承运商</span><span class="desc-value">中远海运集运</span></div>
-        <div class="desc-item"><span class="desc-label">费用类型</span><span class="desc-value"><span class="tag tag-blue">海运费</span></span></div>
-        <div class="desc-item"><span class="desc-label">状态</span><span class="desc-value"><span class="tag tag-gray tag-dot">待确认</span></span></div>
-        <div class="desc-item"><span class="desc-label">开票日期</span><span class="desc-value mono">2026-07-28</span></div>
-        <div class="desc-item"><span class="desc-label">到期日期</span><span class="desc-value mono">2026-08-28</span></div>
-      </div>
-
-      <div class="desc-section-title">🚢 关联提单/运单列表</div>
-      <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:4px;">
-        <table class="data-table" style="font-size:13px;">
-          <thead>
-            <tr>
-              <th>提单/运单号</th>
-              <th>航线</th>
-              <th>柜量/重量</th>
-              <th class="text-right">运费</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td><span class="mono link" onclick="toast('查看提单','info')">BL202607A012</span></td><td>上海→洛杉矶</td><td>3×40HQ / 38,500kg</td><td class="text-right" style="font-weight:600;">¥58,500</td></tr>
-            <tr><td><span class="mono link" onclick="toast('查看提单','info')">BL202607A015</span></td><td>宁波→长滩</td><td>2×40GP / 24,200kg</td><td class="text-right" style="font-weight:600;">¥40,000</td></tr>
-            <tr><td colspan="3" style="text-align:right;color:var(--tms-text-3);">共2票提单</td><td class="text-right" style="color:var(--tms-text-3);">合计见下方</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="desc-section-title">💵 费用明细</div>
-      <div class="summary-card">
-        <div class="summary-row"><span class="summary-label">海运费（基本运费）</span><span class="summary-value">¥82,000</span></div>
-        <div class="summary-row"><span class="summary-label">附加费（BAF/CAF/旺季）</span><span class="summary-value">¥10,500</span></div>
-        <div class="summary-row"><span class="summary-label">码头操作费（THC）</span><span class="summary-value">¥3,600</span></div>
-        <div class="summary-row"><span class="summary-label">文件费/放单费</span><span class="summary-value">¥2,400</span></div>
-        <div class="summary-row total"><span>合计应付</span><span class="summary-value">¥98,500</span></div>
-      </div>
-
-      <div class="desc-section-title">📝 付款记录</div>
-      <div class="timeline">
-        <div class="timeline-item done">
-          <div class="timeline-dot"></div>
-          <div class="timeline-time">2026-07-28 14:00</div>
-          <div class="timeline-title">📥 收到发票</div>
-          <div class="timeline-desc">中远海运开具发票 AP202607-0089，金额 ¥98,500，账期30天</div>
-        </div>
-        <div class="timeline-item active">
-          <div class="timeline-dot"></div>
-          <div class="timeline-time">2026-07-30 (当前)</div>
-          <div class="timeline-title">⏳ 等待对账确认</div>
-          <div class="timeline-desc">财务部核对账单与提单信息，确认后安排付款</div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" data-close="payableDetail">关闭</button>
-      <button class="btn" onclick="toast('对账单已导出','success')">导出对账单</button>
-      <button class="btn btn-primary" onclick="payOpen()">确认付款</button>
-    </div>
-  </div>
-</div>
-
 <script>
 function toast(msg, type) {
   type = type || 'info';
@@ -2092,12 +2065,6 @@ function changePage(btn) {
     while (prev && (isNaN(parseInt(prev.textContent)) || prev.disabled)) prev = prev.previousElementSibling;
     if (prev) { prev.classList.add('active'); toast('已切换到第 ' + prev.textContent + ' 页', 'info'); }
   }
-}
-
-function openDetail(apNo) {
-  document.getElementById('detailApNo').textContent = apNo;
-  document.getElementById('dApNo').textContent = apNo;
-  document.getElementById('payableDetail').classList.add('show');
 }
 
 function pay(btn) {
@@ -2372,14 +2339,107 @@ function updateBatchBtns() {
   }
 }
 
-// Override detail open to render fee subjects
+// ========== 订单部门数据管理 ==========
+var currentApNo = '';
+var currentUploadDept = '';
+var defaultDeptData = {
+  '客服': [{item:'运费补差', amount:1200, remark:'供应商调价', time:'2026-08-01 10:30'}],
+  '单证': [{item:'报关服务费', amount:3500, remark:'', time:'2026-08-01 11:00'}],
+  '海外仓': [{item:'海外仓储费', amount:1800, remark:'3天仓储', time:'2026-08-01 09:00'}]
+};
+var deptData = {};
+
+function ensureDeptData(apNo) {
+  if (!deptData[apNo]) {
+    deptData[apNo] = JSON.parse(JSON.stringify(defaultDeptData));
+  }
+}
+
+function renderDeptData() {
+  var container = document.getElementById('deptDataSection');
+  if (!container) return;
+  ensureDeptData(currentApNo);
+  var data = deptData[currentApNo];
+  var depts = ['客服','单证','海外仓'];
+  var colors = {'客服':'tag-blue','单证':'tag-purple','海外仓':'tag-cyan'};
+  var html = '<div class="dept-cards">';
+  depts.forEach(function(dept){
+    var rows = data[dept] || [];
+    html += '<div class="dept-card">';
+    html += '<div class="dept-card-header"><span class="tag ' + colors[dept] + ' tag-dot">' + dept + '</span><button class="btn btn-sm" onclick="openDetailUpload(\'' + dept + '\')">上传数据</button></div>';
+    if (rows.length === 0) {
+      html += '<div class="dept-empty">暂无 ' + dept + ' 上传数据</div>';
+    } else {
+      html += '<table class="data-table"><thead><tr><th>费用项目</th><th class="text-right">金额</th><th>备注</th></tr></thead><tbody>';
+      rows.forEach(function(r){
+        html += '<tr><td>' + r.item + '</td><td class="text-right" style="font-weight:600;">¥' + formatMoney(r.amount) + '</td><td>' + (r.remark || '—') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 function openDetail(apNo) {
+  currentApNo = apNo;
   document.getElementById('detailApNo').textContent = apNo;
   document.getElementById('dApNo').textContent = apNo;
+  ensureDeptData(apNo);
+  renderDeptData();
   renderDetailFeeSubjects();
-  var firstTab = document.querySelector('#detailTabs .tab-item[data-detail-tab="feeSubject"]');
+  var integrateResult = document.getElementById('deptIntegrateResult');
+  if (integrateResult) integrateResult.style.display = 'none';
+  var firstTab = document.querySelector('#detailTabs .tab-item[data-detail-tab="dept"]');
   if (firstTab) switchDetailTab(firstTab);
   document.getElementById('payableDetail').classList.add('show');
+}
+
+function openDetailUpload(dept) {
+  currentUploadDept = dept;
+  document.getElementById('detailUploadTitle').textContent = dept + '上传应付数据';
+  var tag = document.getElementById('detailUploadDeptTag');
+  tag.textContent = dept;
+  tag.className = 'tag tag-dot ' + (dept === '客服' ? 'tag-blue' : dept === '单证' ? 'tag-purple' : 'tag-cyan');
+  document.getElementById('detailUploadItem').value = '';
+  document.getElementById('detailUploadAmount').value = '';
+  document.getElementById('detailUploadRemark').value = '';
+  document.getElementById('detailUploadFile').value = '';
+  document.getElementById('detailDeptUploadModal').classList.add('show');
+}
+
+function confirmDetailUpload() {
+  var item = document.getElementById('detailUploadItem').value.trim();
+  var amount = parseFloat(document.getElementById('detailUploadAmount').value);
+  var remark = document.getElementById('detailUploadRemark').value.trim();
+  var fileInput = document.getElementById('detailUploadFile');
+  var file = fileInput.files[0];
+  if (!item) { toast('请输入费用项目', 'warning'); return; }
+  if (isNaN(amount) || amount <= 0) { toast('请输入有效金额', 'warning'); return; }
+  if (!file) { toast('请选择要上传的文件', 'warning'); return; }
+  if (!/\.(xlsx|xls|csv)$/i.test(file.name)) { toast('仅支持 .xlsx / .xls / .csv 格式的文件', 'error'); return; }
+  if (file.size > 10 * 1024 * 1024) { toast('文件大小不能超过 10MB', 'error'); return; }
+
+  var now = new Date();
+  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  ensureDeptData(currentApNo);
+  deptData[currentApNo][currentUploadDept].push({ item: item, amount: amount, remark: remark, time: timeStr });
+  document.getElementById('detailDeptUploadModal').classList.remove('show');
+  renderDeptData();
+  toast(currentUploadDept + '数据上传成功：' + item + ' ¥' + formatMoney(amount), 'success');
+}
+
+function integrateDeptData() {
+  ensureDeptData(currentApNo);
+  var data = deptData[currentApNo];
+  var total = 0;
+  ['客服','单证','海外仓'].forEach(function(dept){
+    (data[dept] || []).forEach(function(r){ total += Number(r.amount) || 0; });
+  });
+  document.getElementById('integratedTotal').textContent = '¥' + formatMoney(total);
+  document.getElementById('deptIntegrateResult').style.display = 'block';
+  toast('已整合全部部门数据，合计应付 ¥' + formatMoney(total), 'success');
 }
 </script>
 <script>
