@@ -996,7 +996,7 @@ th.sortable:hover { color: var(--tms-primary); }
           <button class="btn" onclick="toast('导入对账单功能开发中','info')">
             <span>📥</span>导入对账单
           </button>
-          <a href="#" class="btn btn-primary" onclick="toast('新增应收单功能开发中','info')">
+          <a href="#" class="btn btn-primary" onclick="openCreateArModal()">
             <span>＋</span>新增应收单
           </a>
         </div>
@@ -1964,6 +1964,232 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
+<!-- Modal: 新增应收单（多步骤向导） -->
+<div class="modal-mask" id="createReceivableModal">
+  <div class="modal modal-xl" style="width:960px;">
+    <div class="modal-header">
+      <span class="modal-title">＋ 新增应收单</span>
+      <button class="modal-close" data-close="createReceivableModal">×</button>
+    </div>
+    <div class="modal-body" style="padding:24px 28px;">
+      <!-- 步骤指示器 -->
+      <div class="steps" id="createArSteps" style="margin-bottom:24px;padding:0 10px;">
+        <div class="step active" data-step="1" onclick="jumpArStep(1)">
+          <div class="step-circle">1</div>
+          <div class="step-label">运单信息</div>
+        </div>
+        <div class="step" data-step="2" onclick="jumpArStep(2)">
+          <div class="step-circle">2</div>
+          <div class="step-label">客服填写</div>
+        </div>
+        <div class="step" data-step="3" onclick="jumpArStep(3)">
+          <div class="step-circle">3</div>
+          <div class="step-label">单证填写</div>
+        </div>
+        <div class="step" data-step="4" onclick="jumpArStep(4)">
+          <div class="step-circle">4</div>
+          <div class="step-label">海外仓填写</div>
+        </div>
+        <div class="step" data-step="5" onclick="jumpArStep(5)">
+          <div class="step-circle">5</div>
+          <div class="step-label">财务费用汇总</div>
+        </div>
+      </div>
+
+      <!-- Step 1: 运单信息 -->
+      <div class="ar-step-panel" id="arStep1" style="display:block;">
+        <div class="desc-section-title" style="margin-bottom:14px;">📦 从运单列表选择运单数据</div>
+        <div class="filter-bar" style="margin-bottom:14px;">
+          <div class="filter-grid compact" style="grid-template-columns:1fr 1fr auto;">
+            <div class="filter-item"><input type="text" class="form-control" id="arWaybillSearch" placeholder="搜索运单号 / 客户名称" oninput="filterArWaybills()"></div>
+            <div class="filter-item"><input type="date" class="form-control" id="arWaybillDate" onchange="filterArWaybills()"></div>
+            <div class="filter-item" style="display:flex;align-items:flex-end;"><button class="btn btn-primary btn-sm" onclick="filterArWaybills()">🔍 筛选</button></div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;max-height:320px;overflow-y:auto;">
+          <table class="data-table" style="font-size:13px;" id="arWaybillTable">
+            <thead><tr><th style="width:40px;"></th><th>创建日期</th><th>运单号</th><th>扩展单号</th><th>客户名称</th><th>服务类型</th></tr></thead>
+            <tbody id="arWaybillTbody"></tbody>
+          </table>
+        </div>
+        <div id="arSelectedWaybill" style="margin-top:14px;display:none;">
+          <div style="background:var(--tms-primary-bg);border:1px solid var(--tms-primary-light);border-radius:var(--tms-radius);padding:12px 16px;">
+            <span style="font-size:13px;color:var(--tms-text-2);">已选择：</span>
+            <span class="mono" id="arSelWbNo" style="font-weight:600;color:var(--tms-primary);"></span>
+            <span style="margin-left:12px;font-size:13px;color:var(--tms-text-2);">日期：</span>
+            <span id="arSelWbDate" style="font-size:13px;"></span>
+            <span style="margin-left:12px;font-size:13px;color:var(--tms-text-2);">扩展单号：</span>
+            <span class="mono" id="arSelExtNo" style="font-size:13px;"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: 客服填写 -->
+      <div class="ar-step-panel" id="arStep2" style="display:none;">
+        <div class="desc-section-title" style="margin-bottom:14px;">🎧 客服填写信息 <span class="tag tag-blue tag-dot" style="margin-left:8px;">客服</span></div>
+        <div style="background:var(--tms-bg);border-radius:var(--tms-radius);padding:14px 16px;margin-bottom:16px;">
+          <div style="display:flex;gap:20px;font-size:13px;">
+            <div><span style="color:var(--tms-text-3);">运单号：</span><span class="mono" id="arStep2WbNo" style="font-weight:600;"></span></div>
+            <div><span style="color:var(--tms-text-3);">日期：</span><span id="arStep2Date"></span></div>
+            <div><span style="color:var(--tms-text-3);">扩展单号：</span><span class="mono" id="arStep2ExtNo"></span></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>客户名称</label>
+            <input type="text" class="form-control" id="arCustomerName" placeholder="请输入客户名称">
+          </div>
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>主品名</label>
+            <input type="text" class="form-control" id="arMainProduct" placeholder="请输入主品名">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>货站</label>
+            <select class="form-control" id="arCargoStation">
+              <option value="">请选择货站</option>
+              <option>上海浦东货站</option>
+              <option>深圳宝安货站</option>
+              <option>广州白云货站</option>
+              <option>北京首都货站</option>
+              <option>郑州新郑货站</option>
+              <option>杭州萧山货站</option>
+            </select>
+          </div>
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>产品渠道（服务）</label>
+            <select class="form-control" id="arProductChannel">
+              <option value="">请选择产品渠道</option>
+              <option>中美空运专线-FBA</option>
+              <option>中美海运专线-FBA</option>
+              <option>中欧铁路专线</option>
+              <option>中美空运专线-直发</option>
+              <option>东南亚空运专线</option>
+              <option>日韩海运专线</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: 单证填写 -->
+      <div class="ar-step-panel" id="arStep3" style="display:none;">
+        <div class="desc-section-title" style="margin-bottom:14px;">📄 单证填写信息 <span class="tag tag-purple tag-dot" style="margin-left:8px;">单证</span></div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>邮编</label>
+            <input type="text" class="form-control" id="arZipCode" placeholder="请输入目的国邮编">
+          </div>
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>件数</label>
+            <input type="number" class="form-control" id="arPieces" placeholder="0" min="1" oninput="calcArWeight()">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>计费重 (kg)</label>
+            <input type="number" class="form-control" id="arChargeWeight" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()">
+          </div>
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>泡比</label>
+            <select class="form-control" id="arBubbleRatio">
+              <option value="">请选择泡比</option>
+              <option value="1:3000">1:3000</option>
+              <option value="1:5000">1:5000</option>
+              <option value="1:6000">1:6000</option>
+              <option value="1:8000">1:8000</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>仓库代码</label>
+            <input type="text" class="form-control" id="arWarehouseCode" placeholder="请输入仓库代码，如 LAX9、JFK8">
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: 海外仓填写 -->
+      <div class="ar-step-panel" id="arStep4" style="display:none;">
+        <div class="desc-section-title" style="margin-bottom:14px;">🏠 海外仓填写信息 <span class="tag tag-cyan tag-dot" style="margin-left:8px;">海外仓</span></div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>产品附加费 (¥)</label>
+            <input type="number" class="form-control" id="arSurcharge" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()">
+          </div>
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>报关费 (¥)</label>
+            <input type="number" class="form-control" id="arCustomsFee" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label">运费优惠 (¥)</label>
+            <input type="number" class="form-control" id="arFreightDiscount" placeholder="0.00（可选）" step="0.01" min="0" oninput="calcArTotal()">
+            <div class="form-help">如有多项优惠可填写合计金额，将自动从总费用中扣减</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;background:var(--tms-bg);border-radius:var(--tms-radius);padding:14px 16px;">
+          <div style="font-size:13px;color:var(--tms-text-3);margin-bottom:8px;">海外仓费用小计</div>
+          <div style="font-size:22px;font-weight:700;color:var(--tms-primary);" id="arWarehouseSubtotal">¥0.00</div>
+        </div>
+      </div>
+
+      <!-- Step 5: 财务费用汇总 -->
+      <div class="ar-step-panel" id="arStep5" style="display:none;">
+        <div class="desc-section-title" style="margin-bottom:14px;">💰 财务费用汇总 <span class="tag tag-orange tag-dot" style="margin-left:8px;">应收财务</span></div>
+        <!-- 已填信息预览 -->
+        <div style="background:var(--tms-bg);border-radius:var(--tms-radius);padding:14px 16px;margin-bottom:16px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:13px;">
+            <div><span style="color:var(--tms-text-3);">运单号：</span><span class="mono" id="arPreviewWbNo" style="font-weight:600;"></span></div>
+            <div><span style="color:var(--tms-text-3);">客户：</span><span id="arPreviewCustomer"></span></div>
+            <div><span style="color:var(--tms-text-3);">产品渠道：</span><span id="arPreviewChannel"></span></div>
+            <div><span style="color:var(--tms-text-3);">件数：</span><span id="arPreviewPieces"></span></div>
+            <div><span style="color:var(--tms-text-3);">计费重：</span><span id="arPreviewWeight"></span></div>
+            <div><span style="color:var(--tms-text-3);">仓库代码：</span><span id="arPreviewWhCode"></span></div>
+          </div>
+        </div>
+
+        <!-- 其他费用明细 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span style="font-size:14px;font-weight:600;color:var(--tms-text-1);">其他费用明细 <span style="font-size:12px;color:var(--tms-text-3);font-weight:400;">（可选填）</span></span>
+          <button class="btn btn-sm btn-primary" onclick="addArFeeRow()">＋ 添加费用</button>
+        </div>
+        <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:16px;">
+          <table class="data-table" style="font-size:13px;" id="arFeeTable">
+            <thead><tr><th>费用项目</th><th style="width:140px;">金额 (¥)</th><th>备注</th><th style="width:60px;">操作</th></tr></thead>
+            <tbody id="arFeeTbody"></tbody>
+          </table>
+        </div>
+        <div id="arFeeEmpty" style="text-align:center;padding:16px;font-size:13px;color:var(--tms-text-3);">暂无其他费用，点击"添加费用"按钮添加</div>
+
+        <!-- 费用汇总 -->
+        <div style="background:var(--tms-primary-bg);border:1px solid var(--tms-primary-light);border-radius:var(--tms-radius);padding:16px 20px;">
+          <div style="font-size:14px;font-weight:600;color:var(--tms-text-1);margin-bottom:12px;">费用汇总</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-text-2);">产品附加费</span><span id="arSumSurcharge">¥0.00</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-text-2);">报关费</span><span id="arSumCustoms">¥0.00</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-text-2);">其他费用合计</span><span id="arSumOther">¥0.00</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-success);">运费优惠（扣减）</span><span id="arSumDiscount" style="color:var(--tms-success);">- ¥0.00</span></div>
+            <div style="border-top:1px solid var(--tms-border);margin-top:4px;padding-top:10px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:15px;font-weight:600;color:var(--tms-text-1);">应收总金额</span>
+              <span id="arSumTotal" style="font-size:24px;font-weight:700;color:var(--tms-primary);">¥0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="btn" id="arPrevBtn" onclick="prevArStep()" style="display:none;">← 上一步</button>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button class="btn" data-close="createReceivableModal">取消</button>
+        <button class="btn btn-primary" id="arNextBtn" onclick="nextArStep()">下一步 →</button>
+        <button class="btn btn-primary" id="arSubmitBtn" onclick="submitCreateAr()" style="display:none;">✓ 确认创建</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== Toast ==========
 function toast(msg, type) {
@@ -2532,6 +2758,220 @@ function doBatchAssignRep() {
   document.getElementById('batchAssignRepModal').classList.remove('show');
   rows.forEach(function(tr){ var cell = tr.children[9]; if (cell) cell.textContent = name; });
   toast('已批量修改 ' + rows.length + ' 条账单的客户财务代表为：' + name, 'success');
+}
+
+// ========== 新增应收单多步骤向导 ==========
+var arCurrentStep = 1;
+var arSelectedWaybillData = null;
+var arWaybillMockData = [
+  {date:'2026-08-01', wbNo:'YD20260801-001', extNo:'EXT-A001', customer:'华通机械制造有限公司', service:'中美空运专线-FBA'},
+  {date:'2026-08-01', wbNo:'YD20260801-002', extNo:'EXT-A002', customer:'鑫海钢结构工程有限公司', service:'中美海运专线-FBA'},
+  {date:'2026-08-02', wbNo:'YD20260802-005', extNo:'EXT-B005', customer:'远东国际物流集团', service:'中欧铁路专线'},
+  {date:'2026-08-02', wbNo:'YD20260802-008', extNo:'EXT-B008', customer:'中远海运供应链有限公司', service:'中美空运专线-直发'},
+  {date:'2026-08-03', wbNo:'YD20260803-012', extNo:'EXT-C012', customer:'振华重工股份有限公司', service:'东南亚空运专线'},
+  {date:'2026-08-03', wbNo:'YD20260803-015', extNo:'EXT-C015', customer:'深圳市华创科技有限公司', service:'中美空运专线-FBA'},
+  {date:'2026-08-04', wbNo:'YD20260804-021', extNo:'EXT-D021', customer:'广州跨境通供应链管理有限公司', service:'日韩海运专线'},
+  {date:'2026-08-04', wbNo:'YD20260804-028', extNo:'EXT-D028', customer:'北京京通联运物流有限公司', service:'中美空运专线-直发'}
+];
+
+function openCreateArModal() {
+  arCurrentStep = 1;
+  arSelectedWaybillData = null;
+  renderArWaybillTable(arWaybillMockData);
+  showArStep(1);
+  openModal('createReceivableModal');
+}
+
+function renderArWaybillTable(data) {
+  var tbody = document.getElementById('arWaybillTbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tms-text-3);">未找到匹配的运单</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(function(item, idx) {
+    return '<tr onclick="selectArWaybill(' + idx + ')" style="cursor:pointer;" data-idx="' + idx + '">' +
+      '<td style="text-align:center;"><input type="radio" name="arWbRadio" value="' + idx + '" onclick="event.stopPropagation();selectArWaybill(' + idx + ')"></td>' +
+      '<td>' + item.date + '</td>' +
+      '<td class="mono">' + item.wbNo + '</td>' +
+      '<td class="mono">' + item.extNo + '</td>' +
+      '<td>' + item.customer + '</td>' +
+      '<td>' + item.service + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+function filterArWaybills() {
+  var keyword = (document.getElementById('arWaybillSearch').value || '').toLowerCase();
+  var dateVal = document.getElementById('arWaybillDate').value;
+  var filtered = arWaybillMockData.filter(function(item) {
+    var matchKeyword = !keyword || item.wbNo.toLowerCase().indexOf(keyword) > -1 || item.customer.toLowerCase().indexOf(keyword) > -1;
+    var matchDate = !dateVal || item.date === dateVal;
+    return matchKeyword && matchDate;
+  });
+  renderArWaybillTable(filtered);
+  arSelectedWaybillData = null;
+  document.getElementById('arSelectedWaybill').style.display = 'none';
+}
+
+function selectArWaybill(idx) {
+  var tbody = document.getElementById('arWaybillTbody');
+  var rows = tbody.querySelectorAll('tr');
+  var targetIdx = null;
+  tbody.querySelectorAll('tr').forEach(function(tr) {
+    tr.classList.remove('selected');
+    var radio = tr.querySelector('input[type=radio]');
+    if (radio) radio.checked = false;
+  });
+  var row = tbody.querySelector('tr[data-idx="' + idx + '"]');
+  if (row) {
+    row.classList.add('selected');
+    var radio = row.querySelector('input[type=radio]');
+    if (radio) radio.checked = true;
+    targetIdx = parseInt(row.getAttribute('data-idx'));
+  }
+  if (targetIdx !== null) {
+    arSelectedWaybillData = arWaybillMockData[targetIdx];
+    document.getElementById('arSelWbNo').textContent = arSelectedWaybillData.wbNo;
+    document.getElementById('arSelWbDate').textContent = arSelectedWaybillData.date;
+    document.getElementById('arSelExtNo').textContent = arSelectedWaybillData.extNo;
+    document.getElementById('arSelectedWaybill').style.display = 'block';
+  }
+}
+
+function showArStep(step) {
+  arCurrentStep = step;
+  for (var i = 1; i <= 5; i++) {
+    var panel = document.getElementById('arStep' + i);
+    if (panel) panel.style.display = (i === step) ? 'block' : 'none';
+  }
+  var steps = document.querySelectorAll('#createArSteps .step');
+  steps.forEach(function(s, idx) {
+    s.classList.remove('active', 'done');
+    var sNum = idx + 1;
+    if (sNum < step) s.classList.add('done');
+    else if (sNum === step) s.classList.add('active');
+  });
+  var prevBtn = document.getElementById('arPrevBtn');
+  var nextBtn = document.getElementById('arNextBtn');
+  var submitBtn = document.getElementById('arSubmitBtn');
+  prevBtn.style.display = (step > 1) ? 'inline-flex' : 'none';
+  nextBtn.style.display = (step < 5) ? 'inline-flex' : 'none';
+  submitBtn.style.display = (step === 5) ? 'inline-flex' : 'none';
+  if (step === 2) fillArStep2Header();
+  if (step === 5) fillArStep5Preview();
+}
+
+function fillArStep2Header() {
+  if (arSelectedWaybillData) {
+    document.getElementById('arStep2WbNo').textContent = arSelectedWaybillData.wbNo;
+    document.getElementById('arStep2Date').textContent = arSelectedWaybillData.date;
+    document.getElementById('arStep2ExtNo').textContent = arSelectedWaybillData.extNo;
+  }
+}
+
+function fillArStep5Preview() {
+  if (arSelectedWaybillData) {
+    document.getElementById('arPreviewWbNo').textContent = arSelectedWaybillData.wbNo;
+  }
+  document.getElementById('arPreviewCustomer').textContent = document.getElementById('arCustomerName').value || '-';
+  document.getElementById('arPreviewChannel').textContent = document.getElementById('arProductChannel').value || '-';
+  document.getElementById('arPreviewPieces').textContent = document.getElementById('arPieces').value || '-';
+  document.getElementById('arPreviewWeight').textContent = (document.getElementById('arChargeWeight').value || '-') + ' kg';
+  document.getElementById('arPreviewWhCode').textContent = document.getElementById('arWarehouseCode').value || '-';
+  calcArTotal();
+}
+
+function validateArStep(step) {
+  if (step === 1) {
+    if (!arSelectedWaybillData) { toast('请先选择一条运单', 'warning'); return false; }
+  } else if (step === 2) {
+    if (!document.getElementById('arCustomerName').value.trim()) { toast('请输入客户名称', 'warning'); return false; }
+    if (!document.getElementById('arMainProduct').value.trim()) { toast('请输入主品名', 'warning'); return false; }
+    if (!document.getElementById('arCargoStation').value) { toast('请选择货站', 'warning'); return false; }
+    if (!document.getElementById('arProductChannel').value) { toast('请选择产品渠道', 'warning'); return false; }
+  } else if (step === 3) {
+    if (!document.getElementById('arZipCode').value.trim()) { toast('请输入邮编', 'warning'); return false; }
+    if (!document.getElementById('arPieces').value || parseInt(document.getElementById('arPieces').value) <= 0) { toast('请输入有效件数', 'warning'); return false; }
+    if (!document.getElementById('arChargeWeight').value || parseFloat(document.getElementById('arChargeWeight').value) <= 0) { toast('请输入有效计费重', 'warning'); return false; }
+    if (!document.getElementById('arBubbleRatio').value) { toast('请选择泡比', 'warning'); return false; }
+    if (!document.getElementById('arWarehouseCode').value.trim()) { toast('请输入仓库代码', 'warning'); return false; }
+  } else if (step === 4) {
+    var surcharge = parseFloat(document.getElementById('arSurcharge').value) || 0;
+    var customs = parseFloat(document.getElementById('arCustomsFee').value) || 0;
+    if (surcharge <= 0 && customs <= 0) { toast('请至少填写一项费用（产品附加费或报关费）', 'warning'); return false; }
+  }
+  return true;
+}
+
+function nextArStep() {
+  if (!validateArStep(arCurrentStep)) return;
+  if (arCurrentStep < 5) showArStep(arCurrentStep + 1);
+}
+
+function prevArStep() {
+  if (arCurrentStep > 1) showArStep(arCurrentStep - 1);
+}
+
+function jumpArStep(target) {
+  if (target <= arCurrentStep) { showArStep(target); return; }
+  for (var i = arCurrentStep; i < target; i++) {
+    if (!validateArStep(i)) return;
+  }
+  showArStep(target);
+}
+
+function calcArWeight() {
+  // placeholder for weight calculation if needed
+}
+
+function calcArTotal() {
+  var surcharge = parseFloat(document.getElementById('arSurcharge').value) || 0;
+  var customs = parseFloat(document.getElementById('arCustomsFee').value) || 0;
+  var discount = parseFloat(document.getElementById('arFreightDiscount').value) || 0;
+  var otherTotal = 0;
+  document.querySelectorAll('#arFeeTbody .ar-fee-amount').forEach(function(inp) {
+    otherTotal += parseFloat(inp.value) || 0;
+  });
+  var subtotal = surcharge + customs;
+  var total = subtotal + otherTotal - discount;
+  document.getElementById('arWarehouseSubtotal').textContent = '¥' + subtotal.toFixed(2);
+  document.getElementById('arSumSurcharge').textContent = '¥' + surcharge.toFixed(2);
+  document.getElementById('arSumCustoms').textContent = '¥' + customs.toFixed(2);
+  document.getElementById('arSumOther').textContent = '¥' + otherTotal.toFixed(2);
+  document.getElementById('arSumDiscount').textContent = '- ¥' + discount.toFixed(2);
+  document.getElementById('arSumTotal').textContent = '¥' + Math.max(0, total).toFixed(2);
+}
+
+var arFeeRowIdx = 0;
+function addArFeeRow() {
+  arFeeRowIdx++;
+  var tr = document.createElement('tr');
+  tr.id = 'arFeeRow_' + arFeeRowIdx;
+  tr.innerHTML =
+    '<td><input type="text" class="form-control ar-fee-name" placeholder="如：操作费、贴标费" style="height:32px;font-size:13px;"></td>' +
+    '<td><input type="number" class="form-control ar-fee-amount" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()" style="height:32px;font-size:13px;"></td>' +
+    '<td><input type="text" class="form-control ar-fee-remark" placeholder="可选" style="height:32px;font-size:13px;"></td>' +
+    '<td style="text-align:center;"><button class="btn-link" onclick="removeArFeeRow(' + arFeeRowIdx + ')" style="color:var(--tms-error);">删除</button></td>';
+  document.getElementById('arFeeTbody').appendChild(tr);
+  document.getElementById('arFeeEmpty').style.display = 'none';
+  calcArTotal();
+}
+
+function removeArFeeRow(id) {
+  var row = document.getElementById('arFeeRow_' + id);
+  if (row) row.remove();
+  if (document.getElementById('arFeeTbody').children.length === 0) {
+    document.getElementById('arFeeEmpty').style.display = 'block';
+  }
+  calcArTotal();
+}
+
+function submitCreateAr() {
+  var total = document.getElementById('arSumTotal').textContent;
+  confirmDialog('确认创建应收单', '应收总金额：<b style="font-size:16px;color:var(--tms-primary);">' + total + '</b><br>确认创建此应收单吗？', function() {
+    document.getElementById('createReceivableModal').classList.remove('show');
+    toast('应收单创建成功！运单号 ' + (arSelectedWaybillData ? arSelectedWaybillData.wbNo : '') + '，应收金额 ' + total, 'success');
+  }, '确认创建', 'primary');
 }
 </script>
 
