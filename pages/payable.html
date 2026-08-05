@@ -888,6 +888,9 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
       <div class="submenu">
         <a href="receivable.html" class="submenu-item">应收账单</a>
+        <a href="customer-flow.html" class="submenu-item">客户流水</a>
+        <a href="bill-writeoff.html" class="submenu-item">账单核销</a>
+        <a href="receivable-report.html" class="submenu-item">应收报表</a>
       </div>
       <div class="nav-item has-sub expanded" onclick="void(0)">
         <span class="nav-icon">💸</span>
@@ -896,6 +899,19 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
       <div class="submenu">
         <a href="payable.html" class="submenu-item active">应付账单</a>
+      </div>
+
+      <div class="nav-group-title">数据视图</div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">📊</span>
+        <span>数据视角</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="receivable.html" class="submenu-item">应收数据</a>
+        <a href="payable.html" class="submenu-item">应付数据</a>
+        <a href="document-data.html" class="submenu-item">单证数据</a>
+        <a href="cs-data.html" class="submenu-item">客服数据</a>
       </div>
       <div class="nav-group-title">基础数据</div>
       <div class="nav-item has-sub" onclick="void(0)">
@@ -970,13 +986,13 @@ th.sortable:hover { color: var(--tms-primary); }
         </div>
       </div>
 
-      <!-- 数据视角 Tab -->
+      <!-- 数据视角导航（独立页面链接） -->
       <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md) var(--tms-radius-md) 0 0;">
         <div class="tabs" id="viewTabs" style="margin-bottom:0;">
-          <div class="tab-item" data-view="receivable" onclick="switchViewTab(this)">应收数据</div>
-          <div class="tab-item active" data-view="payable" onclick="switchViewTab(this)">应付数据</div>
-          <div class="tab-item" data-view="document" onclick="switchViewTab(this)">单证数据</div>
-          <div class="tab-item" data-view="service" onclick="switchViewTab(this)">客服数据</div>
+          <a href="receivable.html" class="tab-item" style="text-decoration:none;cursor:pointer;">应收数据</a>
+          <a href="payable.html" class="tab-item active" style="text-decoration:none;cursor:pointer;">应付数据</a>
+          <a href="document-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">单证数据</a>
+          <a href="cs-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">客服数据</a>
         </div>
       </div>
 
