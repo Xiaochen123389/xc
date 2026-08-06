@@ -947,8 +947,10 @@ th.sortable:hover { color: var(--tms-primary); }
           <div class="tab-item active" data-status="all" onclick="switchTab(this)">全部<span class="tab-count">156</span></div>
           <div class="tab-item" data-status="pending" onclick="switchTab(this)">待确认<span class="tab-count">12</span></div>
           <div class="tab-item" data-status="confirmed" onclick="switchTab(this)">已确认<span class="tab-count">28</span></div>
-          <div class="tab-item" data-status="shipping" onclick="switchTab(this)">运输中<span class="tab-count">76</span></div>
+          <div class="tab-item" data-status="received" onclick="switchTab(this)">已收货<span class="tab-count">18</span></div>
+          <div class="tab-item" data-status="transit" onclick="switchTab(this)">转运中<span class="tab-count">42</span></div>
           <div class="tab-item" data-status="signed" onclick="switchTab(this)">已签收<span class="tab-count">35</span></div>
+          <div class="tab-item" data-status="returned" onclick="switchTab(this)">退件<span class="tab-count" style="background:var(--tms-warning-light);color:var(--tms-warning);">8</span></div>
           <div class="tab-item" data-status="exception" onclick="switchTab(this)">异常<span class="tab-count" style="background:var(--tms-error-light);color:var(--tms-error);">5</span></div>
         </div>
       </div>
@@ -1064,7 +1066,7 @@ th.sortable:hover { color: var(--tms-primary); }
               </tr>
             </thead>
             <tbody id="waybillTbody">
-              <tr data-status="pending">
+              <tr data-status="received">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openModal('waybillDetail')">YD20260729-0156</span></td>
                 <td>深圳华创科技</td>
@@ -1073,12 +1075,14 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td>张经理</td>
                 <td>12件 / <span class="font-mono">156kg</span></td>
                 <td><span class="text-muted font-mono" style="font-size:12.5px;">2026-07-29 10:30</span></td>
-                <td><span class="tag tag-blue tag-dot">待确认</span></td>
+                <td><span class="tag tag-purple tag-dot">已收货</span></td>
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260729-0156')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1086,7 +1090,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="shipping">
+              <tr data-status="transit">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openModal('waybillDetail')">YD20260729-0155</span></td>
                 <td>广州鑫源贸易</td>
@@ -1095,12 +1099,14 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td>李总</td>
                 <td>8件 / <span class="font-mono">320kg</span></td>
                 <td><span class="text-muted font-mono" style="font-size:12.5px;">2026-07-29 09:45</span></td>
-                <td><span class="tag tag-cyan tag-dot">运输中</span></td>
+                <td><span class="tag tag-cyan tag-dot">转运中</span></td>
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260729-0155')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1124,13 +1130,15 @@ th.sortable:hover { color: var(--tms-primary); }
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260729-0154')">审计</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
                     <button class="btn-link danger" onclick="deleteRow(this)">删除</button>
                   </div>
                 </td>
               </tr>
-              <tr data-status="confirmed">
+              <tr data-status="returned">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openModal('waybillDetail')">YD20260729-0153</span></td>
                 <td>宁波海丰国际</td>
@@ -1139,12 +1147,14 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td>陈先生</td>
                 <td>42件 / <span class="font-mono">1280kg</span></td>
                 <td><span class="text-muted font-mono" style="font-size:12.5px;">2026-07-29 08:30</span></td>
-                <td><span class="tag tag-orange tag-dot">已确认</span></td>
+                <td><span class="tag tag-orange tag-dot">退件</span></td>
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260729-0153')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1174,7 +1184,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="shipping">
+              <tr data-status="transit">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openModal('waybillDetail')">YD20260728-0151</span></td>
                 <td>北京顺达供应链</td>
@@ -1183,12 +1193,14 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td>赵经理</td>
                 <td>5件 / <span class="font-mono">68kg</span></td>
                 <td><span class="text-muted font-mono" style="font-size:12.5px;">2026-07-28 14:50</span></td>
-                <td><span class="tag tag-cyan tag-dot">运输中</span></td>
+                <td><span class="tag tag-cyan tag-dot">转运中</span></td>
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260728-0151')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1212,13 +1224,15 @@ th.sortable:hover { color: var(--tms-primary); }
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260728-0150')">审计</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
                     <button class="btn-link danger" onclick="deleteRow(this)">删除</button>
                   </div>
                 </td>
               </tr>
-              <tr data-status="pending">
+              <tr data-status="received">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openModal('waybillDetail')">YD20260728-0149</span></td>
                 <td>厦门港口集团</td>
@@ -1227,12 +1241,14 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td>周经理</td>
                 <td>56件 / <span class="font-mono">2400kg</span></td>
                 <td><span class="text-muted font-mono" style="font-size:12.5px;">2026-07-28 10:15</span></td>
-                <td><span class="tag tag-blue tag-dot">待确认</span></td>
+                <td><span class="tag tag-purple tag-dot">已收货</span></td>
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260728-0149')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1240,7 +1256,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="shipping">
+              <tr data-status="transit">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openModal('waybillDetail')">YD20260728-0148</span></td>
                 <td>成都西部物流</td>
@@ -1249,12 +1265,14 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td>吴先生</td>
                 <td>22件 / <span class="font-mono">680kg</span></td>
                 <td><span class="text-muted font-mono" style="font-size:12.5px;">2026-07-28 09:00</span></td>
-                <td><span class="tag tag-cyan tag-dot">运输中</span></td>
+                <td><span class="tag tag-cyan tag-dot">转运中</span></td>
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260728-0148')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1262,7 +1280,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="confirmed">
+              <tr data-status="returned">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openModal('waybillDetail')">YD20260727-0147</span></td>
                 <td>天津港务集团</td>
@@ -1271,12 +1289,14 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td>郑女士</td>
                 <td>15件 / <span class="font-mono">780kg</span></td>
                 <td><span class="text-muted font-mono" style="font-size:12.5px;">2026-07-27 17:40</span></td>
-                <td><span class="tag tag-orange tag-dot">已确认</span></td>
+                <td><span class="tag tag-orange tag-dot">退件</span></td>
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260727-0147')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1299,6 +1319,8 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-link" data-modal="waybillDetail">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="openAuditModal('YD20260727-0146')">审计</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" data-modal="waybillTrack">轨迹</button>
                     <span class="divider-v"></span>
@@ -1478,6 +1500,73 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
+<!-- Modal: 运单审计 -->
+<div class="modal-mask" id="waybillAudit">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">运单财务审计</span>
+      <button class="modal-close" data-close="waybillAudit">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="link-box">
+        <span>运单号：<b id="auditWaybillNo" class="mono">-</b></span>
+        <span class="tag tag-purple tag-dot" id="auditStatusTag">待审计</span>
+      </div>
+
+      <div class="desc-section-title">基础费用核对</div>
+      <div class="desc-list cols-3" style="margin-bottom:20px;">
+        <div class="desc-item"><span class="desc-label">预估运费</span><span class="desc-value" id="auditEstFreight">¥4,368.00</span></div>
+        <div class="desc-item"><span class="desc-label">燃油附加</span><span class="desc-value" id="auditFuel">¥655.20</span></div>
+        <div class="desc-item"><span class="desc-label">报关费</span><span class="desc-value" id="auditCustoms">¥350.00</span></div>
+      </div>
+
+      <div class="desc-section-title">财务审计填写</div>
+      <div class="form-grid cols-2" style="margin-bottom:20px;">
+        <div class="form-group">
+          <label class="form-label"><span class="required">*</span>审计结果</label>
+          <select class="form-control" id="auditResult">
+            <option value="">请选择</option>
+            <option value="pass">费用无误，通过</option>
+            <option value="adjust">费用有误，需调整</option>
+            <option value="reject">拒绝核销</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="required">*</span>实际运费（¥）</label>
+          <input type="number" class="form-control" id="auditActualFreight" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">关税 / 税费（¥）</label>
+          <input type="number" class="form-control" id="auditTaxFee" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">其他费用（¥）</label>
+          <input type="number" class="form-control" id="auditOtherFee" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label">审计备注</label>
+          <textarea class="form-control" id="auditRemark" rows="2" placeholder="请填写费用差异原因或审批说明"></textarea>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-row"><span class="summary-label">系统预估合计</span><span class="summary-value" id="auditEstTotal">¥5,373.20</span></div>
+        <div class="summary-row"><span class="summary-label">财务核算合计</span><span class="summary-value" id="auditCalcTotal">¥0.00</span></div>
+        <div class="summary-row total"><span class="summary-label">差额</span><span class="summary-value" id="auditDiff">¥0.00</span></div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px 16px;background:var(--tms-warning-light);border-radius:var(--tms-radius);border:1px solid #ffe7ba;">
+        <div style="font-size:13px;color:#d48806;font-weight:500;">⚠️ 提交后进入审批流程</div>
+        <div style="font-size:12px;color:#d48806;margin-top:4px;">审计结果将提交至财务主管审批，审批通过后方可生成应收账单。</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="waybillAudit">取消</button>
+      <button class="btn btn-primary" onclick="submitAudit()">提交审批</button>
+    </div>
+  </div>
+</div>
+
 <script src="../assets/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -1518,9 +1607,77 @@ function switchTab(el) {
       tr.style.display = 'none';
     }
   });
-  var labels = {all:'全部',pending:'待确认',confirmed:'已确认',shipping:'运输中',signed:'已签收',exception:'异常'};
+  var labels = {all:'全部',pending:'待确认',confirmed:'已确认',received:'已收货',transit:'转运中',signed:'已签收',returned:'退件',exception:'异常'};
   toast('已筛选：' + labels[status] + '（当前显示' + count + '条）', 'info');
 }
+
+// ========== 运单审计 ==========
+var auditMockData = {
+  'YD20260729-0156': { estFreight: 4368.00, fuel: 655.20, customs: 350.00 },
+  'YD20260729-0155': { estFreight: 5280.00, fuel: 792.00, customs: 420.00 },
+  'YD20260729-0154': { estFreight: 1860.00, fuel: 0, customs: 280.00 },
+  'YD20260729-0153': { estFreight: 9850.00, fuel: 0, customs: 650.00 },
+  'YD20260728-0151': { estFreight: 2150.00, fuel: 322.50, customs: 180.00 },
+  'YD20260728-0150': { estFreight: 1450.00, fuel: 0, customs: 220.00 },
+  'YD20260728-0149': { estFreight: 16800.00, fuel: 0, customs: 980.00 },
+  'YD20260728-0148': { estFreight: 7650.00, fuel: 0, customs: 520.00 },
+  'YD20260727-0147': { estFreight: 9200.00, fuel: 0, customs: 480.00 },
+  'YD20260727-0146': { estFreight: 3200.00, fuel: 480.00, customs: 260.00 }
+};
+
+function openAuditModal(waybillNo) {
+  var data = auditMockData[waybillNo] || { estFreight: 0, fuel: 0, customs: 0 };
+  document.getElementById('auditWaybillNo').textContent = waybillNo;
+  document.getElementById('auditEstFreight').textContent = '¥' + data.estFreight.toFixed(2);
+  document.getElementById('auditFuel').textContent = '¥' + data.fuel.toFixed(2);
+  document.getElementById('auditCustoms').textContent = '¥' + data.customs.toFixed(2);
+  var estTotal = data.estFreight + data.fuel + data.customs;
+  document.getElementById('auditEstTotal').textContent = '¥' + estTotal.toFixed(2);
+
+  // 清空输入
+  document.getElementById('auditResult').value = '';
+  document.getElementById('auditActualFreight').value = '';
+  document.getElementById('auditTaxFee').value = '';
+  document.getElementById('auditOtherFee').value = '';
+  document.getElementById('auditRemark').value = '';
+  calcAuditTotal();
+
+  openModal('waybillAudit');
+}
+
+function calcAuditTotal() {
+  var data = auditMockData[document.getElementById('auditWaybillNo').textContent] || { estFreight: 0, fuel: 0, customs: 0 };
+  var estTotal = data.estFreight + data.fuel + data.customs;
+  var actual = parseFloat(document.getElementById('auditActualFreight').value) || 0;
+  var tax = parseFloat(document.getElementById('auditTaxFee').value) || 0;
+  var other = parseFloat(document.getElementById('auditOtherFee').value) || 0;
+  var calcTotal = actual + tax + other;
+  var diff = calcTotal - estTotal;
+  document.getElementById('auditCalcTotal').textContent = '¥' + calcTotal.toFixed(2);
+  var diffEl = document.getElementById('auditDiff');
+  diffEl.textContent = (diff >= 0 ? '+' : '') + '¥' + diff.toFixed(2);
+  diffEl.style.color = diff > 0 ? 'var(--tms-error)' : (diff < 0 ? 'var(--tms-success)' : 'var(--tms-text-1)');
+}
+
+function submitAudit() {
+  var result = document.getElementById('auditResult').value;
+  var actual = document.getElementById('auditActualFreight').value;
+  if (!result) { toast('请选择审计结果', 'warning'); document.getElementById('auditResult').focus(); return; }
+  if (!actual || parseFloat(actual) < 0) { toast('请填写实际运费', 'warning'); document.getElementById('auditActualFreight').focus(); return; }
+
+  var waybillNo = document.getElementById('auditWaybillNo').textContent;
+  confirmDialog('提交财务审计', '运单 <b>' + waybillNo + '</b> 的审计结果将提交至财务主管审批，是否继续？', function() {
+    closeModal('waybillAudit');
+    toast('审计已提交，进入审批流程', 'success');
+  }, '提交审批', 'primary');
+}
+
+// 审计金额输入联动
+document.addEventListener('input', function(e) {
+  if (e.target && (e.target.id === 'auditActualFreight' || e.target.id === 'auditTaxFee' || e.target.id === 'auditOtherFee')) {
+    calcAuditTotal();
+  }
+});
 
 // 查询
 function doQuery() {

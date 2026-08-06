@@ -1014,6 +1014,20 @@ th.sortable:hover { color: var(--tms-primary); }
                         <label class="form-label">站点</label>
                         <input type="text" class="form-control" id="siteStation" value="上海仓" readonly>
                     </div>
+                    <div class="form-group" id="fclApportionGroup" style="display:none;grid-column: span 3;">
+                        <label class="form-label"><span class="required">*</span>运费平摊（整柜）</label>
+                        <div style="display:flex;gap:12px;align-items:flex-start;">
+                            <select class="form-control" id="fclApportionType" onchange="onApportionTypeChange(this.value)" style="width:180px;flex-shrink:0;">
+                                <option value="">请选择平摊方式</option>
+                                <option value="byVolume">按体积(CBM)平摊</option>
+                                <option value="byWeight">按重量(KG)平摊</option>
+                                <option value="byPiece">按件数平摊</option>
+                                <option value="manual">手动录入</option>
+                            </select>
+                            <input type="number" class="form-control" id="fclApportionValue" placeholder="请输入平摊系数或金额，如 1.2 / 5000" step="0.01" min="0" style="flex:1;">
+                        </div>
+                        <div class="form-help" id="fclApportionHelp">选择整柜（FCL）服务时，需填写运费平摊规则。</div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label"><span class="required">*</span>起运港</label>
                         <select class="form-control" id="portFrom">
@@ -1686,6 +1700,36 @@ function onServiceTypeChange(val) {
     // 根据服务类型更新站点建议
     if (val === '空运') {
         document.getElementById('siteStation').value = '上海仓';
+    }
+    // 整柜（FCL）运费平摊字段显隐
+    var fclGroup = document.getElementById('fclApportionGroup');
+    if (val === '海运FCL') {
+        fclGroup.style.display = 'block';
+    } else {
+        fclGroup.style.display = 'none';
+        document.getElementById('fclApportionType').value = '';
+        document.getElementById('fclApportionValue').value = '';
+    }
+}
+
+function onApportionTypeChange(val) {
+    var help = document.getElementById('fclApportionHelp');
+    var input = document.getElementById('fclApportionValue');
+    if (val === 'byVolume') {
+        help.textContent = '按体积平摊：请输入每 CBM 分摊的运费金额（¥/CBM）。';
+        input.placeholder = '如 1200.00';
+    } else if (val === 'byWeight') {
+        help.textContent = '按重量平摊：请输入每 KG 分摊的运费金额（¥/KG）。';
+        input.placeholder = '如 8.50';
+    } else if (val === 'byPiece') {
+        help.textContent = '按件数平摊：请输入每件分摊的运费金额（¥/件）。';
+        input.placeholder = '如 150.00';
+    } else if (val === 'manual') {
+        help.textContent = '手动录入：请输入该运单在本柜中的运费分摊金额（¥）。';
+        input.placeholder = '如 5200.00';
+    } else {
+        help.textContent = '选择整柜（FCL）服务时，需填写运费平摊规则。';
+        input.placeholder = '请输入平摊系数或金额，如 1.2 / 5000';
     }
 }
 
