@@ -53,6 +53,7 @@
   --tms-radius-xl: 16px;
 
   /* === 语义别名（head contract 所需）=== */
+  --tms-background: var(--tms-bg);
   --tms-foreground: #111827;
   --tms-card: #ffffff;
   --tms-muted: #9ca3af;

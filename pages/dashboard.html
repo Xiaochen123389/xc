@@ -60,6 +60,7 @@
   --tms-radius-xl: 16px;
 
   /* === 语义别名（head contract 所需）=== */
+  --tms-background: var(--tms-bg);
   --tms-foreground: #111827;
   --tms-card: #ffffff;
   --tms-muted: #9ca3af;
@@ -743,8 +744,32 @@ th.sortable:hover { color: var(--tms-primary); }
 .login-btn .loading-spin { border-top-color: #fff; border-color: rgba(255,255,255,.3); border-top-color: #fff; }
 
     </style>
-    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tms-background);
+    --color-foreground: var(--tms-foreground);
+    --color-card: var(--tms-card);
+    --color-primary: var(--tms-primary);
+    --color-muted: var(--tms-muted);
+    --color-border: var(--tms-border);
+    --radius-sm: var(--tms-radius-sm);
+    --radius-md: var(--tms-radius-md);
+    --radius-lg: var(--tms-radius-lg);
+    --radius-xl: var(--tms-radius-xl);
+  }
+  @layer base {
+    body { background: var(--tms-background); color: var(--tms-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
     <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tms-background); }
+      .text-background { color: var(--tms-background); }
+      .border-background { border-color: var(--tms-background); }
+      .ring-background { --tw-ring-color: var(--tms-background); }
       .bg-foreground { background-color: var(--tms-foreground); }
       .text-foreground { color: var(--tms-foreground); }
       .border-foreground { border-color: var(--tms-foreground); }
@@ -765,10 +790,6 @@ th.sortable:hover { color: var(--tms-primary); }
       .text-border { color: var(--tms-border); }
       .border-border { border-color: var(--tms-border); }
       .ring-border { --tw-ring-color: var(--tms-border); }
-      .bg-background { background-color: var(--tms-bg); }
-      .text-background { color: var(--tms-bg); }
-      .border-background { border-color: var(--tms-bg); }
-      .ring-background { --tw-ring-color: var(--tms-bg); }
     </style>
     <style>
       .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -845,8 +866,8 @@ th.sortable:hover { color: var(--tms-primary); }
       <span class="nav-caret">▶</span>
     </div>
     <div class="submenu">
-      <a href="receivable.html" class="submenu-item">应收账单</a>
-      <a href="payable.html" class="submenu-item">应付账单</a>
+      <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
+      <a href="payable-enhanced.html" class="submenu-item">应付账单</a>
     </div>
 
     <div class="nav-group-title">基础数据</div>
@@ -981,13 +1002,13 @@ th.sortable:hover { color: var(--tms-primary); }
     <div class="card-header">
       <div class="card-title"><span class="card-title-bar"></span>财务概览</div>
       <div class="card-extra" style="display:flex;gap:16px;">
-        <a href="receivable.html" style="font-size:12px;color:var(--tms-primary);">应收明细 →</a>
-        <a href="payable.html" style="font-size:12px;color:var(--tms-primary);">应付明细 →</a>
+        <a href="receivable-enhanced.html" style="font-size:12px;color:var(--tms-primary);">应收明细 →</a>
+        <a href="payable-enhanced.html" style="font-size:12px;color:var(--tms-primary);">应付明细 →</a>
       </div>
     </div>
     <div class="card-body" style="padding:20px;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-        <a href="receivable.html" style="text-decoration:none;color:inherit;display:block;padding:20px;border-radius:var(--tms-radius-md);background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffe7ba;transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='var(--tms-shadow-md)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+        <a href="receivable-enhanced.html" style="text-decoration:none;color:inherit;display:block;padding:20px;border-radius:var(--tms-radius-md);background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffe7ba;transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='var(--tms-shadow-md)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:20px;">💰</span>
@@ -1016,7 +1037,7 @@ th.sortable:hover { color: var(--tms-primary); }
             <div class="progress"><div class="progress-bar" style="width:66.6%;background:linear-gradient(90deg,#faad14,#52c41a);"></div></div>
           </div>
         </a>
-        <a href="payable.html" style="text-decoration:none;color:inherit;display:block;padding:20px;border-radius:var(--tms-radius-md);background:linear-gradient(135deg,#f9f0ff,#f0f5ff);border:1px solid #d3adf7;transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='var(--tms-shadow-md)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+        <a href="payable-enhanced.html" style="text-decoration:none;color:inherit;display:block;padding:20px;border-radius:var(--tms-radius-md);background:linear-gradient(135deg,#f9f0ff,#f0f5ff);border:1px solid #d3adf7;transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='var(--tms-shadow-md)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:20px;">💸</span>
@@ -1351,5 +1372,7 @@ window.addEventListener('DOMContentLoaded', function(){
   },100);
 });
 </script>
+
+    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
 </body>
 </html>

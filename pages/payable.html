@@ -60,6 +60,7 @@
   --tms-radius-xl: 16px;
 
   /* === 语义别名（head contract 所需）=== */
+  --tms-background: var(--tms-bg);
   --tms-foreground: #111827;
   --tms-card: #ffffff;
   --tms-muted: #9ca3af;
@@ -743,8 +744,32 @@ th.sortable:hover { color: var(--tms-primary); }
 .login-btn .loading-spin { border-top-color: #fff; border-color: rgba(255,255,255,.3); border-top-color: #fff; }
 
     </style>
-    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tms-background);
+    --color-foreground: var(--tms-foreground);
+    --color-card: var(--tms-card);
+    --color-primary: var(--tms-primary);
+    --color-muted: var(--tms-muted);
+    --color-border: var(--tms-border);
+    --radius-sm: var(--tms-radius-sm);
+    --radius-md: var(--tms-radius-md);
+    --radius-lg: var(--tms-radius-lg);
+    --radius-xl: var(--tms-radius-xl);
+  }
+  @layer base {
+    body { background: var(--tms-background); color: var(--tms-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
     <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tms-background); }
+      .text-background { color: var(--tms-background); }
+      .border-background { border-color: var(--tms-background); }
+      .ring-background { --tw-ring-color: var(--tms-background); }
       .bg-foreground { background-color: var(--tms-foreground); }
       .text-foreground { color: var(--tms-foreground); }
       .border-foreground { border-color: var(--tms-foreground); }
@@ -765,10 +790,6 @@ th.sortable:hover { color: var(--tms-primary); }
       .text-border { color: var(--tms-border); }
       .border-border { border-color: var(--tms-border); }
       .ring-border { --tw-ring-color: var(--tms-border); }
-      .bg-background { background-color: var(--tms-bg); }
-      .text-background { color: var(--tms-bg); }
-      .border-background { border-color: var(--tms-bg); }
-      .ring-background { --tw-ring-color: var(--tms-bg); }
     </style>
     <style>
       .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -785,40 +806,6 @@ th.sortable:hover { color: var(--tms-primary); }
         mask-position: center;
         background-color: currentColor;
       }
-    </style>
-    <style>
-      .row-removing { animation: rowRemove .4s forwards; }
-      @keyframes rowRemove { to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; } }
-      .row-fade-in { animation: rowFadeIn .3s ease; }
-      @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .date-range { display: flex; align-items: center; gap: 6px; }
-      .date-range .form-control { flex: 1; min-width: 0; }
-      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
-      .col-move { width: 56px; text-align: center; white-space: nowrap; }
-      .row-move-btns { display: inline-flex; gap: 2px; }
-      .row-move-btns .btn-icon { width: 24px; height: 24px; font-size: 10px; color: var(--tms-text-3); border: none; background: transparent; }
-      .row-move-btns .btn-icon:hover { background: var(--tms-primary-bg); color: var(--tms-primary); }
-      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
-      .fee-subject-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-      .fee-subject-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: var(--tms-primary-light); color: var(--tms-primary); border-radius: 4px; font-size: 13px; }
-      .fee-subject-tag button { border: none; background: transparent; color: var(--tms-primary); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 0 0 4px; }
-      .fee-subject-tag button:hover { color: var(--tms-error); }
-      .detail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--tms-border); background: #fff; }
-      .detail-tabs .tab-item { padding: 12px 16px; font-size: 14px; color: var(--tms-text-2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; font-weight: 500; margin-bottom: -1px; }
-      .detail-tabs .tab-item:hover { color: var(--tms-primary); }
-      .detail-tabs .tab-item.active { color: var(--tms-primary); border-bottom-color: var(--tms-primary); }
-      .detail-tab-panel.hidden { display: none !important; }
-      .data-table thead th { position: sticky; top: 0; z-index: 2; }
-      .data-table thead th.col-check,
-      .data-table thead th.col-move { z-index: 3; }
-      .modal-footer .form-control { height: 34px; min-width: 120px; }
-      #detailDeptUploadModal { z-index: 1001; }
-      .dept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-      .dept-card { border:1px solid var(--tms-border-2); border-radius: var(--tms-radius); padding: 12px; background: #fff; }
-      .dept-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-      .dept-empty { font-size:13px; color:var(--tms-text-3); padding:12px 0; text-align:center; }
-      .dept-card .data-table { font-size:12.5px; }
-      .dept-card .data-table th, .dept-card .data-table td { padding: 6px 8px; }
     </style>
 </head>
 <body>
@@ -887,7 +874,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <span class="nav-caret">▶</span>
       </div>
       <div class="submenu">
-        <a href="receivable.html" class="submenu-item">应收账单</a>
+        <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
         <a href="customer-flow.html" class="submenu-item">客户流水</a>
         <a href="bill-writeoff.html" class="submenu-item">账单核销</a>
         <a href="receivable-report.html" class="submenu-item">应收报表</a>
@@ -898,7 +885,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <span class="nav-caret">▶</span>
       </div>
       <div class="submenu">
-        <a href="payable.html" class="submenu-item active">应付账单</a>
+        <a href="payable-enhanced.html" class="submenu-item active">应付账单</a>
       </div>
 
       <div class="nav-group-title">数据视图</div>
@@ -908,10 +895,11 @@ th.sortable:hover { color: var(--tms-primary); }
         <span class="nav-caret">▶</span>
       </div>
       <div class="submenu">
-        <a href="receivable.html" class="submenu-item">应收数据</a>
-        <a href="payable.html" class="submenu-item">应付数据</a>
+        <a href="receivable-enhanced.html" class="submenu-item">应收数据</a>
+        <a href="payable-enhanced.html" class="submenu-item">应付数据</a>
         <a href="document-data.html" class="submenu-item">单证数据</a>
         <a href="cs-data.html" class="submenu-item">客服数据</a>
+        <a href="warehouse-data.html" class="submenu-item">海外仓数据</a>
       </div>
       <div class="nav-group-title">基础数据</div>
       <div class="nav-item has-sub" onclick="void(0)">
@@ -989,10 +977,11 @@ th.sortable:hover { color: var(--tms-primary); }
       <!-- 数据视角导航（独立页面链接） -->
       <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md) var(--tms-radius-md) 0 0;">
         <div class="tabs" id="viewTabs" style="margin-bottom:0;">
-          <a href="receivable.html" class="tab-item" style="text-decoration:none;cursor:pointer;">应收数据</a>
-          <a href="payable.html" class="tab-item active" style="text-decoration:none;cursor:pointer;">应付数据</a>
+          <a href="receivable-enhanced.html" class="tab-item" style="text-decoration:none;cursor:pointer;">应收数据</a>
+          <a href="payable-enhanced.html" class="tab-item active" style="text-decoration:none;cursor:pointer;">应付数据</a>
           <a href="document-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">单证数据</a>
           <a href="cs-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">客服数据</a>
+          <a href="warehouse-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">海外仓数据</a>
         </div>
       </div>
 
@@ -2113,7 +2102,7 @@ function switchViewTab(el) {
   tabs.forEach(function(t){ t.classList.remove('active'); });
   el.classList.add('active');
   var view = el.getAttribute('data-view');
-  var labels = {receivable:'应收数据',payable:'应付数据',document:'单证数据',service:'客服数据'};
+  var labels = {receivable:'应收数据',payable:'应付数据',document:'单证数据',service:'客服数据',warehouse:'海外仓数据'};
   toast('已切换至：' + (labels[view] || view), 'info');
 }
 
@@ -2478,5 +2467,41 @@ window.addEventListener('DOMContentLoaded', function(){
   },100);
 });
 </script>
+
+    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <style>
+      .row-removing { animation: rowRemove .4s forwards; }
+      @keyframes rowRemove { to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; } }
+      .row-fade-in { animation: rowFadeIn .3s ease; }
+      @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .date-range { display: flex; align-items: center; gap: 6px; }
+      .date-range .form-control { flex: 1; min-width: 0; }
+      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
+      .col-move { width: 56px; text-align: center; white-space: nowrap; }
+      .row-move-btns { display: inline-flex; gap: 2px; }
+      .row-move-btns .btn-icon { width: 24px; height: 24px; font-size: 10px; color: var(--tms-text-3); border: none; background: transparent; }
+      .row-move-btns .btn-icon:hover { background: var(--tms-primary-bg); color: var(--tms-primary); }
+      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
+      .fee-subject-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+      .fee-subject-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: var(--tms-primary-light); color: var(--tms-primary); border-radius: 4px; font-size: 13px; }
+      .fee-subject-tag button { border: none; background: transparent; color: var(--tms-primary); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 0 0 4px; }
+      .fee-subject-tag button:hover { color: var(--tms-error); }
+      .detail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--tms-border); background: #fff; }
+      .detail-tabs .tab-item { padding: 12px 16px; font-size: 14px; color: var(--tms-text-2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; font-weight: 500; margin-bottom: -1px; }
+      .detail-tabs .tab-item:hover { color: var(--tms-primary); }
+      .detail-tabs .tab-item.active { color: var(--tms-primary); border-bottom-color: var(--tms-primary); }
+      .detail-tab-panel.hidden { display: none !important; }
+      .data-table thead th { position: sticky; top: 0; z-index: 2; }
+      .data-table thead th.col-check,
+      .data-table thead th.col-move { z-index: 3; }
+      .modal-footer .form-control { height: 34px; min-width: 120px; }
+      #detailDeptUploadModal { z-index: 1001; }
+      .dept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .dept-card { border:1px solid var(--tms-border-2); border-radius: var(--tms-radius); padding: 12px; background: #fff; }
+      .dept-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+      .dept-empty { font-size:13px; color:var(--tms-text-3); padding:12px 0; text-align:center; }
+      .dept-card .data-table { font-size:12.5px; }
+      .dept-card .data-table th, .dept-card .data-table td { padding: 6px 8px; }
+    </style>
 </body>
 </html>

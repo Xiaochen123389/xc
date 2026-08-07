@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>应收管理 - TMS供应链管理系统</title>
+    <title>应付管理-增强版 - TMS供应链管理系统</title>
     <style id="theme-vars">
 :root {
   /* === 品牌主色（现代化蓝色）=== */
@@ -169,7 +169,8 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
 .data-table .link { color: var(--tms-primary); cursor: pointer; font-weight: 500; }
 .data-table .link:hover { color: var(--tms-primary-hover); text-decoration: underline; }
 .data-table .mono { font-family: "SF Mono", Consolas, Monaco, monospace; font-size: 12.5px; color: var(--tms-text-1); }
-.table-wrapper { overflow-x: auto; }
+.table-wrapper { overflow: visible; }
+.table-wrapper .data-table { min-width: 100%; }
 
 /* ========== 侧边栏 ========== */
 .sidebar {
@@ -262,7 +263,7 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
 .header-user-name { font-size: 13px; color: var(--tms-text-1); font-weight: 500; }
 
 /* ========== 主内容区 ========== */
-.app-main { margin-left: 224px; padding: 20px 24px; min-height: calc(100vh - 56px); }
+.app-main { margin-left: 224px; padding: 20px 24px; height: calc(100vh - 56px); overflow: auto; }
 .page-title-bar { margin-bottom: 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .page-title { font-size: 22px; font-weight: 700; color: var(--tms-text); margin: 0 0 6px; letter-spacing: -.3px; }
 .page-subtitle { font-size: 13px; color: var(--tms-text-3); margin: 0; }
@@ -364,6 +365,20 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
   padding-top: 80px; backdrop-filter: blur(2px);
 }
 .modal-mask.show { display: flex; animation: fadeIn .2s ease; }
+.confirm-mask {
+  position: fixed; inset: 0; background: rgba(15,23,42,.5);
+  z-index: 1100; display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.confirm-mask.show { display: flex; animation: fadeIn .2s ease; }
+.confirm-box {
+  background: #fff; border-radius: var(--tms-radius-lg); padding: 24px;
+  width: 360px; max-width: 90vw; box-shadow: var(--tms-shadow-xl);
+  animation: modalIn .25s cubic-bezier(.4,0,.2,1);
+}
+.confirm-title { font-size: 16px; font-weight: 600; color: var(--tms-text); margin-bottom: 12px; }
+.confirm-msg { font-size: 14px; color: var(--tms-text-2); line-height: 1.6; margin-bottom: 20px; }
+.confirm-actions { display: flex; justify-content: flex-end; gap: 8px; }
 .modal {
   background: #fff; border-radius: var(--tms-radius-lg); width: 560px; max-width: 90vw;
   max-height: calc(100vh - 140px); display: flex; flex-direction: column;
@@ -810,10 +825,8 @@ th.sortable:hover { color: var(--tms-primary); }
 </head>
 <body>
 
-<!-- Toast 容器 -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- Confirm Dialog -->
 <div class="confirm-mask" id="confirmMask">
   <div class="confirm-box">
     <div class="confirm-title" id="confirmTitle">确认操作</div>
@@ -825,8 +838,7 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
-<!-- 侧边栏 -->
-  <aside class="sidebar">
+<aside class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon">T</div>
       <div class="sidebar-logo-text">
@@ -834,14 +846,12 @@ th.sortable:hover { color: var(--tms-primary); }
         <small>SMART LOGISTICS</small>
       </div>
     </div>
-
     <nav class="sidebar-nav">
       <div class="nav-group-title">概览</div>
       <a href="dashboard.html" class="nav-item">
         <span class="nav-icon">🏠</span>
         <span>工作台</span>
       </a>
-
       <div class="nav-group-title">业务管理</div>
       <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">📦</span>
@@ -852,7 +862,6 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="waybill-list.html" class="submenu-item">运单列表</a>
         <a href="waybill-create.html" class="submenu-item">创建运单</a>
       </div>
-
       <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">🚢</span>
         <span>提单管理</span>
@@ -863,7 +872,6 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="bill-list.html" class="submenu-item">提单列表</a>
         <a href="bill-create.html" class="submenu-item">创建提单</a>
       </div>
-
       <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">📏</span>
         <span>超限管理</span>
@@ -874,27 +882,25 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="oversize.html" class="submenu-item">超限货物</a>
         <a href="#" class="submenu-item" onclick="toast('超限审批开发中','info')">超限审批</a>
       </div>
-
       <div class="nav-group-title">财务管理</div>
-      <div class="nav-item has-sub expanded" onclick="void(0)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">💰</span>
         <span>应收管理</span>
-        <span class="nav-badge">5</span>
         <span class="nav-caret">▶</span>
       </div>
       <div class="submenu">
-        <a href="receivable-enhanced.html" class="submenu-item active">应收账单</a>
+        <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
         <a href="customer-flow.html" class="submenu-item">客户流水</a>
         <a href="bill-writeoff.html" class="submenu-item">账单核销</a>
         <a href="receivable-report.html" class="submenu-item">应收报表</a>
       </div>
-      <div class="nav-item has-sub" onclick="void(0)">
+      <div class="nav-item has-sub expanded" onclick="void(0)">
         <span class="nav-icon">💸</span>
         <span>应付管理</span>
         <span class="nav-caret">▶</span>
       </div>
       <div class="submenu">
-        <a href="payable-enhanced.html" class="submenu-item">应付账单</a>
+        <a href="payable-enhanced.html" class="submenu-item active">应付账单-增强版</a>
       </div>
 
       <div class="nav-group-title">数据视图</div>
@@ -905,12 +911,11 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
       <div class="submenu">
         <a href="receivable-enhanced.html" class="submenu-item">应收数据</a>
-        <a href="payable-enhanced.html" class="submenu-item">应付数据</a>
+        <a href="payable-enhanced.html" class="submenu-item active">应付数据</a>
         <a href="document-data.html" class="submenu-item">单证数据</a>
         <a href="cs-data.html" class="submenu-item">客服数据</a>
         <a href="warehouse-data.html" class="submenu-item">海外仓数据</a>
       </div>
-
       <div class="nav-group-title">基础数据</div>
       <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">💹</span>
@@ -929,14 +934,12 @@ th.sortable:hover { color: var(--tms-primary); }
         <span class="nav-icon">📍</span>
         <span>地址簿</span>
       </a>
-
       <div class="nav-group-title">系统</div>
       <div class="nav-item" onclick="toast('系统设置功能开发中','info')">
         <span class="nav-icon">⚙️</span>
         <span>系统设置</span>
       </div>
     </nav>
-
     <div class="sidebar-footer">
       <div class="sidebar-user">
         <div class="sidebar-avatar">王</div>
@@ -946,7 +949,7 @@ th.sortable:hover { color: var(--tms-primary); }
         </div>
       </div>
     </div>
-  </aside>
+</aside>
 
 <header class="app-header">
       <div class="header-breadcrumb">
@@ -954,142 +957,131 @@ th.sortable:hover { color: var(--tms-primary); }
         <span class="sep">/</span>
         <a href="#">财务管理</a>
         <span class="sep">/</span>
-        <span class="current">应收账单</span>
+        <span class="current">应付账单-增强版</span>
       </div>
       <div class="header-right">
         <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
-        <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">
-          🔔
-          <span class="header-badge">3</span>
-        </div>
+        <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">🔔<span class="header-badge">3</span></div>
         <div class="theme-toggle" title="主题切换" onclick="toast('主题切换功能开发中','info')">🌙</div>
         <div class="header-divider"></div>
-        <div class="dropdown-wrap">
-          <div class="header-user" data-dropdown="userMenu">
-            <div class="header-user-avatar">王</div>
-            <span class="header-user-name">王主管</span>
-          </div>
+        <div class="header-user">
+          <div class="header-user-avatar">王</div>
+          <span class="header-user-name">王主管</span>
         </div>
       </div>
-    </header>
+</header>
 
 <main class="app-main">
-      <!-- 页面标题区 -->
       <div class="page-title-bar">
         <div>
-          <h1 class="page-title">💰 应收管理</h1>
-          <p class="page-subtitle">客户运费应收账款统计、对账与收款跟踪</p>
+          <h1 class="page-title">💸 应付管理-增强版</h1>
+          <p class="page-subtitle">承运商/供应商应付账款统计、三部门录入、预估费用、财务审核与付款管理</p>
         </div>
         <div class="page-actions">
-          <a href="customer-flow.html" class="btn">
-            <span>📋</span>客户流水
-          </a>
-          <a href="bill-writeoff.html" class="btn">
-            <span>📝</span>账单核销
-          </a>
-          <a href="receivable-report.html" class="btn">
-            <span>📊</span>应收报表
-          </a>
-          <button class="btn" onclick="openPodModal()">
-            <span>📦</span>POD 查看
-          </button>
-          <button class="btn" onclick="openFeeSubjectModal()">
-            <span>⚙️</span>费用科目设置
-          </button>
+          <button class="btn" onclick="openFlowModal()"><span>📋</span>供应商流水</button>
+          <button class="btn" onclick="openWriteOffModal()"><span>📝</span>账单核销</button>
+          <button class="btn" onclick="openReportModal()"><span>📊</span>应付报表</button>
+          <button class="btn" onclick="openPodModal()"><span>📦</span>POD 查看</button>
+          <button class="btn" onclick="openFeeSubjectModal()"><span>⚙️</span>费用科目设置</button>
           <div class="header-divider" style="margin:0 4px;"></div>
-          <button class="btn" onclick="toast('导入对账单功能开发中','info')">
-            <span>📥</span>导入对账单
-          </button>
-          <a href="#" class="btn btn-primary" onclick="openCreateArModal()">
-            <span>＋</span>新增应收单
-          </a>
+          <button class="btn" onclick="toast('导入账单功能开发中','info')"><span>📥</span>导入账单</button>
+          <a href="#" class="btn btn-primary" onclick="toast('新增应付单功能开发中','info')"><span>＋</span>新增应付单</a>
         </div>
       </div>
 
       <!-- 数据视角导航（独立页面链接） -->
       <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md) var(--tms-radius-md) 0 0;">
         <div class="tabs" id="viewTabs" style="margin-bottom:0;">
-          <a href="receivable-enhanced.html" class="tab-item active" style="text-decoration:none;cursor:pointer;">应收数据</a>
-          <a href="payable-enhanced.html" class="tab-item" style="text-decoration:none;cursor:pointer;">应付数据</a>
+          <a href="receivable-enhanced.html" class="tab-item" style="text-decoration:none;cursor:pointer;">应收数据</a>
+          <a href="payable-enhanced.html" class="tab-item active" style="text-decoration:none;cursor:pointer;">应付数据</a>
           <a href="document-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">单证数据</a>
           <a href="cs-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">客服数据</a>
           <a href="warehouse-data.html" class="tab-item" style="text-decoration:none;cursor:pointer;">海外仓数据</a>
         </div>
       </div>
 
-      <!-- 统计卡 -->
       <div class="stat-grid">
-        <div class="stat-card stat-orange" onclick="filterByStat('all')">
+        <div class="stat-card stat-purple" onclick="filterByStat('all')">
           <div class="stat-info">
-            <div class="stat-label">💰 应收总额</div>
-            <div class="stat-value">¥1,286,450</div>
-            <div class="stat-trend up">↑ ¥128K 较上月</div>
+            <div class="stat-label">💸 应付总额</div>
+            <div class="stat-value">¥968,300</div>
+            <div class="stat-trend up">↑ ¥86K 较上月</div>
           </div>
-          <div class="stat-icon-wrap">💰</div>
+          <div class="stat-icon-wrap">💸</div>
         </div>
-        <div class="stat-card stat-success" onclick="filterByStat('settled')">
+        <div class="stat-card stat-success" onclick="filterByStat('paid')">
           <div class="stat-info">
-            <div class="stat-label">✅ 已收款</div>
-            <div class="stat-value">¥856,200</div>
-            <div class="stat-trend up">回款率 66.6%</div>
+            <div class="stat-label">✅ 已付款</div>
+            <div class="stat-value">¥623,800</div>
+            <div class="stat-trend up">付款率 64.4%</div>
           </div>
           <div class="stat-icon-wrap">✅</div>
         </div>
         <div class="stat-card" onclick="filterByStat('pending')">
           <div class="stat-info">
-            <div class="stat-label">⏳ 待收款</div>
-            <div class="stat-value">¥380,250</div>
-            <div class="stat-trend" style="color:var(--tms-primary);">32笔待结算</div>
+            <div class="stat-label">⏳ 待付款</div>
+            <div class="stat-value">¥314,500</div>
+            <div class="stat-trend" style="color:var(--tms-primary);">26笔待支付</div>
           </div>
           <div class="stat-icon-wrap">⏳</div>
         </div>
-        <div class="stat-card stat-error" onclick="filterByStat('overdue')">
+        <div class="stat-card stat-warning" onclick="filterByStat('thismonth')">
           <div class="stat-info">
-            <div class="stat-label">⚠️ 已逾期</div>
-            <div class="stat-value">¥50,000</div>
-            <div class="stat-trend down">5笔逾期，需催收</div>
+            <div class="stat-label">📅 本月待付</div>
+            <div class="stat-value">¥128,000</div>
+            <div class="stat-trend" style="color:var(--tms-warning);">8笔本月到期</div>
           </div>
-          <div class="stat-icon-wrap">⚠️</div>
+          <div class="stat-icon-wrap">📅</div>
         </div>
       </div>
 
-      <!-- Tabs状态筛选 -->
       <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md) var(--tms-radius-md) 0 0;">
         <div class="tabs" id="statusTabs" style="margin-bottom:0;">
-          <div class="tab-item active" data-status="all" onclick="switchTab(this)">全部<span class="tab-count">156</span></div>
-          <div class="tab-item" data-status="confirm" onclick="switchTab(this)">待确认<span class="tab-count" style="background:var(--tms-border-2);color:var(--tms-text-2);">18</span></div>
-          <div class="tab-item" data-status="pending" onclick="switchTab(this)">待收款<span class="tab-count" style="background:var(--tms-warning-light);color:#d48806;">32</span></div>
-          <div class="tab-item" data-status="partial" onclick="switchTab(this)">部分收款<span class="tab-count" style="background:var(--tms-primary-light);color:var(--tms-primary);">8</span></div>
-          <div class="tab-item" data-status="settled" onclick="switchTab(this)">已结清<span class="tab-count" style="background:var(--tms-success-light);color:#389e0d;">93</span></div>
-          <div class="tab-item" data-status="overdue" onclick="switchTab(this)">已逾期<span class="tab-count" style="background:var(--tms-error-light);color:#cf1322;">5</span></div>
+          <div class="tab-item active" data-status="all" onclick="switchTab(this)">全部<span class="tab-count">128</span></div>
+          <div class="tab-item" data-status="confirm" onclick="switchTab(this)">待确认<span class="tab-count">15</span></div>
+          <div class="tab-item" data-status="pending" onclick="switchTab(this)">待付款<span class="tab-count" style="background:var(--tms-warning-light);color:#d48806;">26</span></div>
+          <div class="tab-item" data-status="partial" onclick="switchTab(this)">部分付款<span class="tab-count" style="background:var(--tms-primary-light);color:var(--tms-primary);">6</span></div>
+          <div class="tab-item" data-status="paid" onclick="switchTab(this)">已付款<span class="tab-count" style="background:var(--tms-success-light);color:#389e0d;">78</span></div>
+          <div class="tab-item" data-status="overdue" onclick="switchTab(this)">已逾期<span class="tab-count" style="background:var(--tms-error-light);color:#cf1322;">3</span></div>
         </div>
       </div>
 
-      <!-- 筛选卡片 -->
       <div class="filter-bar">
         <div class="filter-grid">
           <div class="filter-item">
-            <label class="filter-label">账单号</label>
-            <input type="text" class="form-control" id="fArNo" placeholder="请输入账单号">
+            <label class="filter-label">结算单号</label>
+            <input type="text" class="form-control" id="fApNo" placeholder="请输入结算单号">
           </div>
           <div class="filter-item">
-            <label class="filter-label">客户名称</label>
-            <input type="text" class="form-control" id="fCustomer" placeholder="请输入客户名称">
+            <label class="filter-label">供应商/承运商</label>
+            <input type="text" class="form-control" id="fSupplier" placeholder="请输入供应商名称">
           </div>
           <div class="filter-item">
-            <label class="filter-label">结算状态</label>
+            <label class="filter-label">付款状态</label>
             <select class="form-control" id="fStatus">
               <option value="">全部状态</option>
               <option value="confirm">待确认</option>
-              <option value="pending">待收款</option>
-              <option value="partial">部分收款</option>
-              <option value="settled">已结清</option>
+              <option value="pending">待付款</option>
+              <option value="partial">部分付款</option>
+              <option value="paid">已付款</option>
               <option value="overdue">已逾期</option>
             </select>
           </div>
           <div class="filter-item">
-            <label class="filter-label">关联运单</label>
-            <input type="text" class="form-control" id="fWaybill" placeholder="请输入关联运单号">
+            <label class="filter-label">关联提单</label>
+            <input type="text" class="form-control" id="fBill" placeholder="请输入关联提单号">
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">费用类型</label>
+            <select class="form-control" id="fFeeType">
+              <option value="">全部类型</option>
+              <option value="ocean">海运费</option>
+              <option value="air">空运费</option>
+              <option value="truck">拖车费</option>
+              <option value="customs">报关费</option>
+              <option value="warehouse">仓储费</option>
+              <option value="other">其他</option>
+            </select>
           </div>
           <div class="filter-item">
             <label class="filter-label">开票日期</label>
@@ -1106,13 +1098,10 @@ th.sortable:hover { color: var(--tms-primary); }
         </div>
         <div class="filter-actions">
           <button class="btn" onclick="resetFilter()">重置</button>
-          <button class="btn btn-primary" id="btnQuery" onclick="doQuery()">
-            <span>🔍</span>查询
-          </button>
+          <button class="btn btn-primary" id="btnQuery" onclick="doQuery()"><span>🔍</span>查询</button>
         </div>
       </div>
 
-      <!-- 表格卡片 -->
       <div class="card">
         <div class="table-toolbar">
           <div class="toolbar-left">
@@ -1121,50 +1110,44 @@ th.sortable:hover { color: var(--tms-primary); }
             <button class="btn btn-sm" id="btnBatchAddFee" disabled onclick="openBatchAddFeeModal()">批量增加费用</button>
             <button class="btn btn-sm" id="btnBatchEditFee" disabled onclick="openBatchEditFeeModal()">批量修改费用</button>
             <button class="btn btn-sm" id="btnBatchOffset" disabled onclick="openBatchOffsetModal()">批量对冲费用</button>
-            <button class="btn btn-sm" id="btnBatchAssignRep" disabled onclick="openBatchAssignRepModal()">批量修改客户财务代表</button>
+            <button class="btn btn-sm" id="btnBatchAssignRep" disabled onclick="openBatchAssignRepModal()">批量修改供应商财务代表</button>
             <button class="btn btn-sm btn-danger" id="btnBatchDelete" disabled onclick="batchAction('delete')">批量删除</button>
           </div>
           <div class="toolbar-right">
             <div class="search-box">
               <span class="search-icon">🔍</span>
-              <input type="text" class="form-control" data-search="#receivableTable" placeholder="搜索账单号/客户/运单号（多个用空格/逗号分隔）">
+              <input type="text" class="form-control" data-search="#payableTable" placeholder="搜索结算单号/供应商/提单号（多个用空格/逗号分隔）">
             </div>
-            <button class="btn btn-icon btn-sm" title="刷新" onclick="refreshTable()">
-              <span>🔄</span>
-            </button>
-            <button class="btn btn-icon btn-sm" title="列设置" onclick="toast('列设置开发中','info')">
-              <span>⚙️</span>
-            </button>
+            <button class="btn btn-icon btn-sm" title="刷新" onclick="refreshTable()"><span>🔄</span></button>
+            <button class="btn btn-icon btn-sm" title="列设置" onclick="toast('列设置开发中','info')"><span>⚙️</span></button>
           </div>
         </div>
-
         <div class="table-wrapper">
-          <table class="data-table" id="receivableTable">
+          <table class="data-table" id="payableTable">
             <thead>
               <tr>
                 <th class="col-check"><input type="checkbox" class="check-all"></th>
                 <th class="col-move">排序</th>
-                <th class="sortable" data-sort="arNo">账单号</th>
-                <th class="sortable" data-sort="customer">客户名称</th>
-                <th class="sortable" data-sort="waybill">关联运单</th>
-                <th class="sortable" data-sort="cabinet">柜号</th>
+                <th class="sortable" data-sort="apNo">结算单号</th>
+                <th class="sortable" data-sort="supplier">供应商/承运商</th>
                 <th class="sortable" data-sort="feeSubject">费用科目</th>
-                <th class="sortable" data-sort="salesRep">销售代表</th>
+                <th class="sortable" data-sort="cabinet">柜号</th>
+                <th class="sortable" data-sort="bill">关联提单/运单</th>
+                <th class="sortable" data-sort="purchaseRep">采购代表</th>
                 <th class="sortable" data-sort="serviceRep">客服代表</th>
                 <th class="sortable" data-sort="financeRep">财务代表</th>
                 <th class="sortable" data-sort="currency">币种</th>
-                <th class="sortable" data-sort="arAmount">应收金额</th>
-                <th class="sortable" data-sort="paidAmount">已收金额</th>
-                <th class="sortable" data-sort="unpaidAmount">未收金额</th>
+                <th class="sortable" data-sort="apAmount">应付金额</th>
+                <th class="sortable" data-sort="paidAmount">已付金额</th>
+                <th class="sortable" data-sort="unpaidAmount">未付金额</th>
                 <th class="sortable" data-sort="invoiceDate">开票日期</th>
                 <th class="sortable" data-sort="dueDate">到期日期</th>
                 <th class="sortable" data-sort="status">状态</th>
                 <th class="col-action">操作</th>
               </tr>
             </thead>
-            <tbody id="receivableTbody">
-              <!-- 待确认 -->
-              <tr data-status="confirm" data-ar-no="AR202607-0156" data-customer="华通机械制造有限公司" data-ar-amount="128500" data-paid-amount="0" data-unpaid-amount="128500" data-invoice-date="2026-07-28" data-due-date="2026-08-28">
+            <tbody id="payableTbody">
+              <tr data-status="confirm" data-ap-no="AP202607-0089" data-supplier="中远海运集运" data-ap-amount="98500" data-paid-amount="0" data-unpaid-amount="98500" data-invoice-date="2026-07-28" data-due-date="2026-08-28">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1172,27 +1155,24 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202607-0156')">AR202607-0156</span></td>
-                <td>华通机械制造有限公司</td>
-                <td>
-                  <div>12单</div>
-                  <div class="text-sm text-muted mono">WY202607A001~012</div>
-                </td>
-                <td><span class="mono">CNTU202607156</span></td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0089')">AP202607-0089</span></td>
+                <td>中远海运集运</td>
                 <td><span class="tag tag-blue">运费</span></td>
-                <td>张经理</td>
+                <td><span class="mono">CNTU2026089</span></td>
+                <td><span class="mono text-sm text-muted">BL202607A012</span></td>
+                <td>刘采购</td>
                 <td>李客服</td>
                 <td>王财务</td>
                 <td>CNY</td>
-                <td><span class="money-cell">¥128,500.000</span></td>
+                <td><span class="money-cell">¥98,500.000</span></td>
                 <td><span style="color:var(--tms-success);">¥0.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥128,500.000</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥98,500.000</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-07-28</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-08-28</span></td>
                 <td><span class="tag tag-gray tag-dot">待确认</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202607-0156')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202607-0089')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
                     <span class="divider-v"></span>
@@ -1200,7 +1180,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="confirm" data-ar-no="AR202607-0155" data-customer="鑫海钢结构工程" data-ar-amount="86200" data-paid-amount="0" data-unpaid-amount="86200" data-invoice-date="2026-07-27" data-due-date="2026-08-27">
+              <tr data-status="confirm" data-ap-no="AP202607-0088" data-supplier="马士基航运" data-ap-amount="125600" data-paid-amount="0" data-unpaid-amount="125600" data-invoice-date="2026-07-27" data-due-date="2026-08-27">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1208,27 +1188,24 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202607-0155')">AR202607-0155</span></td>
-                <td>鑫海钢结构工程</td>
-                <td>
-                  <div>8单</div>
-                  <div class="text-sm text-muted mono">WY202607B021~028</div>
-                </td>
-                <td><span class="mono">CNTU202607155</span></td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0088')">AP202607-0088</span></td>
+                <td>马士基航运</td>
                 <td><span class="tag tag-blue">运费</span></td>
-                <td>陈销售</td>
-                <td>刘客服</td>
+                <td><span class="mono">CNTU2026088</span></td>
+                <td><span class="mono text-sm text-muted">BL202607B034</span></td>
+                <td>张采购</td>
+                <td>王客服</td>
                 <td>赵财务</td>
                 <td>CNY</td>
-                <td><span class="money-cell">¥86,200.000</span></td>
+                <td><span class="money-cell">¥125,600.000</span></td>
                 <td><span style="color:var(--tms-success);">¥0.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥86,200.000</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥125,600.000</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-07-27</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-08-27</span></td>
                 <td><span class="tag tag-gray tag-dot">待确认</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202607-0155')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202607-0088')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
                     <span class="divider-v"></span>
@@ -1236,8 +1213,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <!-- 待收款 -->
-              <tr data-status="pending" data-ar-no="AR202607-0148" data-customer="博瑞风电设备" data-ar-amount="156800" data-paid-amount="0" data-unpaid-amount="156800" data-invoice-date="2026-07-20" data-due-date="2026-08-20">
+              <tr data-status="pending" data-ap-no="AP202607-0082" data-supplier="DHL空运" data-ap-amount="45800" data-paid-amount="0" data-unpaid-amount="45800" data-invoice-date="2026-07-22" data-due-date="2026-08-22">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1245,29 +1221,26 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202607-0148')">AR202607-0148</span></td>
-                <td>博瑞风电设备</td>
-                <td>
-                  <div>15单</div>
-                  <div class="text-sm text-muted mono">WY202607C008~022</div>
-                </td>
-                <td><span class="mono">CNTU202607148</span></td>
-                <td><span class="tag tag-orange">附加费</span></td>
-                <td>王销售</td>
-                <td>赵客服</td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0082')">AP202607-0082</span></td>
+                <td>DHL空运</td>
+                <td><span class="tag tag-blue">运费</span></td>
+                <td><span class="mono">CNTU2026082</span></td>
+                <td><span class="mono text-sm text-muted">AWB202607C056</span></td>
+                <td>陈采购</td>
+                <td>刘客服</td>
                 <td>钱财务</td>
                 <td>CNY</td>
-                <td><span class="money-cell">¥156,800.000</span></td>
+                <td><span class="money-cell">¥45,800.000</span></td>
                 <td><span style="color:var(--tms-success);">¥0.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥156,800.000</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-07-20</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-08-20</span></td>
-                <td><span class="tag tag-orange tag-dot">待收款</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥45,800.000</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-22</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-08-22</span></td>
+                <td><span class="tag tag-orange tag-dot">待付款</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202607-0148')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202607-0082')">查看</button>
                     <span class="divider-v"></span>
-                    <button class="btn-link" onclick="collect(this)">收款</button>
+                    <button class="btn-link" onclick="pay(this)">付款</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
                     <span class="divider-v"></span>
@@ -1275,7 +1248,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="pending" data-ar-no="AR202607-0142" data-customer="鼎盛化工装备" data-ar-amount="92400" data-paid-amount="0" data-unpaid-amount="92400" data-invoice-date="2026-07-18" data-due-date="2026-08-18">
+              <tr data-status="pending" data-ap-no="AP202607-0076" data-supplier="中外运拖车" data-ap-amount="18500" data-paid-amount="0" data-unpaid-amount="18500" data-invoice-date="2026-07-18" data-due-date="2026-08-18">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1283,106 +1256,96 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202607-0142')">AR202607-0142</span></td>
-                <td>鼎盛化工装备</td>
-                <td>
-                  <div>6单</div>
-                  <div class="text-sm text-muted mono">WY202607D015~020</div>
+                <td><span class="mono link" onclick="openDetail('AP202607-0076')">AP202607-0076</span></td>
+                <td>中外运拖车</td>
+                <td><span class="tag tag-orange">拖车抵扣</span></td>
+                <td><span class="mono">CNTU2026076</span></td>
+                <td><span class="mono text-sm text-muted">WY202607D089</span></td>
+                <td>刘采购</td>
+                <td>赵客服</td>
+                <td>孙财务</td>
+                <td>CNY</td>
+                <td><span class="money-cell">¥18,500.000</span></td>
+                <td><span style="color:var(--tms-success);">¥0.000</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥18,500.000</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-18</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-08-18</span></td>
+                <td><span class="tag tag-orange tag-dot">待付款</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="openDetail('AP202607-0076')">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="pay(this)">付款</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link danger" onclick="deleteItem(this)">删除</button>
+                  </div>
                 </td>
-                <td><span class="mono">CNTU202607142</span></td>
-                <td><span class="tag tag-purple">报关费</span></td>
-                <td>李销售</td>
+              </tr>
+              <tr data-status="partial" data-ap-no="AP202607-0068" data-supplier="顺丰速运" data-ap-amount="62000" data-paid-amount="30000" data-unpaid-amount="32000" data-invoice-date="2026-07-10" data-due-date="2026-08-10">
+                <td><input type="checkbox" class="row-check"></td>
+                <td class="col-move">
+                  <div class="row-move-btns">
+                    <button class="btn-icon btn-sm" title="上移" onclick="moveRow(this,-1)">▲</button>
+                    <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
+                  </div>
+                </td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0068')">AP202607-0068</span></td>
+                <td>顺丰速运</td>
+                <td><span class="tag tag-blue">运费</span></td>
+                <td><span class="mono">CNTU2026068</span></td>
+                <td><span class="mono text-sm text-muted">AWB202607E023</span></td>
+                <td>王采购</td>
+                <td>周客服</td>
+                <td>吴财务</td>
+                <td>CNY</td>
+                <td><span class="money-cell">¥62,000.000</span></td>
+                <td><span style="color:var(--tms-success);">¥30,000.000</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥32,000.000</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-10</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-08-10</span></td>
+                <td><span class="tag tag-blue tag-dot">部分付款</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="openDetail('AP202607-0068')">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="pay(this)">付款</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link danger" onclick="deleteItem(this)">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="partial" data-ap-no="AP202607-0062" data-supplier="锦海捷亚报关" data-ap-amount="12800" data-paid-amount="6000" data-unpaid-amount="6800" data-invoice-date="2026-07-05" data-due-date="2026-08-05">
+                <td><input type="checkbox" class="row-check"></td>
+                <td class="col-move">
+                  <div class="row-move-btns">
+                    <button class="btn-icon btn-sm" title="上移" onclick="moveRow(this,-1)">▲</button>
+                    <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
+                  </div>
+                </td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0062')">AP202607-0062</span></td>
+                <td>锦海捷亚报关</td>
+                <td><span class="tag tag-purple">报关抵扣</span></td>
+                <td><span class="mono">CNTU2026062</span></td>
+                <td><span class="mono text-sm text-muted">CUS202607F045</span></td>
+                <td>李采购</td>
                 <td>周客服</td>
                 <td>孙财务</td>
                 <td>CNY</td>
-                <td><span class="money-cell">¥92,400.000</span></td>
-                <td><span style="color:var(--tms-success);">¥0.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥92,400.000</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-07-18</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-08-18</span></td>
-                <td><span class="tag tag-orange tag-dot">待收款</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202607-0142')">查看</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="collect(this)">收款</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link danger" onclick="deleteItem(this)">删除</button>
-                  </div>
-                </td>
-              </tr>
-              <!-- 部分收款 -->
-              <tr data-status="partial" data-ar-no="AR202607-0135" data-customer="宏远工程机械" data-ar-amount="186000" data-paid-amount="80000" data-unpaid-amount="106000" data-invoice-date="2026-07-10" data-due-date="2026-08-10">
-                <td><input type="checkbox" class="row-check"></td>
-                <td class="col-move">
-                  <div class="row-move-btns">
-                    <button class="btn-icon btn-sm" title="上移" onclick="moveRow(this,-1)">▲</button>
-                    <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
-                  </div>
-                </td>
-                <td><span class="mono link" onclick="openDetail('AR202607-0135')">AR202607-0135</span></td>
-                <td>宏远工程机械</td>
-                <td>
-                  <div>20单</div>
-                  <div class="text-sm text-muted mono">WY202607E001~020</div>
-                </td>
-                <td><span class="mono">CNTU202607135</span></td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td>赵销售</td>
-                <td>吴客服</td>
-                <td>周财务</td>
-                <td>CNY</td>
-                <td><span class="money-cell">¥186,000.000</span></td>
-                <td><span style="color:var(--tms-success);">¥80,000.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥106,000.000</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-07-10</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-08-10</span></td>
-                <td><span class="tag tag-blue tag-dot">部分收款</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202607-0135')">查看</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="collect(this)">收款</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link danger" onclick="deleteItem(this)">删除</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-status="partial" data-ar-no="AR202607-0128" data-customer="天顺轨道装备" data-ar-amount="75600" data-paid-amount="30000" data-unpaid-amount="45600" data-invoice-date="2026-07-05" data-due-date="2026-08-05">
-                <td><input type="checkbox" class="row-check"></td>
-                <td class="col-move">
-                  <div class="row-move-btns">
-                    <button class="btn-icon btn-sm" title="上移" onclick="moveRow(this,-1)">▲</button>
-                    <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
-                  </div>
-                </td>
-                <td><span class="mono link" onclick="openDetail('AR202607-0128')">AR202607-0128</span></td>
-                <td>天顺轨道装备</td>
-                <td>
-                  <div>10单</div>
-                  <div class="text-sm text-muted mono">WY202607F005~014</div>
-                </td>
-                <td><span class="mono">CNTU202607128</span></td>
-                <td><span class="tag tag-cyan">保险费</span></td>
-                <td>孙销售</td>
-                <td>郑客服</td>
-                <td>吴财务</td>
-                <td>CNY</td>
-                <td><span class="money-cell">¥75,600.000</span></td>
-                <td><span style="color:var(--tms-success);">¥30,000.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥45,600.000</span></td>
+                <td><span class="money-cell">¥12,800.000</span></td>
+                <td><span style="color:var(--tms-success);">¥6,000.000</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥6,800.000</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-07-05</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-08-05</span></td>
-                <td><span class="tag tag-blue tag-dot">部分收款</span></td>
+                <td><span class="tag tag-blue tag-dot">部分付款</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202607-0128')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202607-0062')">查看</button>
                     <span class="divider-v"></span>
-                    <button class="btn-link" onclick="collect(this)">收款</button>
+                    <button class="btn-link" onclick="pay(this)">付款</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
                     <span class="divider-v"></span>
@@ -1390,8 +1353,7 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <!-- 已结清 -->
-              <tr data-status="settled" data-ar-no="AR202606-0098" data-customer="瑞华压力容器" data-ar-amount="68500" data-paid-amount="68500" data-unpaid-amount="0" data-invoice-date="2026-06-20" data-due-date="2026-07-20">
+              <tr data-status="paid" data-ap-no="AP202607-0055" data-supplier="普洛斯仓储" data-ap-amount="28600" data-paid-amount="28600" data-unpaid-amount="0" data-invoice-date="2026-06-20" data-due-date="2026-07-20">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1399,33 +1361,30 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202606-0098')">AR202606-0098</span></td>
-                <td>瑞华压力容器</td>
-                <td>
-                  <div>5单</div>
-                  <div class="text-sm text-muted mono">WY202606G018~022</div>
-                </td>
-                <td><span class="mono">CNTU202606098</span></td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td>周销售</td>
-                <td>钱客服</td>
-                <td>郑财务</td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0055')">AP202607-0055</span></td>
+                <td>普洛斯仓储</td>
+                <td><span class="tag tag-cyan">仓储费</span></td>
+                <td><span class="mono">CNTU2026055</span></td>
+                <td><span class="mono text-sm text-muted">WH202606G018</span></td>
+                <td>张采购</td>
+                <td>孙客服</td>
+                <td>王财务</td>
                 <td>USD</td>
-                <td><span class="money-cell">¥68,500.000</span></td>
-                <td><span style="color:var(--tms-success);">¥68,500.000</span></td>
+                <td><span class="money-cell">¥28,600.000</span></td>
+                <td><span style="color:var(--tms-success);">¥28,600.000</span></td>
                 <td><span class="text-muted">—</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-06-20</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-07-20</span></td>
-                <td><span class="tag tag-green tag-dot">已结清</span></td>
+                <td><span class="tag tag-green tag-dot">已付款</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202606-0098')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202607-0055')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
                   </div>
                 </td>
               </tr>
-              <tr data-status="settled" data-ar-no="AR202606-0085" data-customer="恒力石化装备" data-ar-amount="142300" data-paid-amount="142300" data-unpaid-amount="0" data-invoice-date="2026-06-15" data-due-date="2026-07-15">
+              <tr data-status="paid" data-ap-no="AP202607-0048" data-supplier="中远海运集运" data-ap-amount="86200" data-paid-amount="86200" data-unpaid-amount="0" data-invoice-date="2026-06-15" data-due-date="2026-07-15">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1433,34 +1392,30 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202606-0085')">AR202606-0085</span></td>
-                <td>恒力石化装备</td>
-                <td>
-                  <div>18单</div>
-                  <div class="text-sm text-muted mono">WY202606H001~018</div>
-                </td>
-                <td><span class="mono">CNTU202606085</span></td>
-                <td><span class="tag tag-orange">附加费</span></td>
-                <td>吴销售</td>
-                <td>孙客服</td>
-                <td>王财务</td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0048')">AP202607-0048</span></td>
+                <td>中远海运集运</td>
+                <td><span class="tag tag-blue">运费</span></td>
+                <td><span class="mono">CNTU2026048</span></td>
+                <td><span class="mono text-sm text-muted">BL202606H022</span></td>
+                <td>刘采购</td>
+                <td>李客服</td>
+                <td>赵财务</td>
                 <td>CNY</td>
-                <td><span class="money-cell">¥142,300.000</span></td>
-                <td><span style="color:var(--tms-success);">¥142,300.000</span></td>
+                <td><span class="money-cell">¥86,200.000</span></td>
+                <td><span style="color:var(--tms-success);">¥86,200.000</span></td>
                 <td><span class="text-muted">—</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-06-15</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-07-15</span></td>
-                <td><span class="tag tag-green tag-dot">已结清</span></td>
+                <td><span class="tag tag-green tag-dot">已付款</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202606-0085')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202607-0048')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('对账功能开发中','info')">对账</button>
                   </div>
                 </td>
               </tr>
-              <!-- 已逾期 -->
-              <tr data-status="overdue" data-ar-no="AR202606-0062" data-customer="万通钢构" data-ar-amount="32000" data-paid-amount="0" data-unpaid-amount="32000" data-invoice-date="2026-06-01" data-due-date="2026-07-01">
+              <tr data-status="overdue" data-ap-no="AP202607-0032" data-supplier="中外运拖车" data-ap-amount="15800" data-paid-amount="0" data-unpaid-amount="15800" data-invoice-date="2026-06-01" data-due-date="2026-07-01">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1468,35 +1423,32 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202606-0062')">AR202606-0062</span></td>
-                <td>万通钢构</td>
-                <td>
-                  <div>9单</div>
-                  <div class="text-sm text-muted mono">WY202606I011~019</div>
-                </td>
-                <td><span class="mono">CNTU202606062</span></td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td>钱销售</td>
-                <td>冯客服</td>
-                <td>李财务</td>
+                <td><span class="mono link" onclick="openDetail('AP202607-0032')">AP202607-0032</span></td>
+                <td>中外运拖车</td>
+                <td><span class="tag tag-orange">拖车抵扣</span></td>
+                <td><span class="mono">CNTU2026032</span></td>
+                <td><span class="mono text-sm text-muted">WY202606I011</span></td>
+                <td>陈采购</td>
+                <td>赵客服</td>
+                <td>钱财务</td>
                 <td>CNY</td>
-                <td><span class="money-cell">¥32,000.000</span></td>
+                <td><span class="money-cell">¥15,800.000</span></td>
                 <td><span style="color:var(--tms-success);">¥0.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥32,000.000</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥15,800.000</span></td>
                 <td><span class="text-muted font-mono text-sm">2026-06-01</span></td>
                 <td><span class="text-muted font-mono text-sm" style="color:var(--tms-error);font-weight:600;">2026-07-01</span></td>
                 <td><span class="tag tag-red tag-dot">已逾期</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202606-0062')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202607-0032')">查看</button>
                     <span class="divider-v"></span>
-                    <button class="btn-link" onclick="collect(this)">催收</button>
+                    <button class="btn-link" onclick="pay(this)">付款</button>
                     <span class="divider-v"></span>
                     <button class="btn-link danger" onclick="deleteItem(this)">删除</button>
                   </div>
                 </td>
               </tr>
-              <tr data-status="overdue" data-ar-no="AR202606-0055" data-customer="中远船舶重工" data-ar-amount="18000" data-paid-amount="0" data-unpaid-amount="18000" data-invoice-date="2026-05-28" data-due-date="2026-06-28">
+              <tr data-status="overdue" data-ap-no="AP202605-0028" data-supplier="马士基航运" data-ap-amount="22400" data-paid-amount="0" data-unpaid-amount="22400" data-invoice-date="2026-05-25" data-due-date="2026-06-25">
                 <td><input type="checkbox" class="row-check"></td>
                 <td class="col-move">
                   <div class="row-move-btns">
@@ -1504,29 +1456,26 @@ th.sortable:hover { color: var(--tms-primary); }
                     <button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button>
                   </div>
                 </td>
-                <td><span class="mono link" onclick="openDetail('AR202606-0055')">AR202606-0055</span></td>
-                <td>中远船舶重工</td>
-                <td>
-                  <div>4单</div>
-                  <div class="text-sm text-muted mono">WY202606J003~006</div>
-                </td>
-                <td><span class="mono">CNTU202606055</span></td>
-                <td><span class="tag tag-purple">报关费</span></td>
-                <td>郑销售</td>
-                <td>陈客服</td>
-                <td>张财务</td>
+                <td><span class="mono link" onclick="openDetail('AP202605-0028')">AP202605-0028</span></td>
+                <td>马士基航运</td>
+                <td><span class="tag tag-blue">运费</span></td>
+                <td><span class="mono">CNTU2026028</span></td>
+                <td><span class="mono text-sm text-muted">BL202605J008</span></td>
+                <td>王采购</td>
+                <td>周客服</td>
+                <td>孙财务</td>
                 <td>CNY</td>
-                <td><span class="money-cell">¥18,000.000</span></td>
+                <td><span class="money-cell">¥22,400.000</span></td>
                 <td><span style="color:var(--tms-success);">¥0.000</span></td>
-                <td><span style="color:var(--tms-error);font-weight:600;">¥18,000.000</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-05-28</span></td>
-                <td><span class="text-muted font-mono text-sm" style="color:var(--tms-error);font-weight:600;">2026-06-28</span></td>
+                <td><span style="color:var(--tms-error);font-weight:600;">¥22,400.000</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-05-25</span></td>
+                <td><span class="text-muted font-mono text-sm" style="color:var(--tms-error);font-weight:600;">2026-06-25</span></td>
                 <td><span class="tag tag-red tag-dot">已逾期</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('AR202606-0055')">查看</button>
+                    <button class="btn-link" onclick="openDetail('AP202605-0028')">查看</button>
                     <span class="divider-v"></span>
-                    <button class="btn-link" onclick="collect(this)">催收</button>
+                    <button class="btn-link" onclick="pay(this)">付款</button>
                     <span class="divider-v"></span>
                     <button class="btn-link danger" onclick="deleteItem(this)">删除</button>
                   </div>
@@ -1535,10 +1484,8 @@ th.sortable:hover { color: var(--tms-primary); }
             </tbody>
           </table>
         </div>
-
-        <!-- 分页 -->
         <div class="pagination">
-          <div class="pagination-info">共 <b>156</b> 条记录，每页 <b>10</b> 条</div>
+          <div class="pagination-info">共 <b>128</b> 条记录，每页 <b>10</b> 条</div>
           <div class="pagination-pages">
             <button class="page-btn" disabled onclick="changePage(this)">‹</button>
             <button class="page-btn active" onclick="changePage(this)">1</button>
@@ -1547,13 +1494,25 @@ th.sortable:hover { color: var(--tms-primary); }
             <button class="page-btn" onclick="changePage(this)">4</button>
             <button class="page-btn" onclick="changePage(this)">5</button>
             <span class="text-sm text-muted">...</span>
-            <button class="page-btn" onclick="changePage(this)">16</button>
+            <button class="page-btn" onclick="changePage(this)">13</button>
             <button class="page-btn" onclick="changePage(this)">›</button>
-            <div class="page-jumper">跳至 <input type="number" min="1" max="16" value="1" onkeydown="if(event.key==='Enter'){toast('跳转到第'+this.value+'页','info');}"> 页</div>
+            <div class="page-jumper">跳至 <input type="number" min="1" max="13" value="1" onkeydown="if(event.key==='Enter'){toast('跳转到第'+this.value+'页','info');}"> 页</div>
           </div>
         </div>
       </div>
 </main>
+
+<div class="batch-bar" data-batch-bar>
+  <span class="batch-count">已选择 0 项</span>
+  <button class="btn" onclick="batchAction('confirm')">批量确认</button>
+  <button class="btn" onclick="batchAction('export')">批量导出</button>
+  <button class="btn" onclick="openBatchAddFeeModal()">批量增加费用</button>
+  <button class="btn" onclick="openBatchEditFeeModal()">批量修改费用</button>
+  <button class="btn" onclick="openBatchOffsetModal()">批量对冲费用</button>
+  <button class="btn" onclick="openBatchAssignRepModal()">批量修改供应商财务代表</button>
+  <button class="btn btn-danger" onclick="batchAction('delete')">批量删除</button>
+  <span class="batch-close batch-clear" title="关闭">✕</span>
+</div>
 
 <!-- Modal: 订单部门数据上传 -->
 <div class="modal-mask" id="detailDeptUploadModal">
@@ -1579,11 +1538,6 @@ th.sortable:hover { color: var(--tms-primary); }
         <label class="form-label">备注</label>
         <input type="text" class="form-control" id="detailUploadRemark" placeholder="可选">
       </div>
-      <div class="form-group" style="margin-top:14px;">
-        <label class="form-label">上传文件 <span style="color:var(--tms-error);">*</span></label>
-        <input type="file" id="detailUploadFile" class="form-control" accept=".xlsx,.xls,.csv" style="padding:6px 12px;height:auto;">
-        <div class="form-help">支持 Excel（.xlsx / .xls）或 CSV 格式，文件大小不超过 10MB</div>
-      </div>
     </div>
     <div class="modal-footer">
       <button class="btn" data-close="detailDeptUploadModal">取消</button>
@@ -1592,169 +1546,252 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
-<!-- 批量操作栏 -->
-<div class="batch-bar" data-batch-bar>
-  <span class="batch-count">已选择 0 项</span>
-  <button class="btn" onclick="batchAction('confirm')">批量确认</button>
-  <button class="btn" onclick="batchAction('export')">批量导出</button>
-  <button class="btn btn-danger" onclick="batchAction('delete')">批量删除</button>
-  <span class="batch-close batch-clear" title="关闭">✕</span>
+<!-- Modal: 部门单条数据差异审核 -->
+<div class="modal-mask" id="deptItemAuditModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">🔍 部门数据差异审核</span>
+      <button class="modal-close" data-close="deptItemAuditModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="dept-audit-summary">
+        <div class="row"><span>所属部门</span><span id="deptAuditDept" class="new">—</span></div>
+        <div class="row"><span>费用项目</span><span id="deptAuditName" class="new">—</span></div>
+        <div class="row"><span>原金额</span><span id="deptAuditOldAmount" class="old">¥0.000</span></div>
+        <div class="row"><span>新上报金额</span><span id="deptAuditNewAmount" class="new">¥0.000</span></div>
+        <div class="row"><span>操作人</span><span id="deptAuditOperator" class="old">—</span></div>
+        <div class="row"><span>上报时间</span><span id="deptAuditTime" class="old">—</span></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">审核结论</label>
+        <div class="audit-option-group">
+          <label class="audit-option"><input type="radio" name="deptAuditAction" value="adopt" checked> 采用新金额（覆盖原金额）</label>
+          <label class="audit-option"><input type="radio" name="deptAuditAction" value="keep"> 保留原金额（忽略本次上报）</label>
+          <label class="audit-option"><input type="radio" name="deptAuditAction" value="offline"> 线下已确认（按协商金额处理）</label>
+        </div>
+      </div>
+      <div class="form-group" id="deptAuditAmountGroup" style="display:none;margin-top:12px;">
+        <label class="form-label">协商金额</label>
+        <input type="number" class="form-control" id="deptAuditFinalAmount" placeholder="0.00">
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label class="form-label">审核备注</label>
+        <textarea id="deptAuditRemark" class="form-control" placeholder="请填写差异原因或线下确认结果"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="deptItemAuditModal">取消</button>
+      <button class="btn btn-primary" onclick="submitDeptItemAudit()">提交审核</button>
+    </div>
+  </div>
 </div>
 
-<!-- Modal: 应收账单详情 -->
-<div class="modal-mask" id="receivableDetail">
+<!-- Modal: 应付账单详情 -->
+<div class="modal-mask" id="payableDetail">
   <div class="modal modal-lg">
     <div class="modal-header">
       <div style="display:flex;align-items:center;gap:12px;">
-        <span class="modal-title">💰 应收账单详情</span>
-        <span class="mono" id="detailArNo" style="font-size:14px;color:var(--tms-primary);font-weight:600;">AR202607-0156</span>
+        <span class="modal-title">💸 应付账单详情</span>
+        <span class="mono" id="detailApNo" style="font-size:14px;color:var(--tms-primary);font-weight:600;">AP202607-0089</span>
         <span class="tag tag-gray tag-dot" id="detailStatus">待确认</span>
       </div>
-      <button class="modal-close" data-close="receivableDetail">×</button>
+      <button class="modal-close" data-close="payableDetail">×</button>
     </div>
     <div class="modal-body">
-      <!-- 基本信息 -->
       <div class="desc-section-title">📋 账单基本信息</div>
       <div class="desc-list cols-3">
-        <div class="desc-item"><span class="desc-label">账单号</span><span class="desc-value mono" id="dArNo">AR202607-0156</span></div>
-        <div class="desc-item"><span class="desc-label">客户名称</span><span class="desc-value">华通机械制造有限公司</span></div>
+        <div class="desc-item"><span class="desc-label">结算单号</span><span class="desc-value mono" id="dApNo">AP202607-0089</span></div>
+        <div class="desc-item"><span class="desc-label">供应商/承运商</span><span class="desc-value">中远海运集运</span></div>
+        <div class="desc-item"><span class="desc-label">费用科目</span><span class="desc-value"><span class="tag tag-blue">运费</span></span></div>
+        <div class="desc-item"><span class="desc-label">柜号</span><span class="desc-value mono">CNTU2026089</span></div>
         <div class="desc-item"><span class="desc-label">状态</span><span class="desc-value"><span class="tag tag-gray tag-dot">待确认</span></span></div>
         <div class="desc-item"><span class="desc-label">开票日期</span><span class="desc-value mono">2026-07-28</span></div>
         <div class="desc-item"><span class="desc-label">到期日期</span><span class="desc-value mono">2026-08-28</span></div>
-        <div class="desc-item"><span class="desc-label">业务员</span><span class="desc-value">张经理</span></div>
+        <div class="desc-item"><span class="desc-label">采购代表</span><span class="desc-value">刘采购</span></div>
+        <div class="desc-item"><span class="desc-label">客服代表</span><span class="desc-value">李客服</span></div>
+        <div class="desc-item"><span class="desc-label">财务代表</span><span class="desc-value">王财务</span></div>
+        <div class="desc-item"><span class="desc-label">币种</span><span class="desc-value">CNY</span></div>
       </div>
 
-      <!-- 详情页 Tab -->
       <div class="detail-tabs" id="detailTabs" style="margin:20px 0 16px;">
         <div class="tab-item active" data-detail-tab="dept" onclick="switchDetailTab(this)">部门上传数据</div>
+        <div class="tab-item" data-detail-tab="estimatedFee" onclick="switchDetailTab(this)">预估应付费用</div>
+        <div class="tab-item" data-detail-tab="financeAudit" onclick="switchDetailTab(this)">财务审核</div>
         <div class="tab-item" data-detail-tab="feeSubject" onclick="switchDetailTab(this)">费用科目设置</div>
         <div class="tab-item" data-detail-tab="pod" onclick="switchDetailTab(this)">POD 数据</div>
         <div class="tab-item" data-detail-tab="writeOff" onclick="switchDetailTab(this)">核销记录</div>
         <div class="tab-item" data-detail-tab="flow" onclick="switchDetailTab(this)">账单流水</div>
+        <div class="tab-item" data-detail-tab="log" onclick="switchDetailTab(this)">操作日志</div>
       </div>
 
-      <!-- 部门上传数据 -->
       <div id="detailTab-dept" class="detail-tab-panel">
         <div id="deptDataSection"></div>
         <div id="deptIntegrateResult" style="display:none;margin-top:16px;">
           <div class="desc-section-title">🔀 整合结果</div>
           <div class="summary-card">
-            <div class="summary-row total"><span>整合后合计应收</span><span class="summary-value" id="integratedTotal">¥0</span></div>
+            <div class="summary-row total"><span>整合后合计应付</span><span class="summary-value" id="integratedTotal">¥0</span></div>
           </div>
         </div>
-        <div style="margin-top:16px;">
+        <div style="margin-top:16px;display:flex;gap:8px;">
           <button class="btn btn-primary" onclick="integrateDeptData()">整合全部部门数据</button>
+          <button class="btn" onclick="openEstimatedFeePopup()">查看预估应付费用</button>
         </div>
       </div>
 
-      <!-- 费用科目设置 -->
+      <!-- 预估应付费用 -->
+      <div id="detailTab-estimatedFee" class="detail-tab-panel hidden">
+        <div class="desc-section-title">💡 预估应付费用</div>
+        <div id="estimatedFeeBreakdown" class="summary-card" style="margin-bottom:16px;">
+          <div class="summary-row"><span class="summary-label">基础应付金额</span><span class="summary-value" id="estBaseAmount">¥0.000</span></div>
+          <div class="summary-row"><span class="summary-label">客服录入费用</span><span class="summary-value" id="estCsAmount">¥0.000</span></div>
+          <div class="summary-row"><span class="summary-label">单证录入费用</span><span class="summary-value" id="estDocAmount">¥0.000</span></div>
+          <div class="summary-row"><span class="summary-label">海外仓录入费用</span><span class="summary-value" id="estWhAmount">¥0.000</span></div>
+          <div class="summary-row total"><span>预估应付合计</span><span class="summary-value" id="estTotalAmount">¥0.000</span></div>
+        </div>
+        <div class="form-help">预估费用基于客服、单证、海外仓三方录入数据与基础应付金额自动汇总，财务审核时与实际费用进行比对。</div>
+      </div>
+
+      <!-- 财务审核 -->
+      <div id="detailTab-financeAudit" class="detail-tab-panel hidden">
+        <div class="desc-section-title">🔍 财务审核</div>
+        <div class="form-group">
+          <label class="form-label">预估应付金额</label>
+          <div class="summary-card" style="margin-bottom:16px;">
+            <div class="summary-row total"><span>预估应付合计</span><span class="summary-value" id="auditEstimatedAmount">¥0.000</span></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">实际费用金额 <span style="color:var(--tms-error);">*</span></label>
+          <input type="number" id="auditActualAmount" class="form-control" placeholder="请输入供应商/承运商实际费用金额">
+        </div>
+        <div class="form-group" style="margin-top:14px;">
+          <label class="form-label">审核结果</label>
+          <div class="audit-radio-group">
+            <label class="audit-radio"><input type="radio" name="auditResult" value="pass" checked onchange="toggleAuditExtra()"> 通过（预估与实际一致）</label>
+            <label class="audit-radio"><input type="radio" name="auditResult" value="difference" onchange="toggleAuditExtra()"> 存在差额</label>
+          </div>
+        </div>
+        <div id="auditDifferenceExtra" class="audit-extra" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">差额说明 <span style="color:var(--tms-error);">*</span></label>
+            <textarea id="auditDifferenceRemark" class="form-control" placeholder="请说明差异原因及线下确认情况"></textarea>
+          </div>
+          <div class="form-group" style="margin-top:14px;">
+            <label class="form-label">线下确认方 <span style="color:var(--tms-error);">*</span></label>
+            <input type="text" id="auditDifferenceConfirmors" class="form-control" placeholder="例：财务王经理、客服李、单证赵、海外仓Warehouse">
+          </div>
+        </div>
+        <div id="auditResultPanel" class="audit-result-panel" style="display:none;"></div>
+        <div style="margin-top:16px;">
+          <button class="btn btn-primary" id="btnSubmitAudit" onclick="submitFinancialAudit()">提交审核</button>
+        </div>
+      </div>
+
       <div id="detailTab-feeSubject" class="detail-tab-panel hidden">
         <div class="desc-section-title">⚙️ 费用科目设置</div>
         <div style="display:flex;gap:8px;margin-bottom:12px;">
           <input type="text" class="form-control" id="newFeeSubjectInput" placeholder="输入新费用科目，如：偏远地区附加费" style="flex:1;">
           <button class="btn btn-primary" onclick="addFeeSubject()">添加科目</button>
         </div>
-        <div id="feeSubjectList" style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);padding:12px;max-height:240px;overflow-y:auto;">
+        <div id="detailFeeSubjectList" style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);padding:12px;max-height:240px;overflow-y:auto;">
           <div class="fee-subject-tags"></div>
         </div>
       </div>
 
-      <!-- POD 数据 -->
       <div id="detailTab-pod" class="detail-tab-panel hidden">
         <div class="desc-section-title">📦 POD 数据</div>
         <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
           <table class="data-table" style="font-size:13px;">
             <thead><tr><th>运单号</th><th>签收人</th><th>签收时间</th><th>POD 文件</th></tr></thead>
             <tbody>
-              <tr><td class="mono">WY202607A001</td><td>John Smith</td><td>2026-08-02 14:30</td><td><button class="btn-link" onclick="toast('POD_202607A001.pdf','info')">查看 POD</button></td></tr>
-              <tr><td class="mono">WY202607A002</td><td>—</td><td>—</td><td><span class="text-muted">待回传</span></td></tr>
+              <tr><td class="mono">WY202607D089</td><td>—</td><td>—</td><td><span class="text-muted">待回传</span></td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- 核销记录 -->
       <div id="detailTab-writeOff" class="detail-tab-panel hidden">
         <div class="desc-section-title">📝 核销记录</div>
         <div class="timeline">
           <div class="timeline-item done">
             <div class="timeline-dot"></div>
-            <div class="timeline-time">2026-07-28 10:00</div>
-            <div class="timeline-title">账单开具</div>
-            <div class="timeline-desc">金额 ¥128,500.000</div>
+            <div class="timeline-time">2026-07-28 14:00</div>
+            <div class="timeline-title">📥 收到发票</div>
+            <div class="timeline-desc">金额 ¥98,500.000</div>
           </div>
           <div class="timeline-item active">
             <div class="timeline-dot"></div>
             <div class="timeline-time">当前</div>
-            <div class="timeline-title">等待核销</div>
-            <div class="timeline-desc">尚未收到客户回款</div>
+            <div class="timeline-title">等待对账确认</div>
+            <div class="timeline-desc">尚未完成付款核销</div>
           </div>
         </div>
       </div>
 
-      <!-- 账单流水 -->
       <div id="detailTab-flow" class="detail-tab-panel hidden">
         <div class="desc-section-title">📋 账单流水</div>
         <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
           <table class="data-table" style="font-size:13px;">
             <thead><tr><th>时间</th><th>操作</th><th>金额</th><th>操作人</th><th>备注</th></tr></thead>
             <tbody>
-              <tr><td class="font-mono text-sm">2026-07-28 10:00</td><td>创建账单</td><td style="font-weight:600;">¥128,500.000</td><td>张经理</td><td>—</td></tr>
+              <tr><td class="font-mono text-sm">2026-07-28 14:00</td><td>创建账单</td><td style="font-weight:600;">¥98,500.000</td><td>刘采购</td><td>—</td></tr>
               <tr><td class="font-mono text-sm">2026-07-29 09:30</td><td>发送对账</td><td>—</td><td>系统</td><td>邮件已发送</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- 关联运单列表 -->
-      <div class="desc-section-title">🚛 关联运单列表</div>
+      <!-- 操作日志 -->
+      <div id="detailTab-log" class="detail-tab-panel hidden">
+        <div class="desc-section-title">📜 操作日志</div>
+        <div class="log-list"></div>
+      </div>
+
+      <div class="desc-section-title">🚢 关联提单/运单列表</div>
       <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:4px;">
         <table class="data-table" style="font-size:13px;">
           <thead>
             <tr>
-              <th>运单号</th>
-              <th>目的地</th>
-              <th>件数/重量</th>
+              <th>提单/运单号</th>
+              <th>航线</th>
+              <th>柜量/重量</th>
               <th class="text-right">运费</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td><span class="mono link" onclick="toast('查看运单','info')">WY202607A001</span></td><td>上海→洛杉矶</td><td>12件 / 8,500kg</td><td class="text-right" style="font-weight:600;">¥12,800</td></tr>
-            <tr><td><span class="mono link" onclick="toast('查看运单','info')">WY202607A002</span></td><td>宁波→鹿特丹</td><td>8件 / 6,200kg</td><td class="text-right" style="font-weight:600;">¥10,500</td></tr>
-            <tr><td><span class="mono link" onclick="toast('查看运单','info')">WY202607A003</span></td><td>深圳→长滩</td><td>15件 / 12,000kg</td><td class="text-right" style="font-weight:600;">¥15,600</td></tr>
-            <tr><td colspan="3" style="text-align:right;color:var(--tms-text-3);">... 共12单</td><td class="text-right" style="color:var(--tms-text-3);">合计见下方</td></tr>
+            <tr><td><span class="mono link" onclick="toast('查看提单','info')">BL202607A012</span></td><td>上海→洛杉矶</td><td>3×40HQ / 38,500kg</td><td class="text-right" style="font-weight:600;">¥58,500.000</td></tr>
+            <tr><td colspan="3" style="text-align:right;color:var(--tms-text-3);">共1票提单</td><td class="text-right" style="color:var(--tms-text-3);">合计见下方</td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- 费用明细 -->
       <div class="desc-section-title">💵 费用明细</div>
       <div class="summary-card">
-        <div class="summary-row"><span class="summary-label">运费合计</span><span class="summary-value">¥108,500</span></div>
-        <div class="summary-row"><span class="summary-label">附加费（燃油/旺季）</span><span class="summary-value">¥12,000</span></div>
-        <div class="summary-row"><span class="summary-label">报关费</span><span class="summary-value">¥3,500</span></div>
-        <div class="summary-row"><span class="summary-label">保险费</span><span class="summary-value">¥4,500</span></div>
-        <div class="summary-row total"><span>合计应收</span><span class="summary-value">¥128,500</span></div>
+        <div class="summary-row"><span class="summary-label">海运费（基本运费）</span><span class="summary-value">¥82,000.000</span></div>
+        <div class="summary-row"><span class="summary-label">附加费（BAF/CAF/旺季）</span><span class="summary-value">¥10,500.000</span></div>
+        <div class="summary-row"><span class="summary-label">码头操作费（THC）</span><span class="summary-value">¥3,600.000</span></div>
+        <div class="summary-row"><span class="summary-label">文件费/放单费</span><span class="summary-value">¥2,400.000</span></div>
+        <div class="summary-row total"><span>合计应付</span><span class="summary-value">¥98,500.000</span></div>
       </div>
-<!-- 收款记录 -->
-      <div class="desc-section-title">📝 收款记录</div>
+
+      <div class="desc-section-title">📝 付款记录</div>
       <div class="timeline">
         <div class="timeline-item done">
           <div class="timeline-dot"></div>
-          <div class="timeline-time">2026-07-28 10:00</div>
-          <div class="timeline-title">📤 账单开具</div>
-          <div class="timeline-desc">张经理 开具应收账单 AR202607-0156，金额 ¥128,500</div>
+          <div class="timeline-time">2026-07-28 14:00</div>
+          <div class="timeline-title">📥 收到发票</div>
+          <div class="timeline-desc">中远海运开具发票 AP202607-0089，金额 ¥98,500.000，账期30天</div>
         </div>
         <div class="timeline-item active">
           <div class="timeline-dot"></div>
           <div class="timeline-time">2026-07-30 (当前)</div>
-          <div class="timeline-title">⏳ 等待客户确认</div>
-          <div class="timeline-desc">已发送对账单至客户，等待确认回签</div>
+          <div class="timeline-title">⏳ 等待对账确认</div>
+          <div class="timeline-desc">财务部核对账单与提单信息，确认后安排付款</div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-close="receivableDetail">关闭</button>
+      <button class="btn" data-close="payableDetail">关闭</button>
       <button class="btn" onclick="openPodModal()">POD 查看</button>
       <select class="form-control" id="billTemplateSelect" style="width:auto;min-width:140px;">
         <option value="template1">模板一</option>
@@ -1762,38 +1799,92 @@ th.sortable:hover { color: var(--tms-primary); }
         <option value="custom">自定义模板</option>
       </select>
       <button class="btn" onclick="exportBillWithTemplate()">导出/打印</button>
-      <button class="btn btn-primary" onclick="collectOpen()">确认收款</button>
+      <button class="btn btn-primary" onclick="payOpen()">确认付款</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: 客户流水 -->
+<!-- Modal: 预估应付费用 -->
+<div class="modal-mask" id="estimatedFeeModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">💡 预估应付费用</span>
+      <button class="modal-close" data-close="estimatedFeeModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="summary-card" id="estimatedFeeSummary">
+        <div class="summary-row"><span class="summary-label">基础应付金额</span><span class="summary-value" id="popupEstBase">¥0.000</span></div>
+        <div class="summary-row"><span class="summary-label">客服录入费用</span><span class="summary-value" id="popupEstCs">¥0.000</span></div>
+        <div class="summary-row"><span class="summary-label">单证录入费用</span><span class="summary-value" id="popupEstDoc">¥0.000</span></div>
+        <div class="summary-row"><span class="summary-label">海外仓录入费用</span><span class="summary-value" id="popupEstWh">¥0.000</span></div>
+        <div class="summary-row total"><span>预估应付合计</span><span class="summary-value" id="popupEstTotal">¥0.000</span></div>
+      </div>
+      <div class="form-help" style="margin-top:12px;">该金额为三方录入后系统预估的应付费用，请财务核对实际费用。</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="estimatedFeeModal">关闭</button>
+      <button class="btn btn-primary" onclick="goToFinanceAudit()">前往财务审核</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 差额确认 -->
+<div class="modal-mask" id="differenceConfirmModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ 差额确认</span>
+      <button class="modal-close" data-close="differenceConfirmModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="summary-card" style="border-color:var(--tms-error-light);background:var(--tms-error-light);margin-bottom:16px;">
+        <div class="summary-row"><span class="summary-label">预估应付金额</span><span class="summary-value" id="diffEstAmount">¥0.000</span></div>
+        <div class="summary-row"><span class="summary-label">实际费用金额</span><span class="summary-value" id="diffActualAmount">¥0.000</span></div>
+        <div class="summary-row total" style="border-top-color:var(--tms-error);color:var(--tms-error);"><span>差额</span><span class="summary-value" id="diffVariance">¥0.000</span></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">线下确认说明 <span style="color:var(--tms-error);">*</span></label>
+        <textarea id="diffOfflineNote" class="form-control" placeholder="请填写财务与客服/单证/海外仓线下确认的结果"></textarea>
+      </div>
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label">确认人 <span style="color:var(--tms-error);">*</span></label>
+        <input type="text" id="diffConfirmors" class="form-control" placeholder="例：王财务、李客服、赵单证、Warehouse">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="differenceConfirmModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmDifferenceOffline()">确认差额</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 供应商流水 -->
+
 <div class="modal-mask" id="flowModal">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">📋 客户流水</span>
+      <span class="modal-title">📋 供应商流水</span>
       <button class="modal-close" data-close="flowModal">×</button>
     </div>
     <div class="modal-body">
       <div class="filter-bar" style="margin-bottom:16px;">
         <div class="filter-grid compact">
-          <div class="filter-item"><label class="filter-label">客户</label><input type="text" class="form-control" placeholder="客户名称"></div>
-          <div class="filter-item"><label class="filter-label">账单号</label><input type="text" class="form-control" placeholder="账单号"></div>
-          <div class="filter-item"><label class="filter-label">费用类型</label><select class="form-control"><option value="">全部</option><option>运费</option><option>附加费</option></select></div>
+          <div class="filter-item"><label class="filter-label">供应商</label><input type="text" class="form-control" placeholder="供应商名称"></div>
+          <div class="filter-item"><label class="filter-label">结算单号</label><input type="text" class="form-control" placeholder="结算单号"></div>
+          <div class="filter-item"><label class="filter-label">费用科目</label><select class="form-control"><option value="">全部</option><option>运费</option><option>报关抵扣</option></select></div>
         </div>
         <div class="filter-actions"><button class="btn">重置</button><button class="btn btn-primary" onclick="toast('查询完成','success')">查询</button></div>
       </div>
       <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
         <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>流水号</th><th>账单号</th><th>客户</th><th>费用类型</th><th>金额</th><th>币种</th><th>业务时间</th></tr></thead>
+          <thead><tr><th>流水号</th><th>结算单号</th><th>供应商</th><th>费用科目</th><th>金额</th><th>币种</th><th>业务时间</th></tr></thead>
           <tbody>
-            <tr><td class="mono">FL20260728001</td><td class="mono">AR202607-0156</td><td>华通机械制造有限公司</td><td>运费</td><td style="font-weight:600;">¥128,500.000</td><td>CNY</td><td class="font-mono text-sm">2026-07-28 10:00</td></tr>
-            <tr><td class="mono">FL20260727001</td><td class="mono">AR202607-0155</td><td>鑫海钢结构工程</td><td>运费</td><td style="font-weight:600;">¥86,200.000</td><td>CNY</td><td class="font-mono text-sm">2026-07-27 14:30</td></tr>
+            <tr><td class="mono">FL20260728001</td><td class="mono">AP202607-0089</td><td>中远海运集运</td><td>运费</td><td style="font-weight:600;">¥98,500.000</td><td>CNY</td><td class="font-mono text-sm">2026-07-28 14:00</td></tr>
+            <tr><td class="mono">FL20260727001</td><td class="mono">AP202607-0088</td><td>马士基航运</td><td>运费</td><td style="font-weight:600;">¥125,600.000</td><td>CNY</td><td class="font-mono text-sm">2026-07-27 10:30</td></tr>
           </tbody>
         </table>
       </div>
     </div>
-    <div class="modal-footer"><button class="btn" data-close="flowModal">关闭</button><button class="btn btn-primary" onclick="toast('客户流水已导出','success')">导出流水</button></div>
+    <div class="modal-footer"><button class="btn" data-close="flowModal">关闭</button><button class="btn btn-primary" onclick="toast('供应商流水已导出','success')">导出流水</button></div>
   </div>
 </div>
 
@@ -1806,12 +1897,12 @@ th.sortable:hover { color: var(--tms-primary); }
     </div>
     <div class="modal-body">
       <div class="desc-list cols-3">
-        <div class="desc-item"><span class="desc-label">账单号</span><span class="desc-value mono">AR202607-0156</span></div>
-        <div class="desc-item"><span class="desc-label">客户</span><span class="desc-value">华通机械制造有限公司</span></div>
+        <div class="desc-item"><span class="desc-label">结算单号</span><span class="desc-value mono">AP202607-0089</span></div>
+        <div class="desc-item"><span class="desc-label">供应商</span><span class="desc-value">中远海运集运</span></div>
         <div class="desc-item"><span class="desc-label">币种</span><span class="desc-value">CNY</span></div>
-        <div class="desc-item"><span class="desc-label">账单金额</span><span class="desc-value">¥128,500.000</span></div>
+        <div class="desc-item"><span class="desc-label">账单金额</span><span class="desc-value">¥98,500.000</span></div>
         <div class="desc-item"><span class="desc-label">已核销</span><span class="desc-value" style="color:var(--tms-success);">¥0.000</span></div>
-        <div class="desc-item"><span class="desc-label">待核销</span><span class="desc-value" style="color:var(--tms-error);">¥128,500.000</span></div>
+        <div class="desc-item"><span class="desc-label">待核销</span><span class="desc-value" style="color:var(--tms-error);">¥98,500.000</span></div>
       </div>
       <div class="desc-section-title">核销登记</div>
       <div class="form-row">
@@ -1824,32 +1915,32 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
-<!-- Modal: 应收报表 -->
+<!-- Modal: 应付报表 -->
 <div class="modal-mask" id="reportModal">
   <div class="modal modal-xl">
     <div class="modal-header">
-      <span class="modal-title">📊 应收报表</span>
+      <span class="modal-title">📊 应付报表</span>
       <button class="modal-close" data-close="reportModal">×</button>
     </div>
     <div class="modal-body">
       <div class="filter-bar" style="margin-bottom:16px;">
         <div class="filter-grid compact">
-          <div class="filter-item"><label class="filter-label">客户</label><input type="text" class="form-control" placeholder="客户名称"></div>
+          <div class="filter-item"><label class="filter-label">供应商</label><input type="text" class="form-control" placeholder="供应商名称"></div>
           <div class="filter-item"><label class="filter-label">时间范围</label><div class="date-range"><input type="date" class="form-control" value="2026-07-01"><span class="date-range-sep">~</span><input type="date" class="form-control" value="2026-07-31"></div></div>
-          <div class="filter-item"><label class="filter-label">统计维度</label><select class="form-control"><option>按客户</option><option>按销售代表</option><option>按客服代表</option></select></div>
+          <div class="filter-item"><label class="filter-label">统计维度</label><select class="form-control"><option>按供应商</option><option>按采购代表</option><option>按客服代表</option><option>按财务代表</option></select></div>
         </div>
         <div class="filter-actions"><button class="btn">重置</button><button class="btn btn-primary" onclick="toast('报表已生成','success')">生成报表</button></div>
       </div>
       <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
         <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>客户</th><th>币种</th><th>营业额</th><th>已收款</th><th>待收款</th><th>销售代表</th><th>客服代表</th><th>财务代表</th></tr></thead>
+          <thead><tr><th>供应商</th><th>币种</th><th>应付额</th><th>已付款</th><th>待付款</th><th>采购代表</th><th>客服代表</th><th>财务代表</th></tr></thead>
           <tbody>
-            <tr><td>华通机械制造有限公司</td><td>CNY</td><td style="font-weight:600;">¥128,500.000</td><td style="color:var(--tms-success);">¥0.000</td><td style="color:var(--tms-error);">¥128,500.000</td><td>张经理</td><td>李客服</td><td>王财务</td></tr>
-            <tr><td>鑫海钢结构工程</td><td>CNY</td><td style="font-weight:600;">¥86,200.000</td><td style="color:var(--tms-success);">¥0.000</td><td style="color:var(--tms-error);">¥86,200.000</td><td>陈销售</td><td>刘客服</td><td>赵财务</td></tr>
+            <tr><td>中远海运集运</td><td>CNY</td><td style="font-weight:600;">¥184,700.000</td><td style="color:var(--tms-success);">¥86,200.000</td><td style="color:var(--tms-error);">¥98,500.000</td><td>刘采购</td><td>李客服</td><td>王财务</td></tr>
+            <tr><td>马士基航运</td><td>CNY</td><td style="font-weight:600;">¥148,000.000</td><td style="color:var(--tms-success);">¥0.000</td><td style="color:var(--tms-error);">¥148,000.000</td><td>张采购</td><td>王客服</td><td>赵财务</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="text-sm text-muted" style="margin-top:12px;">* 应收报表不包含退货产生的应收数据。</p>
+      <p class="text-sm text-muted" style="margin-top:12px;">* 应付报表不包含已冲销的应付数据。</p>
     </div>
     <div class="modal-footer"><button class="btn" data-close="reportModal">关闭</button><button class="btn btn-primary" onclick="toast('报表已导出','success')">导出报表</button></div>
   </div>
@@ -1866,17 +1957,17 @@ th.sortable:hover { color: var(--tms-primary); }
       <div class="filter-bar" style="margin-bottom:16px;">
         <div class="filter-grid compact">
           <div class="filter-item"><label class="filter-label">运单号</label><input type="text" class="form-control" placeholder="运单号"></div>
-          <div class="filter-item"><label class="filter-label">客户</label><input type="text" class="form-control" placeholder="客户名称"></div>
+          <div class="filter-item"><label class="filter-label">供应商</label><input type="text" class="form-control" placeholder="供应商名称"></div>
           <div class="filter-item"><label class="filter-label">签收状态</label><select class="form-control"><option value="">全部</option><option>已签收</option><option>待回传</option></select></div>
         </div>
         <div class="filter-actions"><button class="btn">重置</button><button class="btn btn-primary" onclick="toast('查询完成','success')">查询</button></div>
       </div>
       <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
         <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>运单号</th><th>客户</th><th>签收人</th><th>签收时间</th><th>状态</th><th>操作</th></tr></thead>
+          <thead><tr><th>运单号</th><th>供应商</th><th>签收人</th><th>签收时间</th><th>状态</th><th>操作</th></tr></thead>
           <tbody>
-            <tr><td class="mono">WY202607A001</td><td>华通机械制造有限公司</td><td>John Smith</td><td class="font-mono text-sm">2026-08-02 14:30</td><td><span class="tag tag-green">已签收</span></td><td><button class="btn-link" onclick="toast('下载 POD_202607A001.pdf','success')">下载</button></td></tr>
-            <tr><td class="mono">WY202607A002</td><td>华通机械制造有限公司</td><td>—</td><td class="font-mono text-sm">—</td><td><span class="tag tag-gray">待回传</span></td><td><span class="text-muted">—</span></td></tr>
+            <tr><td class="mono">WY202607D089</td><td>中外运拖车</td><td>—</td><td class="font-mono text-sm">—</td><td><span class="tag tag-gray">待回传</span></td><td><span class="text-muted">—</span></td></tr>
+            <tr><td class="mono">BL202607A012</td><td>中远海运集运</td><td>—</td><td class="font-mono text-sm">—</td><td><span class="tag tag-gray">待回传</span></td><td><span class="text-muted">—</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -1914,7 +2005,7 @@ th.sortable:hover { color: var(--tms-primary); }
       <button class="modal-close" data-close="batchAddFeeModal">×</button>
     </div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">费用科目</label><select class="form-control" id="batchAddFeeSubject"><option>运费</option><option>附加费</option><option>报关费</option><option>保险费</option></select></div>
+      <div class="form-group"><label class="form-label">费用科目</label><select class="form-control" id="batchAddFeeSubject"><option>运费</option><option>附加费</option><option>报关抵扣</option><option>保险费</option></select></div>
       <div class="form-group" style="margin-top:14px;"><label class="form-label">金额</label><input type="number" class="form-control" id="batchAddFeeAmount" placeholder="0.000"></div>
       <div class="form-group" style="margin-top:14px;"><label class="form-label">备注</label><input type="text" class="form-control" placeholder="可选"></div>
     </div>
@@ -1930,7 +2021,7 @@ th.sortable:hover { color: var(--tms-primary); }
       <button class="modal-close" data-close="batchEditFeeModal">×</button>
     </div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">费用科目</label><select class="form-control" id="batchEditFeeSubject"><option>运费</option><option>附加费</option><option>报关费</option><option>保险费</option></select></div>
+      <div class="form-group"><label class="form-label">费用科目</label><select class="form-control" id="batchEditFeeSubject"><option>运费</option><option>附加费</option><option>报关抵扣</option><option>保险费</option></select></div>
       <div class="form-group" style="margin-top:14px;"><label class="form-label">新金额</label><input type="number" class="form-control" id="batchEditFeeAmount" placeholder="0.000"></div>
       <div class="form-group" style="margin-top:14px;"><label class="form-label">修改原因</label><input type="text" class="form-control" placeholder="可选"></div>
     </div>
@@ -1954,11 +2045,11 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
-<!-- Modal: 批量修改客户财务代表 -->
+<!-- Modal: 批量修改供应商财务代表 -->
 <div class="modal-mask" id="batchAssignRepModal">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <span class="modal-title">👤 批量修改客户财务代表</span>
+      <span class="modal-title">👤 批量修改供应商财务代表</span>
       <button class="modal-close" data-close="batchAssignRepModal">×</button>
     </div>
     <div class="modal-body">
@@ -1969,234 +2060,7 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
-<!-- Modal: 新增应收单（多步骤向导） -->
-<div class="modal-mask" id="createReceivableModal">
-  <div class="modal modal-xl" style="width:960px;">
-    <div class="modal-header">
-      <span class="modal-title">＋ 新增应收单</span>
-      <button class="modal-close" data-close="createReceivableModal">×</button>
-    </div>
-    <div class="modal-body" style="padding:24px 28px;">
-      <!-- 步骤指示器 -->
-      <div class="steps" id="createArSteps" style="margin-bottom:24px;padding:0 10px;">
-        <div class="step active" data-step="1" onclick="jumpArStep(1)">
-          <div class="step-circle">1</div>
-          <div class="step-label">运单信息</div>
-        </div>
-        <div class="step" data-step="2" onclick="jumpArStep(2)">
-          <div class="step-circle">2</div>
-          <div class="step-label">客服填写</div>
-        </div>
-        <div class="step" data-step="3" onclick="jumpArStep(3)">
-          <div class="step-circle">3</div>
-          <div class="step-label">单证填写</div>
-        </div>
-        <div class="step" data-step="4" onclick="jumpArStep(4)">
-          <div class="step-circle">4</div>
-          <div class="step-label">海外仓填写</div>
-        </div>
-        <div class="step" data-step="5" onclick="jumpArStep(5)">
-          <div class="step-circle">5</div>
-          <div class="step-label">财务费用汇总</div>
-        </div>
-      </div>
-
-      <!-- Step 1: 运单信息 -->
-      <div class="ar-step-panel" id="arStep1" style="display:block;">
-        <div class="desc-section-title" style="margin-bottom:14px;">📦 从运单列表选择运单数据</div>
-        <div class="filter-bar" style="margin-bottom:14px;">
-          <div class="filter-grid compact" style="grid-template-columns:1fr 1fr auto;">
-            <div class="filter-item"><input type="text" class="form-control" id="arWaybillSearch" placeholder="搜索运单号 / 客户名称" oninput="filterArWaybills()"></div>
-            <div class="filter-item"><input type="date" class="form-control" id="arWaybillDate" onchange="filterArWaybills()"></div>
-            <div class="filter-item" style="display:flex;align-items:flex-end;"><button class="btn btn-primary btn-sm" onclick="filterArWaybills()">🔍 筛选</button></div>
-          </div>
-        </div>
-        <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;max-height:320px;overflow-y:auto;">
-          <table class="data-table" style="font-size:13px;" id="arWaybillTable">
-            <thead><tr><th style="width:40px;"></th><th>创建日期</th><th>运单号</th><th>扩展单号</th><th>客户名称</th><th>服务类型</th></tr></thead>
-            <tbody id="arWaybillTbody"></tbody>
-          </table>
-        </div>
-        <div id="arSelectedWaybill" style="margin-top:14px;display:none;">
-          <div style="background:var(--tms-primary-bg);border:1px solid var(--tms-primary-light);border-radius:var(--tms-radius);padding:12px 16px;">
-            <span style="font-size:13px;color:var(--tms-text-2);">已选择：</span>
-            <span class="mono" id="arSelWbNo" style="font-weight:600;color:var(--tms-primary);"></span>
-            <span style="margin-left:12px;font-size:13px;color:var(--tms-text-2);">日期：</span>
-            <span id="arSelWbDate" style="font-size:13px;"></span>
-            <span style="margin-left:12px;font-size:13px;color:var(--tms-text-2);">扩展单号：</span>
-            <span class="mono" id="arSelExtNo" style="font-size:13px;"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 2: 客服填写 -->
-      <div class="ar-step-panel" id="arStep2" style="display:none;">
-        <div class="desc-section-title" style="margin-bottom:14px;">🎧 客服填写信息 <span class="tag tag-blue tag-dot" style="margin-left:8px;">客服</span></div>
-        <div style="background:var(--tms-bg);border-radius:var(--tms-radius);padding:14px 16px;margin-bottom:16px;">
-          <div style="display:flex;gap:20px;font-size:13px;">
-            <div><span style="color:var(--tms-text-3);">运单号：</span><span class="mono" id="arStep2WbNo" style="font-weight:600;"></span></div>
-            <div><span style="color:var(--tms-text-3);">日期：</span><span id="arStep2Date"></span></div>
-            <div><span style="color:var(--tms-text-3);">扩展单号：</span><span class="mono" id="arStep2ExtNo"></span></div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>客户名称</label>
-            <input type="text" class="form-control" id="arCustomerName" placeholder="请输入客户名称">
-          </div>
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>主品名</label>
-            <input type="text" class="form-control" id="arMainProduct" placeholder="请输入主品名">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>货站</label>
-            <select class="form-control" id="arCargoStation">
-              <option value="">请选择货站</option>
-              <option>上海浦东货站</option>
-              <option>深圳宝安货站</option>
-              <option>广州白云货站</option>
-              <option>北京首都货站</option>
-              <option>郑州新郑货站</option>
-              <option>杭州萧山货站</option>
-            </select>
-          </div>
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>产品渠道（服务）</label>
-            <select class="form-control" id="arProductChannel">
-              <option value="">请选择产品渠道</option>
-              <option>中美空运专线-FBA</option>
-              <option>中美海运专线-FBA</option>
-              <option>中欧铁路专线</option>
-              <option>中美空运专线-直发</option>
-              <option>东南亚空运专线</option>
-              <option>日韩海运专线</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 3: 单证填写 -->
-      <div class="ar-step-panel" id="arStep3" style="display:none;">
-        <div class="desc-section-title" style="margin-bottom:14px;">📄 单证填写信息 <span class="tag tag-purple tag-dot" style="margin-left:8px;">单证</span></div>
-        <div class="form-row">
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>邮编</label>
-            <input type="text" class="form-control" id="arZipCode" placeholder="请输入目的国邮编">
-          </div>
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>件数</label>
-            <input type="number" class="form-control" id="arPieces" placeholder="0" min="1" oninput="calcArWeight()">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>计费重 (kg)</label>
-            <input type="number" class="form-control" id="arChargeWeight" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()">
-          </div>
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>泡比</label>
-            <select class="form-control" id="arBubbleRatio">
-              <option value="">请选择泡比</option>
-              <option value="1:3000">1:3000</option>
-              <option value="1:5000">1:5000</option>
-              <option value="1:6000">1:6000</option>
-              <option value="1:8000">1:8000</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>仓库代码</label>
-            <input type="text" class="form-control" id="arWarehouseCode" placeholder="请输入仓库代码，如 LAX9、JFK8">
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 4: 海外仓填写 -->
-      <div class="ar-step-panel" id="arStep4" style="display:none;">
-        <div class="desc-section-title" style="margin-bottom:14px;">🏠 海外仓填写信息 <span class="tag tag-cyan tag-dot" style="margin-left:8px;">海外仓</span></div>
-        <div class="form-row">
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>产品附加费 (¥)</label>
-            <input type="number" class="form-control" id="arSurcharge" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()">
-          </div>
-          <div class="form-col">
-            <label class="form-label"><span class="required">*</span>报关费 (¥)</label>
-            <input type="number" class="form-control" id="arCustomsFee" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-col">
-            <label class="form-label">运费优惠 (¥)</label>
-            <input type="number" class="form-control" id="arFreightDiscount" placeholder="0.00（可选）" step="0.01" min="0" oninput="calcArTotal()">
-            <div class="form-help">如有多项优惠可填写合计金额，将自动从总费用中扣减</div>
-          </div>
-        </div>
-        <div style="margin-top:16px;background:var(--tms-bg);border-radius:var(--tms-radius);padding:14px 16px;">
-          <div style="font-size:13px;color:var(--tms-text-3);margin-bottom:8px;">海外仓费用小计</div>
-          <div style="font-size:22px;font-weight:700;color:var(--tms-primary);" id="arWarehouseSubtotal">¥0.00</div>
-        </div>
-      </div>
-
-      <!-- Step 5: 财务费用汇总 -->
-      <div class="ar-step-panel" id="arStep5" style="display:none;">
-        <div class="desc-section-title" style="margin-bottom:14px;">💰 财务费用汇总 <span class="tag tag-orange tag-dot" style="margin-left:8px;">应收财务</span></div>
-        <!-- 已填信息预览 -->
-        <div style="background:var(--tms-bg);border-radius:var(--tms-radius);padding:14px 16px;margin-bottom:16px;">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:13px;">
-            <div><span style="color:var(--tms-text-3);">运单号：</span><span class="mono" id="arPreviewWbNo" style="font-weight:600;"></span></div>
-            <div><span style="color:var(--tms-text-3);">客户：</span><span id="arPreviewCustomer"></span></div>
-            <div><span style="color:var(--tms-text-3);">产品渠道：</span><span id="arPreviewChannel"></span></div>
-            <div><span style="color:var(--tms-text-3);">件数：</span><span id="arPreviewPieces"></span></div>
-            <div><span style="color:var(--tms-text-3);">计费重：</span><span id="arPreviewWeight"></span></div>
-            <div><span style="color:var(--tms-text-3);">仓库代码：</span><span id="arPreviewWhCode"></span></div>
-          </div>
-        </div>
-
-        <!-- 其他费用明细 -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <span style="font-size:14px;font-weight:600;color:var(--tms-text-1);">其他费用明细 <span style="font-size:12px;color:var(--tms-text-3);font-weight:400;">（可选填）</span></span>
-          <button class="btn btn-sm btn-primary" onclick="addArFeeRow()">＋ 添加费用</button>
-        </div>
-        <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:16px;">
-          <table class="data-table" style="font-size:13px;" id="arFeeTable">
-            <thead><tr><th>费用项目</th><th style="width:140px;">金额 (¥)</th><th>备注</th><th style="width:60px;">操作</th></tr></thead>
-            <tbody id="arFeeTbody"></tbody>
-          </table>
-        </div>
-        <div id="arFeeEmpty" style="text-align:center;padding:16px;font-size:13px;color:var(--tms-text-3);">暂无其他费用，点击"添加费用"按钮添加</div>
-
-        <!-- 费用汇总 -->
-        <div style="background:var(--tms-primary-bg);border:1px solid var(--tms-primary-light);border-radius:var(--tms-radius);padding:16px 20px;">
-          <div style="font-size:14px;font-weight:600;color:var(--tms-text-1);margin-bottom:12px;">费用汇总</div>
-          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-text-2);">产品附加费</span><span id="arSumSurcharge">¥0.00</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-text-2);">报关费</span><span id="arSumCustoms">¥0.00</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-text-2);">其他费用合计</span><span id="arSumOther">¥0.00</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--tms-success);">运费优惠（扣减）</span><span id="arSumDiscount" style="color:var(--tms-success);">- ¥0.00</span></div>
-            <div style="border-top:1px solid var(--tms-border);margin-top:4px;padding-top:10px;display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-size:15px;font-weight:600;color:var(--tms-text-1);">应收总金额</span>
-              <span id="arSumTotal" style="font-size:24px;font-weight:700;color:var(--tms-primary);">¥0.00</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer" style="justify-content:space-between;">
-      <button class="btn" id="arPrevBtn" onclick="prevArStep()" style="display:none;">← 上一步</button>
-      <div style="margin-left:auto;display:flex;gap:8px;">
-        <button class="btn" data-close="createReceivableModal">取消</button>
-        <button class="btn btn-primary" id="arNextBtn" onclick="nextArStep()">下一步 →</button>
-        <button class="btn btn-primary" id="arSubmitBtn" onclick="submitCreateAr()" style="display:none;">✓ 确认创建</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-// ========== Toast ==========
 function toast(msg, type) {
   type = type || 'info';
   var container = document.getElementById('toastContainer');
@@ -2209,79 +2073,58 @@ function toast(msg, type) {
   setTimeout(function(){ t.remove(); }, 2800);
 }
 
-// ========== Confirm Dialog ==========
 var _confirmCb = null;
 function confirmDialog(title, msg, cb, okText, okType) {
   document.getElementById('confirmTitle').textContent = title || '确认操作';
   document.getElementById('confirmMsg').innerHTML = msg || '确定执行此操作吗？';
   var okBtn = document.getElementById('confirmOk');
   okBtn.textContent = okText || '确定';
-  okBtn.className = 'btn ' + (okType === 'danger' ? 'btn-danger' : okType === 'primary' ? 'btn-primary' : 'btn-primary');
+  okBtn.className = 'btn ' + (okType === 'danger' ? 'btn-danger' : 'btn-primary');
   _confirmCb = cb;
   document.getElementById('confirmMask').classList.add('show');
 }
-document.getElementById('confirmCancel').onclick = function() {
-  document.getElementById('confirmMask').classList.remove('show');
-  _confirmCb = null;
-};
+document.getElementById('confirmCancel').onclick = function() { document.getElementById('confirmMask').classList.remove('show'); _confirmCb = null; };
 document.getElementById('confirmOk').onclick = function() {
   document.getElementById('confirmMask').classList.remove('show');
   if (_confirmCb) { var cb = _confirmCb; _confirmCb = null; cb(); }
 };
-document.getElementById('confirmMask').addEventListener('click', function(e) {
-  if (e.target === this) { this.classList.remove('show'); _confirmCb = null; }
-});
+document.getElementById('confirmMask').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('show'); _confirmCb = null; } });
 
-// ========== Modal close ==========
 document.addEventListener('click', function(e) {
   var closeId = e.target.getAttribute('data-close');
-  if (closeId) {
-    document.getElementById(closeId).classList.remove('show');
-  }
+  if (closeId) document.getElementById(closeId).classList.remove('show');
 });
 
-// ========== Init ==========
-document.addEventListener('DOMContentLoaded', function() {
-  updateBatchBtns();
-});
+document.addEventListener('DOMContentLoaded', function() { updateBatchBtns(); });
 
-// ========== Checkbox / batch ==========
 document.addEventListener('change', function(e) {
   if (e.target.matches('.row-check') || e.target.matches('.check-all')) {
     if (e.target.matches('.check-all')) {
       var card = e.target.closest('.card');
       var isChecked = e.target.checked;
-      card.querySelectorAll('tbody .row-check').forEach(function(c){
-        if (c.closest('tr').style.display !== 'none') c.checked = isChecked;
-      });
+      card.querySelectorAll('tbody .row-check').forEach(function(c){ if (c.closest('tr').style.display !== 'none') c.checked = isChecked; });
     }
     setTimeout(updateBatchBtns, 10);
   }
 });
 
 function updateBatchBtns() {
-  var card = document.querySelector('#receivableTable').closest('.card');
+  var card = document.querySelector('#payableTable').closest('.card');
   var checked = card.querySelectorAll('tbody .row-check:checked').length;
-  var btns = ['btnBatchConfirm','btnBatchExport','btnBatchAddFee','btnBatchEditFee','btnBatchOffset','btnBatchAssignRep','btnBatchDelete'];
-  btns.forEach(function(id){
-    var b = document.getElementById(id);
-    if (b) b.disabled = checked === 0;
+  ['btnBatchConfirm','btnBatchExport','btnBatchDelete'].forEach(function(id){
+    var b = document.getElementById(id); if (b) b.disabled = checked === 0;
   });
   var batchBar = document.querySelector('[data-batch-bar]');
   if (batchBar) {
     var countEl = batchBar.querySelector('.batch-count');
     if (countEl) countEl.textContent = '已选择 ' + checked + ' 项';
-    if (checked > 0) {
-      batchBar.classList.add('show');
-    } else {
-      batchBar.classList.remove('show');
-    }
+    batchBar.classList.toggle('show', checked > 0);
   }
 }
 
 document.addEventListener('click', function(e) {
   if (e.target.matches('.batch-clear')) {
-    var card = document.querySelector('#receivableTable').closest('.card');
+    var card = document.querySelector('#payableTable').closest('.card');
     card.querySelectorAll('tbody .row-check').forEach(function(c){ c.checked = false; });
     var checkAll = card.querySelector('.check-all');
     if (checkAll) checkAll.checked = false;
@@ -2289,32 +2132,132 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ========== Tabs ==========
 function switchTab(el) {
-  var tabs = document.querySelectorAll('#statusTabs .tab-item');
-  tabs.forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('#statusTabs .tab-item').forEach(function(t){ t.classList.remove('active'); });
   el.classList.add('active');
   var status = el.getAttribute('data-status');
-  var rows = document.querySelectorAll('#receivableTbody tr');
+  var rows = document.querySelectorAll('#payableTbody tr');
   var count = 0;
   rows.forEach(function(tr){
-    if (status === 'all' || tr.getAttribute('data-status') === status) {
-      tr.style.display = '';
-      count++;
-    } else {
-      tr.style.display = 'none';
-    }
+    if (status === 'all' || tr.getAttribute('data-status') === status) { tr.style.display = ''; count++; }
+    else { tr.style.display = 'none'; }
   });
-  var labels = {all:'全部',confirm:'待确认',pending:'待收款',partial:'部分收款',settled:'已结清',overdue:'已逾期'};
-  toast('已筛选：' + labels[status] + '（当前显示' + count + '条）', 'info');
+  var labels = {all:'全部',confirm:'待确认',pending:'待付款',partial:'部分付款',paid:'已付款',overdue:'已逾期',thismonth:'本月待付'};
+  toast('已筛选：' + (labels[status]||'全部') + '（当前显示' + count + '条）', 'info');
 }
 
 function filterByStat(status) {
-  var tabs = document.querySelectorAll('#statusTabs .tab-item');
-  tabs.forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('#statusTabs .tab-item').forEach(function(t){ t.classList.remove('active'); });
   var target = document.querySelector('#statusTabs .tab-item[data-status="'+status+'"]');
   if (target) { target.classList.add('active'); switchTab(target); }
 }
+
+function doQuery() {
+  var btn = document.getElementById('btnQuery');
+  btn.disabled = true;
+  var originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span class="loading-spin"></span>查询中...';
+  setTimeout(function(){
+    btn.disabled = false; btn.innerHTML = originalHTML;
+    toast('查询完成，共找到 10 条应付账单', 'success');
+  }, 800);
+}
+
+function resetFilter() {
+  document.getElementById('fApNo').value = '';
+  document.getElementById('fSupplier').value = '';
+  document.getElementById('fStatus').value = '';
+  document.getElementById('fBill').value = '';
+  document.getElementById('fFeeType').value = '';
+  document.getElementById('fInvoiceDateStart').value = '';
+  document.getElementById('fInvoiceDateEnd').value = '';
+  document.getElementById('fDueDate').value = '';
+  document.querySelectorAll('#statusTabs .tab-item').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelector('#statusTabs .tab-item[data-status="all"]').classList.add('active');
+  document.querySelectorAll('#payableTbody tr').forEach(function(tr){ tr.style.display = ''; });
+  toast('筛选条件已重置', 'info');
+}
+
+function refreshTable() {
+  var rows = document.querySelectorAll('#payableTbody tr');
+  rows.forEach(function(tr){ tr.classList.add('row-fade-in'); });
+  toast('数据已刷新', 'success');
+  setTimeout(function(){ rows.forEach(function(tr){ tr.classList.remove('row-fade-in'); }); }, 400);
+}
+
+function deleteItem(btn) {
+  var tr = btn.closest('tr');
+  var no = tr.querySelector('.mono').textContent;
+  confirmDialog('删除应付单', '确定要删除应付账单 <b>' + no + '</b> 吗？此操作不可恢复。', function(){
+    tr.classList.add('row-removing');
+    setTimeout(function(){ tr.remove(); updateBatchBtns(); }, 400);
+    toast('应付单 ' + no + ' 已删除', 'success');
+  }, '删除', 'danger');
+}
+
+function batchAction(type) {
+  var card = document.querySelector('#payableTable').closest('.card');
+  var checked = card.querySelectorAll('tbody .row-check:checked');
+  var nos = [];
+  checked.forEach(function(c){ nos.push(c.closest('tr').querySelector('.mono').textContent); });
+  if (nos.length === 0) { toast('请先选择账单', 'warning'); return; }
+  if (type === 'confirm') {
+    confirmDialog('批量确认', '确定要批量确认选中的 <b>' + nos.length + '</b> 条应付账单吗？', function(){
+      toast('已批量确认 ' + nos.length + ' 条应付账单', 'success');
+      updateBatchBtns(); document.querySelector('[data-batch-bar]').classList.remove('show');
+    }, '确认', 'primary');
+  } else if (type === 'export') {
+    toast('正在导出 ' + nos.length + ' 条应付账单...', 'info');
+    setTimeout(function(){ toast('导出成功', 'success'); }, 800);
+  } else if (type === 'delete') {
+    confirmDialog('批量删除', '确定要删除选中的 <b>' + nos.length + '</b> 条应付账单吗？此操作不可恢复。', function(){
+      checked.forEach(function(c){ var tr = c.closest('tr'); tr.classList.add('row-removing'); setTimeout(function(){ tr.remove(); }, 400); });
+      setTimeout(function(){ updateBatchBtns(); document.querySelector('[data-batch-bar]').classList.remove('show'); }, 450);
+      toast('已删除 ' + nos.length + ' 条应付账单', 'success');
+    }, '删除', 'danger');
+  }
+}
+
+function changePage(btn) {
+  if (btn.disabled) return;
+  document.querySelectorAll('.pagination .page-btn').forEach(function(p){ p.classList.remove('active'); });
+  if (!isNaN(parseInt(btn.textContent))) { btn.classList.add('active'); toast('已切换到第 ' + btn.textContent + ' 页', 'info'); }
+  else if (btn.textContent === '›') {
+    var active = document.querySelector('.pagination .page-btn.active');
+    var next = active.nextElementSibling;
+    while (next && (isNaN(parseInt(next.textContent)) || next.disabled)) next = next.nextElementSibling;
+    if (next) { next.classList.add('active'); toast('已切换到第 ' + next.textContent + ' 页', 'info'); }
+  } else if (btn.textContent === '‹') {
+    var active = document.querySelector('.pagination .page-btn.active');
+    var prev = active.previousElementSibling;
+    while (prev && (isNaN(parseInt(prev.textContent)) || prev.disabled)) prev = prev.previousElementSibling;
+    if (prev) { prev.classList.add('active'); toast('已切换到第 ' + prev.textContent + ' 页', 'info'); }
+  }
+}
+
+function pay(btn) {
+  var tr = btn.closest('tr');
+  var no = tr.querySelector('.mono').textContent;
+  var amount = prompt('请输入付款金额（结算单号：' + no + '）：', '');
+  if (amount && amount.trim()) toast('账单 ' + no + ' 已登记付款 ¥' + amount + '，待财务审批', 'success');
+}
+function payOpen() {
+  document.getElementById('payableDetail').classList.remove('show');
+  var no = document.getElementById('detailApNo').textContent;
+  var amount = prompt('请输入付款金额（结算单号：' + no + '）：', '');
+  if (amount && amount.trim()) toast('账单 ' + no + ' 已登记付款 ¥' + amount + '，待财务审批', 'success');
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.matches('[data-search]')) {
+    var keyword = e.target.value.trim().toLowerCase();
+    var tableId = e.target.getAttribute('data-search');
+    document.querySelectorAll(tableId + ' tbody tr').forEach(function(tr){
+      if (!keyword) { tr.style.display = ''; return; }
+      tr.style.display = tr.textContent.toLowerCase().indexOf(keyword) !== -1 ? '' : 'none';
+    });
+  }
+});
 
 // ========== 数据视角 Tab ==========
 function switchViewTab(el) {
@@ -2323,7 +2266,7 @@ function switchViewTab(el) {
   el.classList.add('active');
   var view = el.getAttribute('data-view');
   var labels = {receivable:'应收数据',payable:'应付数据',document:'单证数据',service:'客服数据',warehouse:'海外仓数据'};
-  toast('已切换至：' + labels[view], 'info');
+  toast('已切换至：' + (labels[view] || view), 'info');
 }
 
 // ========== 表格排序 ==========
@@ -2361,10 +2304,10 @@ function sortTable(table, col, dir) {
 
 function getSortValue(row, col) {
   var map = {
-    arNo: 'data-ar-no', customer: 'data-customer', waybill: 3, cabinet: 4, feeSubject: 5,
-    salesRep: 6, serviceRep: 7, financeRep: 8, currency: 9,
-    arAmount: 'data-ar-amount', paidAmount: 'data-paid-amount', unpaidAmount: 'data-unpaid-amount',
-    invoiceDate: 'data-invoice-date', dueDate: 'data-due-date', status: 15
+    apNo: 'data-ap-no', supplier: 'data-supplier', feeSubject: 4, cabinet: 5, bill: 6,
+    purchaseRep: 7, serviceRep: 8, financeRep: 9, currency: 10,
+    apAmount: 'data-ap-amount', paidAmount: 'data-paid-amount', unpaidAmount: 'data-unpaid-amount',
+    invoiceDate: 'data-invoice-date', dueDate: 'data-due-date', status: 16
   };
   var idx = map[col];
   if (typeof idx === 'string' && idx.indexOf('data-') === 0) {
@@ -2375,7 +2318,7 @@ function getSortValue(row, col) {
   var cell = row.children[idx];
   if (!cell) return '';
   var num = parseFloat(cell.textContent.replace(/[¥,]/g, ''));
-  if (!isNaN(num) && col !== 'waybill' && col !== 'status') return num;
+  if (!isNaN(num) && col !== 'bill' && col !== 'status') return num;
   return cell.textContent.trim();
 }
 
@@ -2392,230 +2335,7 @@ function moveRow(btn, direction) {
   setTimeout(function(){ row.classList.remove('row-fade-in'); }, 300);
 }
 
-// ========== Query / Reset ==========
-function doQuery() {
-  var btn = document.getElementById('btnQuery');
-  btn.disabled = true;
-  var originalHTML = btn.innerHTML;
-  btn.innerHTML = '<span class="loading-spin"></span>查询中...';
-  setTimeout(function(){
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
-    toast('查询完成，共找到 10 条应收账单', 'success');
-  }, 800);
-}
-
-function resetFilter() {
-  document.getElementById('fArNo').value = '';
-  document.getElementById('fCustomer').value = '';
-  document.getElementById('fStatus').value = '';
-  document.getElementById('fWaybill').value = '';
-  document.getElementById('fInvoiceDateStart').value = '';
-  document.getElementById('fInvoiceDateEnd').value = '';
-  document.getElementById('fDueDate').value = '';
-  var tabs = document.querySelectorAll('#statusTabs .tab-item');
-  tabs.forEach(function(t){ t.classList.remove('active'); });
-  document.querySelector('#statusTabs .tab-item[data-status="all"]').classList.add('active');
-  document.querySelectorAll('#receivableTbody tr').forEach(function(tr){ tr.style.display = ''; });
-  toast('筛选条件已重置', 'info');
-}
-
-function refreshTable() {
-  var rows = document.querySelectorAll('#receivableTbody tr');
-  rows.forEach(function(tr){ tr.classList.add('row-fade-in'); });
-  toast('数据已刷新', 'success');
-  setTimeout(function(){ rows.forEach(function(tr){ tr.classList.remove('row-fade-in'); }); }, 400);
-}
-
-// ========== Delete ==========
-function deleteItem(btn) {
-  var tr = btn.closest('tr');
-  var no = tr.querySelector('.mono').textContent;
-  confirmDialog('删除应收单', '确定要删除应收账单 <b>' + no + '</b> 吗？此操作不可恢复。', function(){
-    tr.classList.add('row-removing');
-    setTimeout(function(){ tr.remove(); updateBatchBtns(); }, 400);
-    toast('应收单 ' + no + ' 已删除', 'success');
-  }, '删除', 'danger');
-}
-
-// ========== Batch ==========
-function batchAction(type) {
-  var card = document.querySelector('#receivableTable').closest('.card');
-  var checked = card.querySelectorAll('tbody .row-check:checked');
-  var nos = [];
-  checked.forEach(function(c){ nos.push(c.closest('tr').querySelector('.mono').textContent); });
-  if (nos.length === 0) { toast('请先选择账单', 'warning'); return; }
-
-  if (type === 'confirm') {
-    confirmDialog('批量确认', '确定要批量确认选中的 <b>' + nos.length + '</b> 条应收账单吗？', function(){
-      toast('已批量确认 ' + nos.length + ' 条应收账单', 'success');
-      updateBatchBtns();
-      document.querySelector('[data-batch-bar]').classList.remove('show');
-    }, '确认', 'primary');
-  } else if (type === 'export') {
-    toast('正在导出 ' + nos.length + ' 条应收账单...', 'info');
-    setTimeout(function(){ toast('导出成功', 'success'); }, 800);
-  } else if (type === 'delete') {
-    confirmDialog('批量删除', '确定要删除选中的 <b>' + nos.length + '</b> 条应收账单吗？此操作不可恢复。', function(){
-      checked.forEach(function(c){
-        var tr = c.closest('tr');
-        tr.classList.add('row-removing');
-        setTimeout(function(){ tr.remove(); }, 400);
-      });
-      setTimeout(function(){ updateBatchBtns(); document.querySelector('[data-batch-bar]').classList.remove('show'); }, 450);
-      toast('已删除 ' + nos.length + ' 条应收账单', 'success');
-    }, '删除', 'danger');
-  }
-}
-
-// ========== Pagination ==========
-function changePage(btn) {
-  if (btn.disabled) return;
-  var pages = document.querySelectorAll('.pagination .page-btn');
-  pages.forEach(function(p){ p.classList.remove('active'); });
-  if (!isNaN(parseInt(btn.textContent))) {
-    btn.classList.add('active');
-    toast('已切换到第 ' + btn.textContent + ' 页', 'info');
-  } else if (btn.textContent === '›') {
-    var active = document.querySelector('.pagination .page-btn.active');
-    var next = active.nextElementSibling;
-    while (next && (isNaN(parseInt(next.textContent)) || next.disabled)) next = next.nextElementSibling;
-    if (next) { next.classList.add('active'); toast('已切换到第 ' + next.textContent + ' 页', 'info'); }
-  } else if (btn.textContent === '‹') {
-    var active = document.querySelector('.pagination .page-btn.active');
-    var prev = active.previousElementSibling;
-    while (prev && (isNaN(parseInt(prev.textContent)) || prev.disabled)) prev = prev.previousElementSibling;
-    if (prev) { prev.classList.add('active'); toast('已切换到第 ' + prev.textContent + ' 页', 'info'); }
-  }
-}
-
-// ========== Collect ==========
-function collect(btn) {
-  var tr = btn.closest('tr');
-  var no = tr.querySelector('.mono').textContent;
-  var amount = prompt('请输入收款金额（账单号：' + no + '）：', '');
-  if (amount && amount.trim()) {
-    toast('账单 ' + no + ' 已登记收款 ¥' + amount + '，待财务确认', 'success');
-  }
-}
-function collectOpen() {
-  document.getElementById('receivableDetail').classList.remove('show');
-  var no = document.getElementById('detailArNo').textContent;
-  var amount = prompt('请输入收款金额（账单号：' + no + '）：', '');
-  if (amount && amount.trim()) {
-    toast('账单 ' + no + ' 已登记收款 ¥' + amount + '，待财务确认', 'success');
-  }
-}
-
-// ========== 订单部门数据管理 ==========
-var currentArNo = '';
-var currentUploadDept = '';
-var defaultDeptData = {
-  '客服': [{item:'运费补差', amount:1200, remark:'客户加急', time:'2026-08-01 10:30'}],
-  '单证': [{item:'报关服务费', amount:3500, remark:'', time:'2026-08-01 11:00'}],
-  '海外仓': [{item:'海外仓储费', amount:1800, remark:'3天仓储', time:'2026-08-01 09:00'}]
-};
-var deptData = {};
-
-function ensureDeptData(arNo) {
-  if (!deptData[arNo]) {
-    deptData[arNo] = JSON.parse(JSON.stringify(defaultDeptData));
-  }
-}
-
-function formatMoney(n) {
-  return Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-}
-
-function formatExchange(n) {
-  return Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
-}
-
-function renderDeptData() {
-  var container = document.getElementById('deptDataSection');
-  if (!container) return;
-  ensureDeptData(currentArNo);
-  var data = deptData[currentArNo];
-  var depts = ['客服','单证','海外仓'];
-  var colors = {'客服':'tag-blue','单证':'tag-purple','海外仓':'tag-cyan'};
-  var html = '<div class="dept-cards">';
-  depts.forEach(function(dept){
-    var rows = data[dept] || [];
-    html += '<div class="dept-card">';
-    html += '<div class="dept-card-header"><span class="tag ' + colors[dept] + ' tag-dot">' + dept + '</span><button class="btn btn-sm" onclick="openDetailUpload(\'' + dept + '\')">上传数据</button></div>';
-    if (rows.length === 0) {
-      html += '<div class="dept-empty">暂无 ' + dept + ' 上传数据</div>';
-    } else {
-      html += '<table class="data-table"><thead><tr><th>费用项目</th><th class="text-right">金额</th><th>备注</th></tr></thead><tbody>';
-      rows.forEach(function(r){
-        html += '<tr><td>' + r.item + '</td><td class="text-right" style="font-weight:600;">¥' + formatMoney(r.amount) + '</td><td>' + (r.remark || '—') + '</td></tr>';
-      });
-      html += '</tbody></table>';
-    }
-    html += '</div>';
-  });
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-function openDetail(arNo) {
-  currentArNo = arNo;
-  document.getElementById('detailArNo').textContent = arNo;
-  document.getElementById('dArNo').textContent = arNo;
-  ensureDeptData(arNo);
-  renderDeptData();
-  var integrateResult = document.getElementById('deptIntegrateResult');
-  if (integrateResult) integrateResult.style.display = 'none';
-  document.getElementById('receivableDetail').classList.add('show');
-}
-
-function openDetailUpload(dept) {
-  currentUploadDept = dept;
-  document.getElementById('detailUploadTitle').textContent = dept + '上传应收数据';
-  var tag = document.getElementById('detailUploadDeptTag');
-  tag.textContent = dept;
-  tag.className = 'tag tag-dot ' + (dept === '客服' ? 'tag-blue' : dept === '单证' ? 'tag-purple' : 'tag-cyan');
-  document.getElementById('detailUploadItem').value = '';
-  document.getElementById('detailUploadAmount').value = '';
-  document.getElementById('detailUploadRemark').value = '';
-  document.getElementById('detailUploadFile').value = '';
-  document.getElementById('detailDeptUploadModal').classList.add('show');
-}
-
-function confirmDetailUpload() {
-  var item = document.getElementById('detailUploadItem').value.trim();
-  var amount = parseFloat(document.getElementById('detailUploadAmount').value);
-  var remark = document.getElementById('detailUploadRemark').value.trim();
-  var fileInput = document.getElementById('detailUploadFile');
-  var file = fileInput.files[0];
-  if (!item) { toast('请输入费用项目', 'warning'); return; }
-  if (isNaN(amount) || amount <= 0) { toast('请输入有效金额', 'warning'); return; }
-  if (!file) { toast('请选择要上传的文件', 'warning'); return; }
-  if (!/\.(xlsx|xls|csv)$/i.test(file.name)) { toast('仅支持 .xlsx / .xls / .csv 格式的文件', 'error'); return; }
-  if (file.size > 10 * 1024 * 1024) { toast('文件大小不能超过 10MB', 'error'); return; }
-
-  var now = new Date();
-  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-  ensureDeptData(currentArNo);
-  deptData[currentArNo][currentUploadDept].push({ item: item, amount: amount, remark: remark, time: timeStr });
-  document.getElementById('detailDeptUploadModal').classList.remove('show');
-  renderDeptData();
-  toast(currentUploadDept + '数据上传成功：' + item + ' ¥' + formatMoney(amount), 'success');
-}
-
-function integrateDeptData() {
-  ensureDeptData(currentArNo);
-  var data = deptData[currentArNo];
-  var total = 0;
-  ['客服','单证','海外仓'].forEach(function(dept){
-    (data[dept] || []).forEach(function(r){ total += Number(r.amount) || 0; });
-  });
-  document.getElementById('integratedTotal').textContent = '¥' + formatMoney(total);
-  document.getElementById('deptIntegrateResult').style.display = 'block';
-  toast('已整合全部部门数据，合计应收 ¥' + formatMoney(total), 'success');
-}
-
-// ========== Search (multi-keyword) ==========
+// ========== 多关键词搜索 ==========
 document.addEventListener('input', function(e) {
   if (e.target.matches('[data-search]')) {
     var raw = e.target.value.trim().toLowerCase();
@@ -2623,10 +2343,7 @@ document.addEventListener('input', function(e) {
     var rows = document.querySelectorAll(tableId + ' tbody tr');
     var keywords = raw ? raw.split(/[,，\s]+/).filter(function(k){ return k.length > 0; }) : [];
     rows.forEach(function(tr){
-      if (keywords.length === 0) {
-        tr.style.display = '';
-        return;
-      }
+      if (keywords.length === 0) { tr.style.display = ''; return; }
       var text = tr.textContent.toLowerCase();
       var match = keywords.every(function(k){ return text.indexOf(k) !== -1; });
       tr.style.display = match ? '' : 'none';
@@ -2634,8 +2351,17 @@ document.addEventListener('input', function(e) {
   }
 });
 
-// ========== Modal open helpers ==========
+// ========== 金额格式化 ==========
+function formatMoney(n) {
+  return Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+}
+function formatExchange(n) {
+  return Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+}
+
+// ========== Modal helpers ==========
 function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function openFlowModal() { openModal('flowModal'); }
 function openWriteOffModal() { openModal('writeOffModal'); }
 function openReportModal() { openModal('reportModal'); }
@@ -2656,7 +2382,7 @@ function doWriteOff() {
 function exportBillWithTemplate() {
   var tpl = document.getElementById('billTemplateSelect').value;
   var names = {template1:'模板一',template2:'模板二',custom:'自定义模板'};
-  toast('已使用「' + names[tpl] + '」导出/打印对账单', 'success');
+  toast('已使用「' + (names[tpl] || tpl) + '」导出/打印对账单', 'success');
 }
 
 // ========== 详情页 Tab ==========
@@ -2683,12 +2409,12 @@ function renderFeeTagList(containerSelector) {
   var container = document.querySelector(containerSelector);
   if (!container) return;
   container.innerHTML = feeSubjects.map(function(s){
-    return '<span class="fee-subject-tag">' + s + '<button onclick="removeFeeSubject(\'' + s + '\')">×</button></span>';
+    return '<span class="fee-subject-tag">' + s + '<button data-subject="' + s + '" onclick="removeFeeSubject(this.dataset.subject)">×</button></span>';
   }).join('');
 }
 
 function renderGlobalFeeSubjects() { renderFeeTagList('#globalFeeSubjectList .fee-subject-tags'); }
-function renderDetailFeeSubjects() { renderFeeTagList('#feeSubjectList .fee-subject-tags'); }
+function renderDetailFeeSubjects() { renderFeeTagList('#detailFeeSubjectList .fee-subject-tags'); }
 
 function addGlobalFeeSubject() {
   var input = document.getElementById('globalFeeSubjectInput');
@@ -2721,7 +2447,7 @@ function removeFeeSubject(name) {
 
 // ========== 批量操作模拟 ==========
 function getCheckedRows() {
-  var card = document.querySelector('#receivableTable').closest('.card');
+  var card = document.querySelector('#payableTable').closest('.card');
   return Array.from(card.querySelectorAll('tbody .row-check:checked')).map(function(c){ return c.closest('tr'); });
 }
 
@@ -2761,288 +2487,505 @@ function doBatchAssignRep() {
   var name = document.getElementById('batchRepName').value.trim();
   if (!name) { toast('请输入财务代表姓名', 'warning'); return; }
   document.getElementById('batchAssignRepModal').classList.remove('show');
-  rows.forEach(function(tr){ var cell = tr.children[9]; if (cell) cell.textContent = name; });
-  toast('已批量修改 ' + rows.length + ' 条账单的客户财务代表为：' + name, 'success');
+  rows.forEach(function(tr){ var cell = tr.children[10]; if (cell) cell.textContent = name; });
+  toast('已批量修改 ' + rows.length + ' 条账单的供应商财务代表为：' + name, 'success');
 }
 
-// ========== 新增应收单多步骤向导 ==========
-var arCurrentStep = 1;
-var arSelectedWaybillData = null;
-var arWaybillMockData = [
-  {date:'2026-08-01', wbNo:'YD20260801-001', extNo:'EXT-A001', customer:'华通机械制造有限公司', service:'中美空运专线-FBA'},
-  {date:'2026-08-01', wbNo:'YD20260801-002', extNo:'EXT-A002', customer:'鑫海钢结构工程有限公司', service:'中美海运专线-FBA'},
-  {date:'2026-08-02', wbNo:'YD20260802-005', extNo:'EXT-B005', customer:'远东国际物流集团', service:'中欧铁路专线'},
-  {date:'2026-08-02', wbNo:'YD20260802-008', extNo:'EXT-B008', customer:'中远海运供应链有限公司', service:'中美空运专线-直发'},
-  {date:'2026-08-03', wbNo:'YD20260803-012', extNo:'EXT-C012', customer:'振华重工股份有限公司', service:'东南亚空运专线'},
-  {date:'2026-08-03', wbNo:'YD20260803-015', extNo:'EXT-C015', customer:'深圳市华创科技有限公司', service:'中美空运专线-FBA'},
-  {date:'2026-08-04', wbNo:'YD20260804-021', extNo:'EXT-D021', customer:'广州跨境通供应链管理有限公司', service:'日韩海运专线'},
-  {date:'2026-08-04', wbNo:'YD20260804-028', extNo:'EXT-D028', customer:'北京京通联运物流有限公司', service:'中美空运专线-直发'}
-];
-
-function openCreateArModal() {
-  arCurrentStep = 1;
-  arSelectedWaybillData = null;
-  renderArWaybillTable(arWaybillMockData);
-  showArStep(1);
-  openModal('createReceivableModal');
+// Override batch button state handling to include new buttons
+function updateBatchBtns() {
+  var card = document.querySelector('#payableTable').closest('.card');
+  var checked = card.querySelectorAll('tbody .row-check:checked').length;
+  var btns = ['btnBatchConfirm','btnBatchExport','btnBatchAddFee','btnBatchEditFee','btnBatchOffset','btnBatchAssignRep','btnBatchDelete'];
+  btns.forEach(function(id){
+    var b = document.getElementById(id);
+    if (b) b.disabled = checked === 0;
+  });
+  var batchBar = document.querySelector('[data-batch-bar]');
+  if (batchBar) {
+    var countEl = batchBar.querySelector('.batch-count');
+    if (countEl) countEl.textContent = '已选择 ' + checked + ' 项';
+    batchBar.classList.toggle('show', checked > 0);
+  }
 }
 
-function renderArWaybillTable(data) {
-  var tbody = document.getElementById('arWaybillTbody');
-  if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tms-text-3);">未找到匹配的运单</td></tr>';
+// ========== 应付数据存储与增强流程 ==========
+var currentApNo = '';
+var currentUploadDept = '';
+
+var payableStore = {
+  'AP202607-0089': {
+    supplier:'中远海运集运', baseAmount:98500, paid:0, status:'confirm',
+    feeSubject:'运费', cabinet:'CNTU2026089', bill:'BL202607A012',
+    purchaseRep:'刘采购', serviceRep:'李客服', financeRep:'王财务', currency:'CNY',
+    invoiceDate:'2026-07-28', dueDate:'2026-08-28',
+    deptData:[
+      { dept:'客服', items:[{name:'运费补差', amount:1200, remark:'供应商调价', time:'2026-08-01 10:30', operator:'李客服'}] },
+      { dept:'单证', items:[{name:'报关服务费', amount:3500, remark:'', time:'2026-08-01 11:00', operator:'赵单证'}] },
+      { dept:'海外仓', items:[{name:'海外仓储费', amount:1800, remark:'3天仓储', time:'2026-08-01 09:00', operator:'Warehouse'}] }
+    ],
+    audits:[{result:'pending', time:'', operator:'', remark:'', actualAmount:0, confirmors:''}],
+    logs:[
+      {time:'2026-07-28 14:00', operator:'系统', change:'创建应付账单 AP202607-0089，基础金额 ¥98,500.000'},
+      {time:'2026-08-01 10:30', operator:'李客服', change:'上传客服数据：运费补差 ¥1,200.000'},
+      {time:'2026-08-01 11:00', operator:'赵单证', change:'上传单证数据：报关服务费 ¥3,500.000'},
+      {time:'2026-08-01 09:00', operator:'Warehouse', change:'上传海外仓数据：海外仓储费 ¥1,800.000'}
+    ]
+  },
+  'AP202607-0088': {
+    supplier:'马士基航运', baseAmount:125600, paid:0, status:'confirm',
+    feeSubject:'运费', cabinet:'CNTU2026088', bill:'BL202607B034',
+    purchaseRep:'张采购', serviceRep:'王客服', financeRep:'赵财务', currency:'CNY',
+    invoiceDate:'2026-07-27', dueDate:'2026-08-27',
+    deptData:[
+      { dept:'客服', items:[{name:'改单费', amount:500, remark:'提单信息变更', time:'2026-07-30 14:00', operator:'王客服'}] },
+      { dept:'单证', items:[{name:'产地证', amount:300, remark:'CO产地证', time:'2026-07-30 15:00', operator:'钱单证'}] },
+      { dept:'海外仓', items:[] }
+    ],
+    audits:[{result:'pending', time:'', operator:'', remark:'', actualAmount:0, confirmors:''}],
+    logs:[
+      {time:'2026-07-27 10:30', operator:'系统', change:'创建应付账单 AP202607-0088，基础金额 ¥125,600.000'},
+      {time:'2026-07-30 14:00', operator:'王客服', change:'上传客服数据：改单费 ¥500.000'},
+      {time:'2026-07-30 15:00', operator:'钱单证', change:'上传单证数据：产地证 ¥300.000'}
+    ]
+  },
+  'AP202607-0082': {
+    supplier:'DHL空运', baseAmount:45800, paid:0, status:'pending',
+    feeSubject:'运费', cabinet:'CNTU2026082', bill:'AWB202607C056',
+    purchaseRep:'陈采购', serviceRep:'刘客服', financeRep:'钱财务', currency:'CNY',
+    invoiceDate:'2026-07-22', dueDate:'2026-08-22',
+    deptData:[
+      { dept:'客服', items:[{name:'燃油附加费', amount:2500, remark:'旺季燃油调整', time:'2026-07-25 09:00', operator:'刘客服'}] },
+      { dept:'单证', items:[{name:'报关资料复核', amount:0, remark:'资料齐全', time:'2026-07-25 10:00', operator:'孙单证'}] },
+      { dept:'海外仓', items:[{name:'入库操作费', amount:800, remark:'LAX9仓', time:'2026-07-25 08:00', operator:'Warehouse'}] }
+    ],
+    audits:[{result:'correct', time:'2026-07-26 11:00', operator:'钱财务', remark:'预估与实际一致', actualAmount:49100, confirmors:''}],
+    logs:[
+      {time:'2026-07-22 16:00', operator:'系统', change:'创建应付账单 AP202607-0082，基础金额 ¥45,800.000'},
+      {time:'2026-07-25 09:00', operator:'刘客服', change:'上传客服数据：燃油附加费 ¥2,500.000'},
+      {time:'2026-07-25 10:00', operator:'孙单证', change:'上传单证数据：报关资料复核通过'},
+      {time:'2026-07-25 08:00', operator:'Warehouse', change:'上传海外仓数据：入库操作费 ¥800.000'},
+      {time:'2026-07-26 11:00', operator:'钱财务', change:'财务审核通过：预估与实际一致'}
+    ]
+  }
+};
+
+// 扩充演示数据：生成更多应付账单，使表格可纵向滚动以呈现冻结表头效果
+(function(){
+  var suppliers = ['中外运拖车','顺丰速运','锦海捷亚报关','普洛斯仓储','中远海运集运','马士基航运','达飞轮船','赫伯罗特','DHL空运','日本邮船','长荣海运','东方海外'];
+  var subjects = ['拖车费','报关费','仓储费','运费','港杂费','燃油附加费'];
+  var statuses = ['pending','partial','paid','overdue','confirm'];
+  var reps = ['刘采购','张采购','陈采购'];
+  var creps = ['李客服','王客服','刘客服'];
+  var freps = ['王财务','赵财务','钱财务'];
+  for(var i=0;i<12;i++){
+    var no = 'AP202607-' + String(76 - i*5).padStart(4,'0');
+    if(payableStore[no]) continue;
+    var amt = 15000 + (i*9300) % 110000;
+    var paid = (i%3===0) ? 0 : Math.floor(amt*0.4);
+    var day = String(28-i).padStart(2,'0');
+    payableStore[no] = {
+      supplier: suppliers[i % suppliers.length],
+      baseAmount: amt, paid: paid, status: statuses[i % statuses.length],
+      feeSubject: subjects[i % subjects.length],
+      cabinet: 'CNTU2026' + (100+i), bill: 'BL2026' + (200+i) + 'A' + String(i).padStart(2,'0'),
+      purchaseRep: reps[i%3], serviceRep: creps[i%3], financeRep: freps[i%3], currency:'CNY',
+      invoiceDate: '2026-07-' + day, dueDate: '2026-08-' + day,
+      deptData:[{dept:'客服',items:[]},{dept:'单证',items:[]},{dept:'海外仓',items:[]}],
+      audits:[{result:'pending',time:'',operator:'',remark:'',actualAmount:0,confirmors:''}],
+      logs:[{time:'2026-07-'+day+' 09:00',operator:'系统',change:'创建应付账单 '+no+'，基础金额 ¥'+amt.toLocaleString('zh-CN',{minimumFractionDigits:3})}]
+    };
+  }
+})();
+
+function fmtMoney(n){ return '¥' + Number(n || 0).toLocaleString('zh-CN', {minimumFractionDigits:3, maximumFractionDigits:3}); }
+function fmtMoney2(n){ return '¥' + Number(n || 0).toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function getAp(apNo){ return payableStore[apNo] || null; }
+
+function getDeptColor(dept){
+  return dept === '客服' ? 'tag-blue' : (dept === '单证' ? 'tag-purple' : 'tag-cyan');
+}
+
+function statusTagAp(s){
+  var map = {
+    confirm:'<span class="tag tag-gray tag-dot">待确认</span>',
+    pending:'<span class="tag tag-orange tag-dot">待付款</span>',
+    partial:'<span class="tag tag-blue tag-dot">部分付款</span>',
+    paid:'<span class="tag tag-green tag-dot">已付款</span>',
+    overdue:'<span class="tag tag-red tag-dot">已逾期</span>'
+  };
+  return map[s] || map.confirm;
+}
+
+function calcEstimatedFee(ap){
+  var base = Number(ap.baseAmount) || 0;
+  var cs = 0, doc = 0, wh = 0;
+  ap.deptData.forEach(function(d){
+    d.items.forEach(function(it){ var a = Number(it.amount)||0; if(d.dept==='客服') cs+=a; else if(d.dept==='单证') doc+=a; else if(d.dept==='海外仓') wh+=a; });
+  });
+  return { base:base, cs:cs, doc:doc, wh:wh, total:base+cs+doc+wh };
+}
+
+function getDeptAuditBadge(status){
+  if(status === 'pending') return '<span class="tag tag-orange tag-dot dept-audit-badge">待审核</span>';
+  if(status === 'diff') return '<span class="tag tag-red tag-dot dept-audit-badge">差异</span>';
+  if(status === 'normal') return '<span class="tag tag-green tag-dot dept-audit-badge">已确认</span>';
+  return '<span class="tag tag-gray dept-audit-badge">—</span>';
+}
+
+function getDeptItemByIndex(dept, idx){
+  var ap = getAp(currentApNo);
+  if(!ap || !ap.deptData) return null;
+  var deptObj = ap.deptData.find(function(d){ return d.dept === dept; });
+  if(!deptObj || !deptObj.items[idx]) return null;
+  return { deptObj: deptObj, item: deptObj.items[idx], idx: idx };
+}
+
+function findOldItemForPending(deptObj, pendingItem){
+  var bizKey = (pendingItem.waybill||'') + '|' + (pendingItem.feeType||pendingItem.name||'') + '|' + (pendingItem.customer||'');
+  for(var i=0;i<deptObj.items.length;i++){
+    var it = deptObj.items[i];
+    if(it === pendingItem) continue;
+    var itKey = (it.waybill||'') + '|' + (it.feeType||it.name||'') + '|' + (it.customer||'');
+    if(itKey !== '|' && itKey === bizKey && (it.auditStatus||'normal') !== 'pending' && (it.auditStatus||'normal') !== 'diff') return { item: it, idx: i };
+  }
+  if(pendingItem.sourceRecordId){
+    for(var i=0;i<deptObj.items.length;i++){
+      var it = deptObj.items[i];
+      if(it === pendingItem) continue;
+      if(it.sourceRecordId === pendingItem.sourceRecordId) return { item: it, idx: i };
+    }
+  }
+  return null;
+}
+
+var currentAuditDept = '';
+var currentAuditIdx = -1;
+
+function openDeptItemAudit(dept, idx){
+  var found = getDeptItemByIndex(dept, idx);
+  if(!found) return;
+  var pendingItem = found.item;
+  var oldItem = null;
+  if((pendingItem.auditStatus||'normal') === 'pending' || (pendingItem.auditStatus||'normal') === 'diff'){
+    oldItem = findOldItemForPending(found.deptObj, pendingItem);
+  }
+  currentAuditDept = dept;
+  currentAuditIdx = idx;
+  document.getElementById('deptAuditDept').textContent = dept;
+  document.getElementById('deptAuditName').textContent = pendingItem.name;
+  document.getElementById('deptAuditNewAmount').textContent = fmtMoney(pendingItem.amount);
+  document.getElementById('deptAuditOperator').textContent = pendingItem.operator || '—';
+  document.getElementById('deptAuditTime').textContent = pendingItem.time || '—';
+  document.getElementById('deptAuditOldAmount').textContent = oldItem ? fmtMoney(oldItem.item.amount) : '（新记录）';
+  document.getElementById('deptAuditFinalAmount').value = oldItem ? oldItem.item.amount : pendingItem.amount;
+  document.getElementById('deptAuditRemark').value = pendingItem.remark || '';
+  document.querySelector('input[name="deptAuditAction"][value="adopt"]').checked = true;
+  document.getElementById('deptAuditAmountGroup').style.display = 'none';
+  openModal('deptItemAuditModal');
+}
+
+function toggleDeptAuditAmountGroup(){
+  var val = document.querySelector('input[name="deptAuditAction"]:checked').value;
+  document.getElementById('deptAuditAmountGroup').style.display = (val === 'offline') ? 'block' : 'none';
+}
+
+document.addEventListener('change', function(e){
+  if(e.target.name === 'deptAuditAction') toggleDeptAuditAmountGroup();
+});
+
+function submitDeptItemAudit(){
+  var found = getDeptItemByIndex(currentAuditDept, currentAuditIdx);
+  if(!found){ closeModal('deptItemAuditModal'); return; }
+  var action = document.querySelector('input[name="deptAuditAction"]:checked').value;
+  var remark = document.getElementById('deptAuditRemark').value.trim();
+  var ap = getAp(currentApNo);
+  var deptObj = found.deptObj;
+  var pendingItem = found.item;
+  var old = findOldItemForPending(deptObj, pendingItem);
+  var time = new Date().toLocaleString('zh-CN',{hour12:false});
+  var operator = '王财务';
+  if(action === 'adopt'){
+    var oldAmount = old ? old.item.amount : 0;
+    if(old) old.item.amount = pendingItem.amount;
+    deptObj.items.splice(found.idx, 1);
+    ap.logs.unshift({time:time, operator:operator, change:currentAuditDept + '数据差异审核：采用新金额 ' + fmtMoney(pendingItem.amount) + '，覆盖原金额 ' + fmtMoney(oldAmount) + (remark ? '。备注：' + remark : '')});
+  } else if(action === 'keep'){
+    var oldAmount = old ? old.item.amount : 0;
+    deptObj.items.splice(found.idx, 1);
+    ap.logs.unshift({time:time, operator:operator, change:currentAuditDept + '数据差异审核：保留原金额 ' + fmtMoney(oldAmount) + '，忽略新上报 ' + fmtMoney(pendingItem.amount) + (remark ? '。备注：' + remark : '')});
+  } else if(action === 'offline'){
+    var finalAmount = parseFloat(document.getElementById('deptAuditFinalAmount').value) || 0;
+    if(old) old.item.amount = finalAmount;
+    deptObj.items.splice(found.idx, 1);
+    ap.logs.unshift({time:time, operator:operator, change:currentAuditDept + '数据差异审核：线下协商金额为 ' + fmtMoney(finalAmount) + (remark ? '。备注：' + remark : '')});
+  }
+  closeModal('deptItemAuditModal');
+  renderDeptData();
+  renderEstimatedFeePanel();
+  renderFinanceAuditPanel();
+  renderOperationLogs();
+  toast('部门数据差异审核已提交','success');
+}
+
+function renderDeptData(){
+  var container = document.getElementById('deptDataSection');
+  if(!container) return;
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  // 使用 DeptSync 合并同步数据：重复覆盖，差异标记待审核
+  if(window.DeptSync){
+    if(!ap.deptData) ap.deptData = [{dept:'客服',items:[]},{dept:'单证',items:[]},{dept:'海外仓',items:[]}];
+    ap.deptData = DeptSync.getMergedDeptData(ap.deptData, ['reported','confirmed']);
+  }
+  var html = '<div class="dept-cards">';
+  ap.deptData.forEach(function(d){
+    html += '<div class="dept-card">';
+    html += '<div class="dept-card-header"><span class="tag ' + getDeptColor(d.dept) + ' tag-dot">' + d.dept + '</span>';
+    html += '<button class="btn btn-sm btn-primary" data-dept="' + d.dept + '" onclick="openDetailUpload(this.dataset.dept)">＋ 录入数据</button></div>';
+    if(d.items.length === 0){
+      html += '<div class="dept-empty">暂无 ' + d.dept + ' 数据，请录入</div>';
+    } else {
+      html += '<table class="data-table"><thead><tr><th>费用项目</th><th class="text-right">金额</th><th>时间</th><th>操作人</th><th>状态</th><th class="col-action">操作</th></tr></thead><tbody>';
+      d.items.forEach(function(it, idx){
+        var status = it.auditStatus || 'normal';
+        var rowClass = status === 'pending' ? 'dept-row-pending' : (status === 'diff' ? 'dept-row-diff' : (status === 'normal' ? 'dept-row-normal' : ''));
+        var badge = getDeptAuditBadge(status);
+        var action = '';
+        if(status === 'pending' || status === 'diff'){
+          action = '<button class="btn btn-sm btn-primary" onclick="openDeptItemAudit(\'' + d.dept + '\',' + idx + ')">审核</button>';
+        } else {
+          action = '<span style="color:var(--tms-text-3);font-size:12px;">—</span>';
+        }
+        html += '<tr class="' + rowClass + '"><td>' + it.name + '</td><td class="text-right" style="font-weight:600;">' + fmtMoney(it.amount) + '</td><td>' + it.time + '</td><td>' + it.operator + '</td><td>' + badge + '</td><td class="col-action dept-item-actions">' + action + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function openDetail(apNo){
+  currentApNo = apNo;
+  var ap = getAp(apNo);
+  if(!ap) ap = { supplier:'', baseAmount:0, paid:0, status:'confirm', feeSubject:'运费', cabinet:'', bill:'', purchaseRep:'', serviceRep:'', financeRep:'', currency:'CNY', invoiceDate:'', dueDate:'', deptData:[{dept:'客服',items:[]},{dept:'单证',items:[]},{dept:'海外仓',items:[]}], audits:[{result:'pending', actualAmount:0, remark:'', confirmors:''}], logs:[] };
+  document.getElementById('detailApNo').textContent = apNo;
+  document.getElementById('dApNo').textContent = apNo;
+  renderDeptData();
+  renderEstimatedFeePanel();
+  renderFinanceAuditPanel();
+  renderOperationLogs();
+  var integrateResult = document.getElementById('deptIntegrateResult');
+  if(integrateResult) integrateResult.style.display = 'none';
+  var firstTab = document.querySelector('#detailTabs .tab-item[data-detail-tab="dept"]');
+  if(firstTab) switchDetailTab(firstTab);
+  openModal('payableDetail');
+}
+
+function openDetailUpload(dept){
+  currentUploadDept = dept;
+  document.getElementById('detailUploadTitle').textContent = dept + '录入应付数据';
+  var tag = document.getElementById('detailUploadDeptTag');
+  tag.textContent = dept;
+  tag.className = 'tag tag-dot ' + getDeptColor(dept);
+  document.getElementById('detailUploadItem').value = '';
+  document.getElementById('detailUploadAmount').value = '';
+  document.getElementById('detailUploadRemark').value = '';
+  openModal('detailDeptUploadModal');
+}
+
+function confirmDetailUpload(){
+  var item = document.getElementById('detailUploadItem').value.trim();
+  var amount = parseFloat(document.getElementById('detailUploadAmount').value) || 0;
+  var remark = document.getElementById('detailUploadRemark').value.trim();
+  if(!item){ toast('请输入费用项目', 'warning'); return; }
+  if(amount < 0){ toast('请输入有效金额', 'warning'); return; }
+
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var now = new Date();
+  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  var deptObj = ap.deptData.find(function(d){ return d.dept === currentUploadDept; });
+  if(!deptObj){ deptObj = {dept:currentUploadDept, items:[]}; ap.deptData.push(deptObj); }
+  var operator = currentUploadDept === '客服' ? '李客服' : (currentUploadDept === '单证' ? '赵单证' : 'Warehouse');
+  deptObj.items.push({ name:item, amount:amount, remark:remark, time:timeStr, operator:operator });
+  ap.logs.unshift({time:timeStr, operator:operator, change:'上传' + currentUploadDept + '数据：' + item + ' ' + fmtMoney(amount) + (remark ? '，备注：' + remark : '')});
+  closeModal('detailDeptUploadModal');
+  renderDeptData();
+  renderEstimatedFeePanel();
+  renderFinanceAuditPanel();
+  renderOperationLogs();
+  toast(currentUploadDept + '数据上传成功：' + item + ' ' + fmtMoney(amount), 'success');
+  openEstimatedFeePopup();
+}
+
+function integrateDeptData(){
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var est = calcEstimatedFee(ap);
+  document.getElementById('integratedTotal').textContent = fmtMoney(est.total);
+  document.getElementById('deptIntegrateResult').style.display = 'block';
+  toast('已整合全部部门数据，合计应付 ' + fmtMoney(est.total), 'success');
+}
+
+function renderEstimatedFeePanel(){
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var est = calcEstimatedFee(ap);
+  document.getElementById('estBaseAmount').textContent = fmtMoney(est.base);
+  document.getElementById('estCsAmount').textContent = fmtMoney(est.cs);
+  document.getElementById('estDocAmount').textContent = fmtMoney(est.doc);
+  document.getElementById('estWhAmount').textContent = fmtMoney(est.wh);
+  document.getElementById('estTotalAmount').textContent = fmtMoney(est.total);
+  document.getElementById('auditEstimatedAmount').textContent = fmtMoney(est.total);
+}
+
+function openEstimatedFeePopup(){
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var est = calcEstimatedFee(ap);
+  document.getElementById('popupEstBase').textContent = fmtMoney(est.base);
+  document.getElementById('popupEstCs').textContent = fmtMoney(est.cs);
+  document.getElementById('popupEstDoc').textContent = fmtMoney(est.doc);
+  document.getElementById('popupEstWh').textContent = fmtMoney(est.wh);
+  document.getElementById('popupEstTotal').textContent = fmtMoney(est.total);
+  openModal('estimatedFeeModal');
+}
+
+function goToFinanceAudit(){
+  closeModal('estimatedFeeModal');
+  var tab = document.querySelector('#detailTabs .tab-item[data-detail-tab="financeAudit"]');
+  if(tab) switchDetailTab(tab);
+}
+
+function toggleAuditExtra(){
+  var val = document.querySelector('input[name="auditResult"]:checked').value;
+  document.getElementById('auditDifferenceExtra').style.display = (val === 'difference') ? 'block' : 'none';
+}
+
+function renderFinanceAuditPanel(){
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var est = calcEstimatedFee(ap);
+  document.getElementById('auditEstimatedAmount').textContent = fmtMoney(est.total);
+  var last = ap.audits[ap.audits.length - 1];
+  var panel = document.getElementById('auditResultPanel');
+  if(!panel) return;
+  if(last && last.result && last.result !== 'pending'){
+    panel.style.display = 'block';
+    var text = last.result === 'pass' ? '已通过：预估与实际一致' : '已确认差额：' + fmtMoney2(Math.abs((last.actualAmount || 0) - est.total)) + '，' + (last.remark || '');
+    panel.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:#389e0d;font-weight:600;"><span>✓</span><span>' + text + '</span></div>';
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function submitFinancialAudit(){
+  var ap = getAp(currentApNo);
+  if(!ap){ toast('未找到当前账单', 'error'); return; }
+  var est = calcEstimatedFee(ap);
+  var actual = parseFloat(document.getElementById('auditActualAmount').value);
+  if(isNaN(actual) || actual < 0){ toast('请输入实际费用金额', 'warning'); return; }
+  var val = document.querySelector('input[name="auditResult"]:checked').value;
+  if(val === 'difference'){
+    var remark = document.getElementById('auditDifferenceRemark').value.trim();
+    var confirmors = document.getElementById('auditDifferenceConfirmors').value.trim();
+    if(!remark){ toast('请填写差额说明', 'warning'); return; }
+    if(!confirmors){ toast('请填写线下确认方', 'warning'); return; }
+    openDifferencePopup(est.total, actual, remark, confirmors);
     return;
   }
-  tbody.innerHTML = data.map(function(item, idx) {
-    return '<tr onclick="selectArWaybill(' + idx + ')" style="cursor:pointer;" data-idx="' + idx + '">' +
-      '<td style="text-align:center;"><input type="radio" name="arWbRadio" value="' + idx + '" onclick="event.stopPropagation();selectArWaybill(' + idx + ')"></td>' +
-      '<td>' + item.date + '</td>' +
-      '<td class="mono">' + item.wbNo + '</td>' +
-      '<td class="mono">' + item.extNo + '</td>' +
-      '<td>' + item.customer + '</td>' +
-      '<td>' + item.service + '</td>' +
-      '</tr>';
+  var time = new Date().toLocaleString('zh-CN',{hour12:false});
+  ap.audits.push({result:'pass', time:time, operator:'王财务', actualAmount:actual, remark:'预估与实际一致', confirmors:''});
+  ap.logs.unshift({time:time, operator:'王财务', change:'财务审核通过：预估应付 ' + fmtMoney(est.total) + ' 与实际费用 ' + fmtMoney(actual) + ' 一致'});
+  renderFinanceAuditPanel();
+  renderOperationLogs();
+  toast('财务审核通过：预估与实际一致', 'success');
+  document.getElementById('auditActualAmount').value = '';
+}
+
+function openDifferencePopup(est, actual, remark, confirmors){
+  document.getElementById('diffEstAmount').textContent = fmtMoney(est);
+  document.getElementById('diffActualAmount').textContent = fmtMoney(actual);
+  var variance = actual - est;
+  var varianceEl = document.getElementById('diffVariance');
+  varianceEl.textContent = (variance >= 0 ? '+' : '-') + fmtMoney(Math.abs(variance));
+  varianceEl.style.color = 'var(--tms-error)';
+  document.getElementById('diffOfflineNote').value = remark || '';
+  document.getElementById('diffConfirmors').value = confirmors || '';
+  openModal('differenceConfirmModal');
+}
+
+function confirmDifferenceOffline(){
+  var note = document.getElementById('diffOfflineNote').value.trim();
+  var confirmors = document.getElementById('diffConfirmors').value.trim();
+  if(!note){ toast('请填写线下确认说明', 'warning'); return; }
+  if(!confirmors){ toast('请填写确认人', 'warning'); return; }
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var est = calcEstimatedFee(ap);
+  var actual = parseFloat(document.getElementById('auditActualAmount').value) || 0;
+  var variance = actual - est;
+  var time = new Date().toLocaleString('zh-CN',{hour12:false});
+  ap.audits.push({result:'difference', time:time, operator:'王财务', actualAmount:actual, remark:note, confirmors:confirmors});
+  ap.logs.unshift({time:time, operator:'王财务', change:'差额确认：预估 ' + fmtMoney(est) + ' 与实际 ' + fmtMoney(actual) + ' 差额 ' + (variance >= 0 ? '+' : '-') + fmtMoney(Math.abs(variance)) + '，确认方：' + confirmors});
+  closeModal('differenceConfirmModal');
+  renderFinanceAuditPanel();
+  renderOperationLogs();
+  toast('差额已确认，需线下继续跟进', 'success');
+  document.getElementById('auditActualAmount').value = '';
+  document.getElementById('auditDifferenceRemark').value = '';
+  document.getElementById('auditDifferenceConfirmors').value = '';
+}
+
+function renderOperationLogs(){
+  var ap = getAp(currentApNo);
+  var container = document.querySelector('#detailTab-log .log-list');
+  if(!container || !ap) return;
+  if(!ap.logs || ap.logs.length === 0){
+    container.innerHTML = '<div class="text-muted" style="padding:12px 0;">暂无操作日志</div>';
+    return;
+  }
+  container.innerHTML = ap.logs.map(function(l){
+    return '<div class="log-item"><div class="log-meta">' + l.time + '<br>' + l.operator + '</div><div class="log-change">' + l.change + '</div></div>';
   }).join('');
 }
 
-function filterArWaybills() {
-  var keyword = (document.getElementById('arWaybillSearch').value || '').toLowerCase();
-  var dateVal = document.getElementById('arWaybillDate').value;
-  var filtered = arWaybillMockData.filter(function(item) {
-    var matchKeyword = !keyword || item.wbNo.toLowerCase().indexOf(keyword) > -1 || item.customer.toLowerCase().indexOf(keyword) > -1;
-    var matchDate = !dateVal || item.date === dateVal;
-    return matchKeyword && matchDate;
-  });
-  renderArWaybillTable(filtered);
-  arSelectedWaybillData = null;
-  document.getElementById('arSelectedWaybill').style.display = 'none';
+function renderTable(){
+  var tbody = document.getElementById('payableTbody');
+  if(!tbody) return;
+  var rows = Object.keys(payableStore).map(function(no){
+    var ap = payableStore[no];
+    var unpaid = ap.baseAmount - ap.paid;
+    return '<tr data-status="' + ap.status + '" data-ap-no="' + no + '" data-supplier="' + ap.supplier + '" data-ap-amount="' + ap.baseAmount + '" data-paid-amount="' + ap.paid + '" data-unpaid-amount="' + unpaid + '" data-invoice-date="' + ap.invoiceDate + '" data-due-date="' + ap.dueDate + '">'
+      + '<td><input type="checkbox" class="row-check"></td>'
+      + '<td class="col-move"><div class="row-move-btns"><button class="btn-icon btn-sm" title="上移" onclick="moveRow(this,-1)">▲</button><button class="btn-icon btn-sm" title="下移" onclick="moveRow(this,1)">▼</button></div></td>'
+      + '<td><span class="mono link" data-apno="' + no + '" onclick="openDetail(this.dataset.apno)">' + no + '</span></td>'
+      + '<td>' + ap.supplier + '</td>'
+      + '<td><span class="tag tag-blue">' + ap.feeSubject + '</span></td>'
+      + '<td><span class="mono">' + ap.cabinet + '</span></td>'
+      + '<td><span class="mono text-sm text-muted">' + ap.bill + '</span></td>'
+      + '<td>' + ap.purchaseRep + '</td>'
+      + '<td>' + ap.serviceRep + '</td>'
+      + '<td>' + ap.financeRep + '</td>'
+      + '<td>' + ap.currency + '</td>'
+      + '<td><span class="money-cell">' + fmtMoney(ap.baseAmount) + '</span></td>'
+      + '<td><span style="color:var(--tms-success);">' + fmtMoney(ap.paid) + '</span></td>'
+      + '<td><span style="color:var(--tms-error);font-weight:600;">' + fmtMoney(unpaid) + '</span></td>'
+      + '<td><span class="text-muted font-mono text-sm">' + ap.invoiceDate + '</span></td>'
+      + '<td><span class="text-muted font-mono text-sm">' + ap.dueDate + '</span></td>'
+      + '<td>' + statusTagAp(ap.status) + '</td>'
+      + '<td class="col-action"><div class="action-links"><button class="btn-link" data-apno="' + no + '" onclick="openDetail(this.dataset.apno)">查看</button><span class="divider-v"></span><button class="btn-link" onclick="toast(\'对账功能开发中\',\'info\')">对账</button><span class="divider-v"></span><button class="btn-link danger" onclick="deleteItem(this)">删除</button></div></td>'
+      + '</tr>';
+  }).join('');
+  tbody.innerHTML = rows;
 }
 
-function selectArWaybill(idx) {
-  var tbody = document.getElementById('arWaybillTbody');
-  var rows = tbody.querySelectorAll('tr');
-  var targetIdx = null;
-  tbody.querySelectorAll('tr').forEach(function(tr) {
-    tr.classList.remove('selected');
-    var radio = tr.querySelector('input[type=radio]');
-    if (radio) radio.checked = false;
-  });
-  var row = tbody.querySelector('tr[data-idx="' + idx + '"]');
-  if (row) {
-    row.classList.add('selected');
-    var radio = row.querySelector('input[type=radio]');
-    if (radio) radio.checked = true;
-    targetIdx = parseInt(row.getAttribute('data-idx'));
-  }
-  if (targetIdx !== null) {
-    arSelectedWaybillData = arWaybillMockData[targetIdx];
-    document.getElementById('arSelWbNo').textContent = arSelectedWaybillData.wbNo;
-    document.getElementById('arSelWbDate').textContent = arSelectedWaybillData.date;
-    document.getElementById('arSelExtNo').textContent = arSelectedWaybillData.extNo;
-    document.getElementById('arSelectedWaybill').style.display = 'block';
-  }
-}
-
-function showArStep(step) {
-  arCurrentStep = step;
-  for (var i = 1; i <= 5; i++) {
-    var panel = document.getElementById('arStep' + i);
-    if (panel) panel.style.display = (i === step) ? 'block' : 'none';
-  }
-  var steps = document.querySelectorAll('#createArSteps .step');
-  steps.forEach(function(s, idx) {
-    s.classList.remove('active', 'done');
-    var sNum = idx + 1;
-    if (sNum < step) s.classList.add('done');
-    else if (sNum === step) s.classList.add('active');
-  });
-  var prevBtn = document.getElementById('arPrevBtn');
-  var nextBtn = document.getElementById('arNextBtn');
-  var submitBtn = document.getElementById('arSubmitBtn');
-  prevBtn.style.display = (step > 1) ? 'inline-flex' : 'none';
-  nextBtn.style.display = (step < 5) ? 'inline-flex' : 'none';
-  submitBtn.style.display = (step === 5) ? 'inline-flex' : 'none';
-  if (step === 2) fillArStep2Header();
-  if (step === 5) fillArStep5Preview();
-}
-
-function fillArStep2Header() {
-  if (arSelectedWaybillData) {
-    document.getElementById('arStep2WbNo').textContent = arSelectedWaybillData.wbNo;
-    document.getElementById('arStep2Date').textContent = arSelectedWaybillData.date;
-    document.getElementById('arStep2ExtNo').textContent = arSelectedWaybillData.extNo;
-  }
-}
-
-function fillArStep5Preview() {
-  if (arSelectedWaybillData) {
-    document.getElementById('arPreviewWbNo').textContent = arSelectedWaybillData.wbNo;
-  }
-  document.getElementById('arPreviewCustomer').textContent = document.getElementById('arCustomerName').value || '-';
-  document.getElementById('arPreviewChannel').textContent = document.getElementById('arProductChannel').value || '-';
-  document.getElementById('arPreviewPieces').textContent = document.getElementById('arPieces').value || '-';
-  document.getElementById('arPreviewWeight').textContent = (document.getElementById('arChargeWeight').value || '-') + ' kg';
-  document.getElementById('arPreviewWhCode').textContent = document.getElementById('arWarehouseCode').value || '-';
-  calcArTotal();
-}
-
-function validateArStep(step) {
-  if (step === 1) {
-    if (!arSelectedWaybillData) { toast('请先选择一条运单', 'warning'); return false; }
-  } else if (step === 2) {
-    if (!document.getElementById('arCustomerName').value.trim()) { toast('请输入客户名称', 'warning'); return false; }
-    if (!document.getElementById('arMainProduct').value.trim()) { toast('请输入主品名', 'warning'); return false; }
-    if (!document.getElementById('arCargoStation').value) { toast('请选择货站', 'warning'); return false; }
-    if (!document.getElementById('arProductChannel').value) { toast('请选择产品渠道', 'warning'); return false; }
-  } else if (step === 3) {
-    if (!document.getElementById('arZipCode').value.trim()) { toast('请输入邮编', 'warning'); return false; }
-    if (!document.getElementById('arPieces').value || parseInt(document.getElementById('arPieces').value) <= 0) { toast('请输入有效件数', 'warning'); return false; }
-    if (!document.getElementById('arChargeWeight').value || parseFloat(document.getElementById('arChargeWeight').value) <= 0) { toast('请输入有效计费重', 'warning'); return false; }
-    if (!document.getElementById('arBubbleRatio').value) { toast('请选择泡比', 'warning'); return false; }
-    if (!document.getElementById('arWarehouseCode').value.trim()) { toast('请输入仓库代码', 'warning'); return false; }
-  } else if (step === 4) {
-    var surcharge = parseFloat(document.getElementById('arSurcharge').value) || 0;
-    var customs = parseFloat(document.getElementById('arCustomsFee').value) || 0;
-    if (surcharge <= 0 && customs <= 0) { toast('请至少填写一项费用（产品附加费或报关费）', 'warning'); return false; }
-  }
-  return true;
-}
-
-function nextArStep() {
-  if (!validateArStep(arCurrentStep)) return;
-  if (arCurrentStep < 5) showArStep(arCurrentStep + 1);
-}
-
-function prevArStep() {
-  if (arCurrentStep > 1) showArStep(arCurrentStep - 1);
-}
-
-function jumpArStep(target) {
-  if (target <= arCurrentStep) { showArStep(target); return; }
-  for (var i = arCurrentStep; i < target; i++) {
-    if (!validateArStep(i)) return;
-  }
-  showArStep(target);
-}
-
-function calcArWeight() {
-  // placeholder for weight calculation if needed
-}
-
-function calcArTotal() {
-  var surcharge = parseFloat(document.getElementById('arSurcharge').value) || 0;
-  var customs = parseFloat(document.getElementById('arCustomsFee').value) || 0;
-  var discount = parseFloat(document.getElementById('arFreightDiscount').value) || 0;
-  var otherTotal = 0;
-  document.querySelectorAll('#arFeeTbody .ar-fee-amount').forEach(function(inp) {
-    otherTotal += parseFloat(inp.value) || 0;
-  });
-  var subtotal = surcharge + customs;
-  var total = subtotal + otherTotal - discount;
-  document.getElementById('arWarehouseSubtotal').textContent = '¥' + subtotal.toFixed(2);
-  document.getElementById('arSumSurcharge').textContent = '¥' + surcharge.toFixed(2);
-  document.getElementById('arSumCustoms').textContent = '¥' + customs.toFixed(2);
-  document.getElementById('arSumOther').textContent = '¥' + otherTotal.toFixed(2);
-  document.getElementById('arSumDiscount').textContent = '- ¥' + discount.toFixed(2);
-  document.getElementById('arSumTotal').textContent = '¥' + Math.max(0, total).toFixed(2);
-}
-
-var arFeeRowIdx = 0;
-function addArFeeRow() {
-  arFeeRowIdx++;
-  var tr = document.createElement('tr');
-  tr.id = 'arFeeRow_' + arFeeRowIdx;
-  tr.innerHTML =
-    '<td><input type="text" class="form-control ar-fee-name" placeholder="如：操作费、贴标费" style="height:32px;font-size:13px;"></td>' +
-    '<td><input type="number" class="form-control ar-fee-amount" placeholder="0.00" step="0.01" min="0" oninput="calcArTotal()" style="height:32px;font-size:13px;"></td>' +
-    '<td><input type="text" class="form-control ar-fee-remark" placeholder="可选" style="height:32px;font-size:13px;"></td>' +
-    '<td style="text-align:center;"><button class="btn-link" onclick="removeArFeeRow(' + arFeeRowIdx + ')" style="color:var(--tms-error);">删除</button></td>';
-  document.getElementById('arFeeTbody').appendChild(tr);
-  document.getElementById('arFeeEmpty').style.display = 'none';
-  calcArTotal();
-}
-
-function removeArFeeRow(id) {
-  var row = document.getElementById('arFeeRow_' + id);
-  if (row) row.remove();
-  if (document.getElementById('arFeeTbody').children.length === 0) {
-    document.getElementById('arFeeEmpty').style.display = 'block';
-  }
-  calcArTotal();
-}
-
-function submitCreateAr() {
-  var total = document.getElementById('arSumTotal').textContent;
-  confirmDialog('确认创建应收单', '应收总金额：<b style="font-size:16px;color:var(--tms-primary);">' + total + '</b><br>确认创建此应收单吗？', function() {
-    document.getElementById('createReceivableModal').classList.remove('show');
-    toast('应收单创建成功！运单号 ' + (arSelectedWaybillData ? arSelectedWaybillData.wbNo : '') + '，应收金额 ' + total, 'success');
-  }, '确认创建', 'primary');
-}
+document.addEventListener('DOMContentLoaded', function(){
+  renderTable();
+});
 </script>
-
-    <style>
-      .no-scrollbar::-webkit-scrollbar { display: none; }
-      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      [data-icon] {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-position: center;
-        mask-position: center;
-        background-color: currentColor;
-      }
-      .row-removing { animation: rowRemove .4s forwards; }
-      @keyframes rowRemove { to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; } }
-      .row-fade-in { animation: rowFadeIn .3s ease; }
-      @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .date-range { display: flex; align-items: center; gap: 6px; }
-      .date-range .form-control { flex: 1; min-width: 0; }
-      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
-
-      .dept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-      .dept-card { border:1px solid var(--tms-border-2); border-radius: var(--tms-radius); padding: 12px; background: #fff; }
-      .dept-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-      .dept-empty { font-size:13px; color:var(--tms-text-3); padding:12px 0; text-align:center; }
-      .dept-card .data-table { font-size:12.5px; }
-      .dept-card .data-table th { padding: 6px 8px; }
-      .dept-card .data-table td { padding: 6px 8px; }
-      .text-right { text-align:right; }
-
-      /* 新增：排序列 */
-      .col-move { width: 56px; text-align: center; white-space: nowrap; }
-      .row-move-btns { display: inline-flex; gap: 2px; }
-      .row-move-btns .btn-icon { width: 24px; height: 24px; font-size: 10px; color: var(--tms-text-3); border: none; background: transparent; }
-      .row-move-btns .btn-icon:hover { background: var(--tms-primary-bg); color: var(--tms-primary); }
-
-      /* 新增：金额单元格 */
-      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
-
-      /* 新增：费用科目标签 */
-      .fee-subject-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-      .fee-subject-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: var(--tms-primary-light); color: var(--tms-primary); border-radius: 4px; font-size: 13px; }
-      .fee-subject-tag button { border: none; background: transparent; color: var(--tms-primary); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 0 0 4px; }
-      .fee-subject-tag button:hover { color: var(--tms-error); }
-
-      /* 新增：详情页 Tab */
-      .detail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--tms-border); background: #fff; }
-      .detail-tabs .tab-item { padding: 12px 16px; font-size: 14px; color: var(--tms-text-2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; font-weight: 500; margin-bottom: -1px; }
-      .detail-tabs .tab-item:hover { color: var(--tms-primary); }
-      .detail-tabs .tab-item.active { color: var(--tms-primary); border-bottom-color: var(--tms-primary); }
-      .detail-tab-panel.hidden { display: none !important; }
-
-      /* 表头 sticky 层级增强 */
-      .data-table thead th { position: sticky; top: 0; z-index: 2; }
-      .data-table thead th.col-check,
-      .data-table thead th.col-move { z-index: 3; }
-
-      /* 模板选择下拉在 footer 中样式 */
-      .modal-footer .form-control { height: 34px; min-width: 120px; }
-
-    </style>
 <script>
 // Fallback: if lucide doesn't load, show emoji/text placeholders
 window.addEventListener('DOMContentLoaded', function(){
@@ -3065,5 +3008,99 @@ window.addEventListener('DOMContentLoaded', function(){
 </script>
 
     <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <style>
+      .row-removing { animation: rowRemove .4s forwards; }
+      @keyframes rowRemove { to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; } }
+      .row-fade-in { animation: rowFadeIn .3s ease; }
+      @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .date-range { display: flex; align-items: center; gap: 6px; }
+      .date-range .form-control { flex: 1; min-width: 0; }
+      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
+      .col-move { width: 56px; text-align: center; white-space: nowrap; }
+      .row-move-btns { display: inline-flex; gap: 2px; }
+      .row-move-btns .btn-icon { width: 24px; height: 24px; font-size: 10px; color: var(--tms-text-3); border: none; background: transparent; }
+      .row-move-btns .btn-icon:hover { background: var(--tms-primary-bg); color: var(--tms-primary); }
+      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
+      .fee-subject-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+      .fee-subject-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: var(--tms-primary-light); color: var(--tms-primary); border-radius: 4px; font-size: 13px; }
+      .fee-subject-tag button { border: none; background: transparent; color: var(--tms-primary); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 0 0 4px; }
+      .fee-subject-tag button:hover { color: var(--tms-error); }
+      .detail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--tms-border); background: #fff; }
+      .detail-tabs .tab-item { padding: 12px 16px; font-size: 14px; color: var(--tms-text-2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; font-weight: 500; margin-bottom: -1px; }
+      .detail-tabs .tab-item:hover { color: var(--tms-primary); }
+      .detail-tabs .tab-item.active { color: var(--tms-primary); border-bottom-color: var(--tms-primary); }
+      .detail-tab-panel.hidden { display: none !important; }
+      .data-table thead th { position: sticky; top: 0; z-index: 2; }
+      .data-table thead th.col-check,
+      .data-table thead th.col-move { z-index: 3; }
+      .modal-footer .form-control { height: 34px; min-width: 120px; }
+      #detailDeptUploadModal { z-index: 1001; }
+      .dept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .dept-card { border:1px solid var(--tms-border-2); border-radius: var(--tms-radius); padding: 12px; background: #fff; }
+      .dept-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+      .dept-empty { font-size:13px; color:var(--tms-text-3); padding:12px 0; text-align:center; }
+      .dept-card .data-table { font-size:12.5px; }
+      .dept-card .data-table th, .dept-card .data-table td { padding: 6px 8px; }
+      .audit-radio-group { display:flex; flex-wrap:wrap; gap:12px; }
+      .audit-radio { display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border:1px solid var(--tms-border); border-radius:var(--tms-radius); cursor:pointer; font-size:13.5px; background:#fff; }
+      .audit-radio:hover { border-color:var(--tms-primary); color:var(--tms-primary); }
+      .audit-radio input { margin:0; }
+      .audit-extra { background:var(--tms-bg-hover); border-radius:var(--tms-radius); padding:14px; margin-top:12px; }
+      .audit-result-panel { margin-top:14px; padding:12px 14px; background:var(--tms-success-light); border:1px solid rgba(82,196,26,.3); border-radius:var(--tms-radius); }
+      .log-list { display:flex; flex-direction:column; gap:12px; }
+      .log-item { display:flex; gap:14px; padding:12px; border:1px solid var(--tms-border-2); border-radius:var(--tms-radius); background:#fff; }
+      .log-meta { flex-shrink:0; width:120px; font-size:12px; color:var(--tms-text-3); line-height:1.5; }
+      .log-change { flex:1; font-size:13.5px; color:var(--tms-text-1); line-height:1.5; }
+      #estimatedFeeModal, #differenceConfirmModal, #deptItemAuditModal { z-index: 1001; }
+      .dept-row-pending { background: #fffbe6 !important; }
+      .dept-row-diff { background: #fff1f0 !important; }
+      .dept-row-normal { background: #f6ffed !important; }
+      .dept-audit-badge { margin-left: 6px; }
+      .dept-item-actions { display: flex; gap: 6px; justify-content: flex-end; }
+      .dept-audit-summary { background: var(--tms-bg-hover); border-radius: var(--tms-radius); padding: 12px; margin-bottom: 14px; }
+      .dept-audit-summary .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px; }
+      .dept-audit-summary .row:last-child { margin-bottom: 0; }
+      .dept-audit-summary .old { color: var(--tms-text-2); }
+      .dept-audit-summary .new { color: var(--tms-error); font-weight: 600; }
+      .audit-option-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+      .audit-option { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--tms-border); border-radius: var(--tms-radius); cursor: pointer; font-size: 13.5px; }
+      .audit-option:hover { border-color: var(--tms-primary); }
+      .audit-option input { margin: 0; }
+    </style>
+<script src="../assets/js/dept-sync.js"></script>
+<script>
+(function(){
+  if(!window.DeptSync) return;
+
+  // 页面加载时：若 localStorage 中没有任何部门数据，预置示例同步数据
+  var raw = localStorage.getItem(DeptSync.STORAGE_KEY);
+  var hasData = false;
+  if(raw){
+    try{
+      var parsed = JSON.parse(raw);
+      hasData = (Array.isArray(parsed.cs) && parsed.cs.length > 0) ||
+                (Array.isArray(parsed.document) && parsed.document.length > 0) ||
+                (Array.isArray(parsed.warehouse) && parsed.warehouse.length > 0);
+    }catch(e){}
+  }
+  if(!hasData){
+    DeptSync.addRecord('cs', { feeType:'freightDiff', feeTypeName:'运费补差', amount:1200, remark:'供应商调价', operator:'李客服', status:'reported', createTime:'2026-08-01 10:30', waybill:'WY-DEMO-001', customer:'DHL空运' });
+    DeptSync.addRecord('cs', { feeType:'freightDiff', feeTypeName:'运费补差', amount:1450, remark:'客服二次上报-运费补差调整', operator:'李客服', status:'reported', createTime:'2026-08-01 14:30', waybill:'WY-DEMO-001', customer:'DHL空运' });
+    DeptSync.addRecord('document', { feeType:'customs', feeTypeName:'报关服务费', amount:3500, remark:'', operator:'赵单证', status:'reported', createTime:'2026-08-01 11:00', waybill:'WY-DEMO-001', customer:'DHL空运' });
+    DeptSync.addRecord('warehouse', { feeType:'storage', feeTypeName:'海外仓储费', amount:1800, remark:'3天仓储', operator:'Warehouse', status:'reported', createTime:'2026-08-01 09:00', waybill:'WY-DEMO-001', customer:'DHL空运' });
+  }
+
+  // 监听同步事件：其他页面修改 localStorage 时，若详情弹窗打开则自动刷新
+  DeptSync.onSync(function(e){
+    if(e && e.type === 'storage'){
+      var detailModal = document.getElementById('payableDetail');
+      if(detailModal && detailModal.classList.contains('show')){
+        renderDeptData();
+        renderEstimatedFeePanel();
+      }
+    }
+  });
+})();
+</script>
 </body>
 </html>

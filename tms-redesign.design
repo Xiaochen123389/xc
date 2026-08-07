@@ -181,13 +181,31 @@
       }
     },
     {
+      "id": "page-receivable-enhanced",
+      "title": "应收管理-增强版",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785995400000,
+      "canvasData": {
+        "x": 6200,
+        "y": 0,
+        "w": 1440,
+        "h": 1700,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/receivable-enhanced.html",
+        "interactions": []
+      }
+    },
+    {
       "id": "page-payable",
       "title": "应付管理",
       "type": "page",
       "version": 1,
       "createdAt": 1785388199000,
       "canvasData": {
-        "x": 6200,
+        "x": 6820,
         "y": 0,
         "w": 1440,
         "h": 1700,
@@ -199,13 +217,31 @@
       }
     },
     {
+      "id": "page-payable-enhanced",
+      "title": "应付管理-增强版",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1786003600000,
+      "canvasData": {
+        "x": 7440,
+        "y": 0,
+        "w": 1440,
+        "h": 1700,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/payable-enhanced.html",
+        "interactions": []
+      }
+    },
+    {
       "id": "page-rates",
       "title": "运价管理",
       "type": "page",
       "version": 1,
       "createdAt": 1785393534000,
       "canvasData": {
-        "x": 6820,
+        "x": 8060,
         "y": 0,
         "w": 1440,
         "h": 1900,
@@ -213,6 +249,132 @@
       },
       "devMetadata": {
         "htmlSrc": "pages/rates.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-bill-writeoff",
+      "title": "账单核销",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000001,
+      "canvasData": {
+        "x": 8680,
+        "y": 0,
+        "w": 1440,
+        "h": 1500,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/bill-writeoff.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-cs-data",
+      "title": "客服数据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000002,
+      "canvasData": {
+        "x": 9300,
+        "y": 0,
+        "w": 1440,
+        "h": 1600,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/cs-data.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-customer-flow",
+      "title": "客户流水",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000003,
+      "canvasData": {
+        "x": 9920,
+        "y": 0,
+        "w": 1440,
+        "h": 1400,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/customer-flow.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-demo-entry",
+      "title": "演示入口",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000004,
+      "canvasData": {
+        "x": 10540,
+        "y": 0,
+        "w": 1440,
+        "h": 900,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/demo-entry.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-document-data",
+      "title": "单证数据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000005,
+      "canvasData": {
+        "x": 11160,
+        "y": 0,
+        "w": 1440,
+        "h": 1400,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/document-data.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-receivable-report",
+      "title": "应收报表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000006,
+      "canvasData": {
+        "x": 11780,
+        "y": 0,
+        "w": 1440,
+        "h": 1400,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/receivable-report.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-warehouse-data",
+      "title": "海外仓数据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1786066249603,
+      "canvasData": {
+        "x": 12400,
+        "y": 0,
+        "w": 1440,
+        "h": 1600,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/warehouse-data.html",
         "interactions": []
       }
     }

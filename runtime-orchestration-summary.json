@@ -1,32 +1,158 @@
 {
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.22.00.00.00",
+    "release": "prompt-base-cloud-ssot-migration",
+    "version_source": "skill-release-manifest.json",
+    "read_status": "ok"
+  },
   "project": {
     "resolvedLane": "existing_edit_add_comparison",
     "selectedIntentWorkflowRead": true,
     "contextRequirementsLoaded": [
-      {"path": "shared-runtime/runtime-boundaries/lane-runtime-contracts.md", "readStatus": "loaded", "bodyRead": true},
-      {"path": "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md", "readStatus": "loaded", "bodyRead": true},
-      {"path": "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md", "readStatus": "loaded", "bodyRead": true},
-      {"path": "delivery-quality/page-rendering-quality-gate.md", "readStatus": "loaded", "bodyRead": true},
-      {"path": "delivery-quality/design-artifact-validation.md", "readStatus": "loaded", "bodyRead": true},
-      {"path": "delivery-quality/delivery-evidence-contract.md", "readStatus": "loaded", "bodyRead": true}
+      {
+        "path": "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/page-rendering-quality-gate.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/design-artifact-validation.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/delivery-evidence-contract.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "visual-experience/visual-experience-guidelines.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "intent-workflows/intent-project-mutation/edit-existing-project.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "intent-workflows/intent-project-mutation/existing-edit-dispatch-contract.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "intent-workflows/intent-project-mutation/existing-edit-page-runtime.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "intent-workflows/intent-project-mutation/comparison-page-contract.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      }
     ],
     "contextReadScope": "existing-project:tms-redesign",
-    "validationRunDiscipline": "default",
-    "lowValueCallWatchdog": { "noProgressNextAction": "readiness" },
+    "validationRunDiscipline": {
+      "maxFullValidationRuns": 2,
+      "softWarningsTriggerRepair": false,
+      "blockingRepairMode": "targeted-once",
+      "forbiddenRepairTriggers": [
+        "soft-warning-only",
+        "provenance-warning-only",
+        "style-warning-only"
+      ]
+    },
+    "lowValueCallWatchdog": {
+      "noProgressNextAction": "readiness"
+    },
     "deviceType": "desktop",
     "viewportMode": "app-shell",
-    "mutationMode": "modify-existing-pages",
+    "mutationMode": "existing-page-edit",
     "inPlaceEditAllowed": true,
-    "derivationType": "explicit-in-place",
-    "sourcePageId": "page-waybill-list",
-    "sourceHtmlSrc": "pages/waybill-list.html",
+    "derivationType": "in-place-edit",
     "affectedPages": [
-      {"nodeId": "page-waybill-list", "htmlSrc": "pages/waybill-list.html", "title": "运单列表", "changeType": "add-audit-entry-and-modal"},
-      {"nodeId": "page-waybill-create", "htmlSrc": "pages/waybill-create.html", "title": "创建运单", "changeType": "add-fcl-freight-apportion-field"}
+      {
+        "nodeId": "page-cs-data",
+        "htmlSrc": "pages/cs-data.html",
+        "title": "客服数据",
+        "changeType": "dept-data-entry-with-auto-sync"
+      },
+      {
+        "nodeId": "page-document-data",
+        "htmlSrc": "pages/document-data.html",
+        "title": "单证数据",
+        "changeType": "dept-data-entry-with-auto-sync"
+      },
+      {
+        "nodeId": "page-warehouse-data",
+        "htmlSrc": "pages/warehouse-data.html",
+        "title": "海外仓数据",
+        "changeType": "dept-data-entry-with-auto-sync"
+      },
+      {
+        "nodeId": "page-receivable-enhanced",
+        "htmlSrc": "pages/receivable-enhanced.html",
+        "title": "应收管理-增强版",
+        "changeType": "read-dept-sync-data"
+      },
+      {
+        "nodeId": "page-payable-enhanced",
+        "htmlSrc": "pages/payable-enhanced.html",
+        "title": "应付管理-增强版",
+        "changeType": "read-dept-sync-data"
+      }
     ],
     "expectedDispatches": [
-      {"nodeId": "page-waybill-list", "packetType": "ExistingEditPagePacket", "status": "completed", "changedFiles": ["pages/waybill-list.html"], "toolCallLedger": {"todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0}},
-      {"nodeId": "page-waybill-create", "packetType": "ExistingEditPagePacket", "status": "completed", "changedFiles": ["pages/waybill-create.html"], "toolCallLedger": {"todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0}}
+      {
+        "nodeId": "page-cs-data",
+        "packetType": "ExistingEditPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/cs-data.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      },
+      {
+        "nodeId": "page-document-data",
+        "packetType": "ExistingEditPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/document-data.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      },
+      {
+        "nodeId": "page-warehouse-data",
+        "packetType": "ExistingEditPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/warehouse-data.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      },
+      {
+        "nodeId": "page-receivable-enhanced",
+        "packetType": "ExistingEditPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/receivable-enhanced.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      },
+      {
+        "nodeId": "page-payable-enhanced",
+        "packetType": "ExistingEditPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/payable-enhanced.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      }
     ],
     "styleContinuityAnchors": {
       "colorSystem": "modern blue primary #1677ff, semantic success #52c41a / warning #faad14 / error #ff4d4f, neutral grays #1f2937 to #f3f4f6",
@@ -37,6 +163,470 @@
       "surfaceAndDepth": "white cards on #f5f7fa bg, subtle borders, shadow-sm/md/lg",
       "imageryAndIconography": "unicode emoji fallbacks, lucide icons via data-lucide",
       "interactionTone": "hover transitions .15-.2s cubic-bezier, primary-blue focus rings"
+    },
+    "validationHistory": [
+      {
+        "reportPath": "validation-report.json",
+        "reportHash": "e53f34be7cfa158d59dd36b09729b1fcdd136e1d21be3650de6a2d120f2f2b6c",
+        "checkedAt": "2026-08-06T06:55:38.765Z",
+        "success": false,
+        "exitCode": 1,
+        "renderBlockingErrorCount": 1,
+        "repairPlanHints": [
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body"
+        ],
+        "errorSignatures": [
+          {
+            "errorClass": "artifact-readiness",
+            "normalized": "[design-file] Validation failed for .design file batch: ======================================== [FAIL] Validation failed ---------------------------------------- Found 6 issues: 1. [pages/bill-writeoff.html] HTML file exists but is not registered in canvas: pages/bill-writeoff.html exists in pages/ but has no corresponding page node in the .design file's data array. Fix: add a page node for this file to the data array 2. [pages/cs-data.html] HTML file exists but is not registered in canvas: pages/cs-data.html exists in pages/ but has no corresponding page node in the .design file's data array. Fix: add a page node for this file to the data array 3. [pages/customer-flow.html] HTML file exists but is not registered in canvas: pages/customer-flow.html exists in pages/ but has no corresponding page node in the .design file's data array. Fix: add a page node for this file to the data array 4. [pages/demo-entry.html] HTML file exists but is not registered in canvas: pages/demo-entry.html exists in pages/ but has no corresponding page node in the .design file's data array. Fix: add a page node for this file to the data array 5. [pages/document-data.html] HTML file exists but is not registered in canvas: pages/document-data.html exists in pages/ but has no corresponding page node in the .design file's data array. Fix: add a page node for this file to the data array 6. [pages/receivable-report.html] HTML file exists but is not registered in canvas: pages/receivable-report.html exists in pages/ but has no corresponding page node in the .design file's data array. Fix: add a page node for this file to the data array ========================================",
+            "signature": "8485077ee9a09bf49ada62a1e3d4c7aa66f884a3140ebf069c734d38de2d67e8"
+          }
+        ],
+        "terminalState": null
+      },
+      {
+        "reportPath": "validation-report.json",
+        "reportHash": "cee635a9179af6c12378a4d71e51a63d96773711facbbcd097e3720ebe5bdcef",
+        "checkedAt": "2026-08-06T06:58:20.926Z",
+        "success": true,
+        "exitCode": 0,
+        "renderBlockingErrorCount": 0,
+        "repairPlanHints": [
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body",
+          "hardcoded-color-in-body"
+        ],
+        "errorSignatures": [],
+        "terminalState": null
+      }
+    ],
+    "validationRepairLedger": [
+      {
+        "failedReportPath": "validation-report.json",
+        "failedReportHash": "e53f34be7cfa158d59dd36b09729b1fcdd136e1d21be3650de6a2d120f2f2b6c",
+        "repairWorkflowReadPath": "intent-workflows/intent-project-mutation/main-agent-repair-workflow.md",
+        "repairStartedAt": "2026-08-06T06:56:11.023Z",
+        "repairEntryStatus": "revalidated-success",
+        "ownerTriage": [
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "address.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "bill-list.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "bill-writeoff.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "cs-data.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "dashboard.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "demo-entry.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "document-data.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "login.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "oversize.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "payable.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "rates.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "receivable-enhanced.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "receivable-report.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "receivable.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          },
+          {
+            "owner": "sub-agent",
+            "errorClass": "hardcoded-color-in-body",
+            "affectedFiles": [
+              "waybill-list.html"
+            ],
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once"
+          }
+        ],
+        "repairPlanHints": [
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "address.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "bill-list.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "bill-writeoff.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "cs-data.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "dashboard.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "demo-entry.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "document-data.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "login.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "oversize.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "payable.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "rates.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "receivable-enhanced.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "receivable-report.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "receivable.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          },
+          {
+            "errorClass": "hardcoded-color-in-body",
+            "owner": "sub-agent",
+            "repairScope": "targeted-token-replace",
+            "strategy": "targeted_token_replace_once",
+            "affectedFiles": [
+              "waybill-list.html"
+            ],
+            "repairReportPath": null,
+            "repairAlreadyAttempted": false,
+            "allowSourceRead": "no-full-html-read",
+            "maxValidationRuns": 2
+          }
+        ],
+        "repairActions": [
+          {
+            "owner": "main-agent",
+            "errorClass": "artifact-readiness",
+            "affectedFiles": [
+              "tms-redesign.design"
+            ],
+            "action": "add_missing_page_nodes_to_design",
+            "observedFileHashes": [
+              {
+                "path": "tms-redesign.design",
+                "hash": "c814f0887cc9072d3ba3cd1af581ad611544230edc232149a73374a3c39f947c"
+              }
+            ],
+            "preEditFileHashes": [],
+            "postEditFileHashes": [],
+            "repairOwnedFields": [
+              "artifact-readiness"
+            ],
+            "recordedAt": "2026-08-06T06:58:09.011Z",
+            "repairActionTableRequired": true
+          }
+        ],
+        "revalidationReportPath": "validation-report.json",
+        "revalidationReportHash": "cee635a9179af6c12378a4d71e51a63d96773711facbbcd097e3720ebe5bdcef",
+        "revalidationSuccess": true,
+        "blockedReason": null,
+        "revalidationRecordedAt": "2026-08-06T06:58:32.665Z"
+      }
+    ],
+    "repairEntryEvidence": [
+      {
+        "failedReportPath": "validation-report.json",
+        "failedReportHash": "e53f34be7cfa158d59dd36b09729b1fcdd136e1d21be3650de6a2d120f2f2b6c",
+        "repairWorkflowReadPath": "intent-workflows/intent-project-mutation/main-agent-repair-workflow.md",
+        "repairStartedAt": "2026-08-06T06:56:11.023Z",
+        "ledgerIndex": 0,
+        "ownerTriageCount": 15,
+        "repairActionCount": 1,
+        "revalidationReportPath": "validation-report.json",
+        "revalidationReportHash": "cee635a9179af6c12378a4d71e51a63d96773711facbbcd097e3720ebe5bdcef",
+        "revalidationSuccess": true
+      }
+    ]
+  },
+  "pages": [
+    {
+      "nodeId": "page-receivable-enhanced",
+      "slug": "receivable-enhanced",
+      "title": "应收管理-增强版",
+      "htmlSrc": "pages/receivable-enhanced.html",
+      "pageType": "information-dense",
+      "businessScenario": "AR bill management with frozen header, multi-department data, finance audit, payment tracking, discount records and operation logs",
+      "componentPlan": [],
+      "imagePlan": [],
+      "qualityRisks": [
+        "dense-table-layout",
+        "frozen-header-sticky",
+        "modal-tab-complexity"
+      ]
     }
-  }
+  ]
 }

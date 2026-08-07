@@ -1,0 +1,187 @@
+{
+  "success": false,
+  "outcome": "terminal_stop",
+  "repairable": false,
+  "terminalViolations": [
+    "validationHistory has 3 full validation run(s), max allowed is 2"
+  ],
+  "terminalBlockingSummary": {
+    "terminalState": "validation-budget-exhausted",
+    "nextAction": "stop_and_report_blocking_summary",
+    "violations": [
+      "validationHistory has 3 full validation run(s), max allowed is 2"
+    ]
+  },
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.22.00.00.00",
+    "version_source": "skill-release-manifest.json",
+    "runtime_skill_dir": null,
+    "recorded_at": null,
+    "expected_version": "2026.07.22.00.00.00",
+    "status": "matched",
+    "read_status": "ok"
+  },
+  "operatingMode": "free-explore",
+  "renderBlockingErrorCount": 0,
+  "softWarningCount": 26,
+  "renderBlockingErrors": [],
+  "errorSignatures": [],
+  "softWarnings": [
+    "[html-head-style] receivable-enhanced.html: found 1 custom <style> block(s) in <head>. The <head> is owned by apply-html-head-contract.mjs; move custom styles before </body> or re-run apply-html-head-contract.mjs <css-path> <html-file> --replace-head to relocate them.",
+    "[repair-ledger] validationRepairLedger[0].repairActions[0].preEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[0].repairActions[0].postEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[1].repairActions[0].preEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[1].repairActions[0].postEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[1].revalidationReportPath is missing",
+    "[repair-ledger] validationRepairLedger[1].revalidationReportHash is missing",
+    "[repair-ledger] validationRepairLedger[1].revalidationSuccess should be a boolean",
+    "[validation-discipline] validationHistory has 3 full validation run(s), max allowed is 2",
+    "[html-quality] address.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] bill-list.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] bill-writeoff.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] cs-data.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] dashboard.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] demo-entry.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] document-data.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] login.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] oversize.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] payable-enhanced.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] payable.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] rates.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] receivable-enhanced.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] receivable-report.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] receivable.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] warehouse-data.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] waybill-list.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference."
+  ],
+  "repairPlanHints": [],
+  "repairActionTable": [],
+  "errorCount": 0,
+  "warningCount": 26,
+  "errors": [],
+  "warnings": [
+    "[html-head-style] receivable-enhanced.html: found 1 custom <style> block(s) in <head>. The <head> is owned by apply-html-head-contract.mjs; move custom styles before </body> or re-run apply-html-head-contract.mjs <css-path> <html-file> --replace-head to relocate them.",
+    "[repair-ledger] validationRepairLedger[0].repairActions[0].preEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[0].repairActions[0].postEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[1].repairActions[0].preEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[1].repairActions[0].postEditFileHashes[] is missing (legacy optional evidence)",
+    "[repair-ledger] validationRepairLedger[1].revalidationReportPath is missing",
+    "[repair-ledger] validationRepairLedger[1].revalidationReportHash is missing",
+    "[repair-ledger] validationRepairLedger[1].revalidationSuccess should be a boolean",
+    "[validation-discipline] validationHistory has 3 full validation run(s), max allowed is 2",
+    "[html-quality] address.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] bill-list.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] bill-writeoff.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] cs-data.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] dashboard.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] demo-entry.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] document-data.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] login.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] oversize.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] payable-enhanced.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] payable.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] rates.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] receivable-enhanced.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] receivable-report.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] receivable.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] warehouse-data.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference.",
+    "[html-quality] waybill-list.html: hardcoded colors are forbidden outside <style id=\"theme-vars\">. Use brand CSS variables from the token reference."
+  ],
+  "validationRunDisciplineStatus": {
+    "declared": true,
+    "restoreMode": false,
+    "maxFullValidationRuns": 2,
+    "validationHistoryCount": 3,
+    "repairLedgerCount": 2,
+    "softWarningsTriggerRepair": false,
+    "terminalState": "validation-budget-exhausted",
+    "nextAction": "stop_and_report_blocking_summary",
+    "violations": [
+      "validationHistory has 3 full validation run(s), max allowed is 2"
+    ],
+    "success": false
+  },
+  "terminalState": "validation-budget-exhausted",
+  "nextCheck": {
+    "type": "stop",
+    "reason": "validation-budget-exhausted",
+    "command": null
+  },
+  "repairBatch": [],
+  "repairContextPacket": {
+    "schema_version": "1.0",
+    "purpose": "terminal stop packet; do not repair",
+    "success": false,
+    "outcome": "terminal_stop",
+    "repairable": false,
+    "terminalViolations": [
+      "validationHistory has 3 full validation run(s), max allowed is 2"
+    ],
+    "terminalBlockingSummary": {
+      "terminalState": "validation-budget-exhausted",
+      "nextAction": "stop_and_report_blocking_summary",
+      "violations": [
+        "validationHistory has 3 full validation run(s), max allowed is 2"
+      ]
+    },
+    "terminalState": "validation-budget-exhausted",
+    "skillProvenance": {
+      "name": "solo-design",
+      "version": "2026.07.22.00.00.00",
+      "version_source": "skill-release-manifest.json",
+      "runtime_skill_dir": null,
+      "recorded_at": null,
+      "expected_version": "2026.07.22.00.00.00",
+      "status": "matched",
+      "read_status": "ok"
+    },
+    "renderBlockingErrorCount": 0,
+    "softWarningCount": 26,
+    "renderBlockingErrors": [],
+    "repairActionTable": [],
+    "repairPlanHints": [],
+    "nextCheck": {
+      "type": "stop",
+      "command": null,
+      "fullValidationAllowed": false,
+      "reason": "validation-budget-exhausted",
+      "nextAction": "stop_and_report_blocking_summary"
+    },
+    "forbidden": [
+      "do not repair ledger",
+      "do not delete validation state",
+      "do not rerun validation",
+      "do not read validator source"
+    ]
+  },
+  "projectFileHashes": {
+    "tms-redesign.design": "6c68946a082bdf6f27dc6a55de75aeae4e0295a7f1d945318e8b100318a29bfe",
+    "runtime-orchestration-summary.json": "7f2a46f8c6d47f04ed49cb27811ff71be7cf9d1c8e918d16e2a652f3436c0eca",
+    "pages/address.html": "a31d909a0150a275a9b41b828633f422d39a3f7efe1d3430e690a3abb18e7409",
+    "pages/bill-create.html": "2362dd09d107c78f9f695545bd87c92ae58dae87af0685bf27dacc540e5a1a0d",
+    "pages/bill-list.html": "01b8ad833d00dfad771ec29aa09bfed79eeae84c41ca75e3a8fc5a47a429cb7b",
+    "pages/bill-writeoff.html": "726d920274ad93427d34695df7bc674248bb080fd1e27a897491a9fa2f9f7f5c",
+    "pages/cs-data.html": "ef15d89114575b7ae9a211a9178469afebb67c9837d22c280eed25143e654c1e",
+    "pages/customer-flow.html": "445386c252b657f002a5e149203a8fff2e54f8a21dc697000890cc3e222ca303",
+    "pages/dashboard.html": "9dcd5aca09ca13fa292efc5adad29c670bc1fb3c9f7d4439bd005b652aeb3e3e",
+    "pages/demo-entry.html": "ef5690f212e1cf658109a2252c55e68ab13ee07ab30817ab4ad9bf9b9d0dd3a0",
+    "pages/document-data.html": "838bbc22f943890f3219f6c6a9b90160c16d7f6226dac44a55c52529431971ef",
+    "pages/login.html": "dc9f9119faa52047623e77e28db135a0972105a209d7db99744183e19d224dfa",
+    "pages/oversize.html": "3f8e4a2af940bcbc94c5dfd25b86aabf718636e63cab9a4eba17f2ba971541d5",
+    "pages/payable-enhanced.html": "64fcc8a350ba1b816c285fa357e36f51f4969daf4c3f39b923b46ef952736f87",
+    "pages/payable.html": "2b61625d6f8360fe38b01a02080027ddc642a25757412c9662543492d7a60c5d",
+    "pages/rates.html": "5b18fdaded49738a335a251e4f1647df6e7b2f0b1881620acf89f7cc6d5b07d7",
+    "pages/receivable-enhanced.html": "55efba010eb8175d7d98bf14580cb7cf6e4e08f8797ccc2e5dc079fd7de23a06",
+    "pages/receivable-report.html": "4ef1ffb14c034a9567968dbf7420bd042da06acefc9a72855cfd7814b5c72cc4",
+    "pages/receivable.html": "3f71a0261c567dc30e1c8df5d546c53aadcacbd4e889c2bf42be5cfdfd1b65d1",
+    "pages/service.html": "04addeb5e7121eb370910aa140a130b546ef5899393a2ecd200472080351ca68",
+    "pages/warehouse-data.html": "87f31a5c46c9070d5b28a81b329ff2f39b3ed31f1a4016b3cd45ebab47e1c43d",
+    "pages/waybill-create.html": "e21423dfab0a1fb6cc7029aa26ba2ee5d02eede61d5b1ba836c950f3580e8419",
+    "pages/waybill-list.html": "58f420268d38c829e95b918f2ddbe8123d7f5d31f9792695e98dedc4e9b9bf23"
+  },
+  "designDir": "C:\\Users\\86182\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69b64ce9b96f31a9bc472c\\tms-redesign",
+  "expectedPages": null,
+  "requireInteractions": null,
+  "checkedAt": "2026-08-07T04:29:21.085Z"
+}

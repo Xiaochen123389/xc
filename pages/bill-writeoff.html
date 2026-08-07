@@ -60,6 +60,7 @@
   --tms-radius-xl: 16px;
 
   /* === 语义别名（head contract 所需）=== */
+  --tms-background: var(--tms-bg);
   --tms-foreground: #111827;
   --tms-card: #ffffff;
   --tms-muted: #9ca3af;
@@ -122,7 +123,6 @@ input, select, textarea { font-family: inherit; }
 .form-control::placeholder { color: var(--tms-text-3); }
 .form-control.error { border-color: var(--tms-error); }
 .form-control.error:focus { box-shadow: 0 0 0 3px rgba(255,77,79,.12); }
-.form-control[readonly] { background: var(--tms-bg-hover); color: var(--tms-text-2); cursor: default; }
 textarea.form-control { height: auto; padding: 8px 12px; min-height: 80px; resize: vertical; line-height: 1.5; }
 select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' stroke='%239ca3af' fill='none' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
 .form-row { display: flex; gap: 20px; margin-bottom: 18px; }
@@ -364,28 +364,12 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
   padding-top: 80px; backdrop-filter: blur(2px);
 }
 .modal-mask.show { display: flex; animation: fadeIn .2s ease; }
-
-/* Confirm Dialog */
-.confirm-mask {
-  position: fixed; inset: 0; background: rgba(15,23,42,.5);
-  z-index: 1100; display: none; align-items: flex-start; justify-content: center;
-  padding-top: 120px; backdrop-filter: blur(2px);
-}
-.confirm-mask.show { display: flex; animation: fadeIn .2s ease; }
-.confirm-box {
-  background: #fff; border-radius: var(--tms-radius-lg); width: 420px; max-width: 90vw;
-  box-shadow: var(--tms-shadow-xl); padding: 24px;
-}
-.confirm-title { font-size: 16px; font-weight: 600; color: var(--tms-text); margin-bottom: 8px; }
-.confirm-msg { font-size: 14px; color: var(--tms-text-2); line-height: 1.6; margin-bottom: 20px; }
-.confirm-actions { display: flex; justify-content: flex-end; gap: 8px; }
 .modal {
   background: #fff; border-radius: var(--tms-radius-lg); width: 560px; max-width: 90vw;
   max-height: calc(100vh - 140px); display: flex; flex-direction: column;
   box-shadow: var(--tms-shadow-xl); animation: modalIn .25s cubic-bezier(.4,0,.2,1);
 }
 .modal.modal-sm { width: 420px; }
-.modal.modal-md { width: 600px; }
 .modal.modal-lg { width: 780px; }
 .modal.modal-xl { width: 1000px; }
 .modal-header {
@@ -760,8 +744,32 @@ th.sortable:hover { color: var(--tms-primary); }
 .login-btn .loading-spin { border-top-color: #fff; border-color: rgba(255,255,255,.3); border-top-color: #fff; }
 
     </style>
-    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tms-background);
+    --color-foreground: var(--tms-foreground);
+    --color-card: var(--tms-card);
+    --color-primary: var(--tms-primary);
+    --color-muted: var(--tms-muted);
+    --color-border: var(--tms-border);
+    --radius-sm: var(--tms-radius-sm);
+    --radius-md: var(--tms-radius-md);
+    --radius-lg: var(--tms-radius-lg);
+    --radius-xl: var(--tms-radius-xl);
+  }
+  @layer base {
+    body { background: var(--tms-background); color: var(--tms-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
     <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tms-background); }
+      .text-background { color: var(--tms-background); }
+      .border-background { border-color: var(--tms-background); }
+      .ring-background { --tw-ring-color: var(--tms-background); }
       .bg-foreground { background-color: var(--tms-foreground); }
       .text-foreground { color: var(--tms-foreground); }
       .border-foreground { border-color: var(--tms-foreground); }
@@ -782,10 +790,6 @@ th.sortable:hover { color: var(--tms-primary); }
       .text-border { color: var(--tms-border); }
       .border-border { border-color: var(--tms-border); }
       .ring-border { --tw-ring-color: var(--tms-border); }
-      .bg-background { background-color: var(--tms-bg); }
-      .text-background { color: var(--tms-bg); }
-      .border-background { border-color: var(--tms-bg); }
-      .ring-background { --tw-ring-color: var(--tms-bg); }
     </style>
     <style>
       .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -801,36 +805,6 @@ th.sortable:hover { color: var(--tms-primary); }
         -webkit-mask-position: center;
         mask-position: center;
         background-color: currentColor;
-      }
-    </style>
-    <style>
-      /* ========== 账单核销页专属样式 ========== */
-      .writeoff-layout { display: grid; grid-template-columns: 2fr 3fr; gap: 16px; align-items: start; }
-      .writeoff-form .form-group { margin-bottom: 16px; }
-      .writeoff-form .form-group:last-child { margin-bottom: 0; }
-      .amount-positive { color: var(--tms-success); font-weight: 600; }
-      .amount-negative { color: var(--tms-error); font-weight: 600; }
-      .amount-total { color: var(--tms-text); font-weight: 600; font-feature-settings: 'tnum'; }
-      .form-control[readonly].amount-positive { color: var(--tms-success); font-weight: 600; }
-      .form-control[readonly].amount-negative { color: var(--tms-error); font-weight: 600; }
-      .bill-info-banner {
-        display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-        background: linear-gradient(135deg, #f0f7ff, #e6f4ff); border: 1px solid var(--tms-primary-light);
-        border-radius: var(--tms-radius-md); margin-bottom: 16px;
-      }
-      .bill-info-banner .bill-icon {
-        width: 40px; height: 40px; border-radius: 10px; background: var(--tms-primary);
-        color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
-      }
-      .bill-info-text { flex: 1; }
-      .bill-info-title { font-size: 14px; font-weight: 600; color: var(--tms-text); }
-      .bill-info-sub { font-size: 12px; color: var(--tms-text-3); margin-top: 2px; }
-      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
-      .money-cell.positive { color: var(--tms-success); }
-      .row-fade-in { animation: rowFadeIn .3s ease; }
-      @keyframes rowFadeIn { from { opacity: 0; background: var(--tms-success-light); } to { opacity: 1; background: transparent; } }
-      @media (max-width: 1100px) {
-        .writeoff-layout { grid-template-columns: 1fr; }
       }
     </style>
 </head>
@@ -909,7 +883,7 @@ th.sortable:hover { color: var(--tms-primary); }
       <span class="nav-caret">▶</span>
     </div>
     <div class="submenu">
-      <a href="receivable.html" class="submenu-item">应收账单</a>
+      <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
       <a href="customer-flow.html" class="submenu-item">客户流水</a>
       <a href="bill-writeoff.html" class="submenu-item active">账单核销</a>
       <a href="receivable-report.html" class="submenu-item">应收报表</a>
@@ -921,15 +895,15 @@ th.sortable:hover { color: var(--tms-primary); }
       <span class="nav-caret">▶</span>
     </div>
     <div class="submenu">
-      <a href="payable.html" class="submenu-item">应付账单</a>
+      <a href="payable-enhanced.html" class="submenu-item">应付账单</a>
     </div>
 
     <div class="nav-group-title">数据视图</div>
-    <a href="receivable.html" class="nav-item">
+    <a href="receivable-enhanced.html" class="nav-item">
       <span class="nav-icon">📊</span>
       <span>应收数据</span>
     </a>
-    <a href="payable.html" class="nav-item">
+    <a href="payable-enhanced.html" class="nav-item">
       <span class="nav-icon">📉</span>
       <span>应付数据</span>
     </a>
@@ -983,7 +957,7 @@ th.sortable:hover { color: var(--tms-primary); }
   <div class="header-breadcrumb">
     <a href="dashboard.html">首页</a>
     <span class="sep">/</span>
-    <a href="receivable.html">财务管理</a>
+    <a href="receivable-enhanced.html">财务管理</a>
     <span class="sep">/</span>
     <span class="current">账单核销</span>
   </div>
@@ -1012,7 +986,7 @@ th.sortable:hover { color: var(--tms-primary); }
       <p class="page-subtitle">应收账单收款核销登记与记录查询</p>
     </div>
     <div class="page-actions">
-      <a href="receivable.html" class="btn">
+      <a href="receivable-enhanced.html" class="btn">
         <span>←</span>返回应收管理
       </a>
       <button class="btn" onclick="exportWriteOffRecords()">
@@ -1499,5 +1473,37 @@ window.addEventListener('DOMContentLoaded', function(){
   },100);
 });
 </script>
+
+    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <style>
+      /* ========== 账单核销页专属样式 ========== */
+      .writeoff-layout { display: grid; grid-template-columns: 2fr 3fr; gap: 16px; align-items: start; }
+      .writeoff-form .form-group { margin-bottom: 16px; }
+      .writeoff-form .form-group:last-child { margin-bottom: 0; }
+      .amount-positive { color: var(--tms-success); font-weight: 600; }
+      .amount-negative { color: var(--tms-error); font-weight: 600; }
+      .amount-total { color: var(--tms-text); font-weight: 600; font-feature-settings: 'tnum'; }
+      .form-control[readonly].amount-positive { color: var(--tms-success); font-weight: 600; }
+      .form-control[readonly].amount-negative { color: var(--tms-error); font-weight: 600; }
+      .bill-info-banner {
+        display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+        background: linear-gradient(135deg, #f0f7ff, #e6f4ff); border: 1px solid var(--tms-primary-light);
+        border-radius: var(--tms-radius-md); margin-bottom: 16px;
+      }
+      .bill-info-banner .bill-icon {
+        width: 40px; height: 40px; border-radius: 10px; background: var(--tms-primary);
+        color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+      }
+      .bill-info-text { flex: 1; }
+      .bill-info-title { font-size: 14px; font-weight: 600; color: var(--tms-text); }
+      .bill-info-sub { font-size: 12px; color: var(--tms-text-3); margin-top: 2px; }
+      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
+      .money-cell.positive { color: var(--tms-success); }
+      .row-fade-in { animation: rowFadeIn .3s ease; }
+      @keyframes rowFadeIn { from { opacity: 0; background: var(--tms-success-light); } to { opacity: 1; background: transparent; } }
+      @media (max-width: 1100px) {
+        .writeoff-layout { grid-template-columns: 1fr; }
+      }
+    </style>
 </body>
 </html>
