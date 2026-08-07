@@ -67,6 +67,14 @@ appJs = appJs.replace(
 );
 appJs = appJs.replace(/<\/script>/g, '<\\/script>');
 
+console.log('Reading dept-sync.js...');
+const deptSyncPath = path.join(projectDir, 'assets', 'js', 'dept-sync.js');
+let deptSyncJs = '';
+if (fs.existsSync(deptSyncPath)) {
+  deptSyncJs = processScriptCode(fs.readFileSync(deptSyncPath, 'utf8'));
+  deptSyncJs = deptSyncJs.replace(/<\/script>/g, '<\\/script>');
+}
+
 console.log('Reading pages...');
 const pageFiles = fs.readdirSync(pagesDir).filter(f => f.endsWith('.html')).sort();
 
@@ -245,6 +253,9 @@ const output = [
   '<script>',
   readyDef,
   appJs,
+  '</script>',
+  '<script>',
+  deptSyncJs,
   '</script>',
   '<script>',
   routerCode,
