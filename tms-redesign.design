@@ -377,6 +377,24 @@
         "htmlSrc": "pages/warehouse-data.html",
         "interactions": []
       }
+    },
+    {
+      "id": "page-supplier-management",
+      "title": "供应商管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1786069800000,
+      "canvasData": {
+        "x": 13020,
+        "y": 0,
+        "w": 1440,
+        "h": 1900,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/supplier-management.html",
+        "interactions": []
+      }
     }
   ],
   "config": {

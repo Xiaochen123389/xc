@@ -516,7 +516,31 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; accent-
 .batch-close { cursor: pointer; color: rgba(255,255,255,.6); padding: 4px; border-radius: 4px; }
 .batch-close:hover { color: #fff; background: rgba(255,255,255,.1); }
 
-/* ========== 图标（使用 unicode / inline SVG） ========== */
+/* ========== 主Tab切换（销售/采购） ==========*/
+.main-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.main-tab {
+  padding: 10px 20px; border-radius: var(--tms-radius-md); background: #fff;
+  border: 1px solid var(--tms-border-2); cursor: pointer; font-size: 14px; font-weight: 500;
+  color: var(--tms-text-2); transition: all .2s; box-shadow: var(--tms-shadow-sm);
+}
+.main-tab:hover { color: var(--tms-primary); border-color: var(--tms-primary-light); }
+.main-tab.active { background: var(--tms-primary); color: #fff; border-color: var(--tms-primary); box-shadow: 0 4px 10px rgba(22,119,255,.25); }
+
+/* ========== 价格 ==========*/
+.price-multi { display: flex; flex-wrap: wrap; gap: 4px; }
+.price-num { font-family: "SF Mono", Consolas, Monaco, monospace; font-weight: 600; color: var(--tms-text-1); font-feature-settings: "tnum"; }
+
+/* ========== 行动画与补充统计卡 ==========*/
+.stat-card.stat-purple::before { background: #722ed1; }
+.stat-card.stat-gray::before { background: var(--tms-text-3); }
+.stat-purple .stat-icon-wrap { background: #f9f0ff; color: #722ed1; }
+.stat-gray .stat-icon-wrap { background: var(--tms-border-2); color: var(--tms-text-3); }
+.row-removing { animation: rowRemove .4s forwards; }
+@keyframes rowRemove { to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; } }
+.row-fade-in { animation: rowFadeIn .3s ease; }
+@keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ========== 图标（使用 unicode / inline SVG） ==========*/
 .i { font-style: normal; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 
 /* ========== 登录页专属 ========== */
@@ -791,6 +815,23 @@ th.sortable:hover { color: var(--tms-primary); }
       .border-border { border-color: var(--tms-border); }
       .ring-border { --tw-ring-color: var(--tms-border); }
     </style>
+    <style id="supplier-styles">
+      /* 供应商相关 */
+      .supplier-logo { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; background: linear-gradient(135deg, var(--tms-primary), #69b1ff); }
+      .quote-file-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--tms-border-2); }
+      .quote-file-row:last-child { border-bottom: none; }
+      .quote-file-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+      .quote-file-icon { width: 32px; height: 32px; border-radius: 6px; background: var(--tms-error-light); color: var(--tms-error); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+      .quote-file-name { font-size: 13.5px; color: var(--tms-text-1); font-weight: 500; }
+      .quote-file-meta { font-size: 12px; color: var(--tms-text-3); margin-top: 2px; }
+      .supplier-summary { background: var(--tms-primary-bg); border: 1px solid var(--tms-primary-light); border-radius: var(--tms-radius-md); padding: 12px 16px; margin-top: 12px; }
+      .supplier-summary-title { font-size: 13px; font-weight: 600; color: var(--tms-primary); margin-bottom: 8px; }
+      .supplier-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--tms-text-2); padding: 4px 0; }
+      .price-hint { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+      .price-hint.low { background: var(--tms-success-light); color: #389e0d; }
+      .price-hint.high { background: var(--tms-error-light); color: #cf1322; }
+      .price-hint.neutral { background: var(--tms-border-2); color: var(--tms-text-2); }
+    </style>
     <style>
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -896,6 +937,7 @@ th.sortable:hover { color: var(--tms-primary); }
       <div class="submenu">
         <a href="rates.html?tab=sell" class="submenu-item active" id="navSell">销售运价</a>
         <a href="rates.html?tab=buy" class="submenu-item" id="navBuy">采购运价</a>
+        <a href="supplier-management.html" class="submenu-item">供应商管理</a>
       </div>
       <a href="service.html" class="nav-item">
         <span class="nav-icon">🛣️</span>
@@ -958,7 +1000,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <button class="btn" onclick="toast('导入运价功能开发中','info')">
           <span>📥</span>导入运价
         </button>
-        <button class="btn btn-primary" onclick="toast('新增运价功能开发中','info')">
+        <button class="btn btn-primary" onclick="openAddRateModal()">
           <span>＋</span>新增运价
         </button>
       </div>
@@ -1037,6 +1079,12 @@ th.sortable:hover { color: var(--tms-primary); }
               <option value="air">空运</option>
               <option value="rail">铁运</option>
               <option value="land">陆运</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">供应商</label>
+            <select class="form-control" id="fSellSupplier">
+              <option value="">全部供应商</option>
             </select>
           </div>
           <div class="filter-item">
@@ -1126,6 +1174,7 @@ th.sortable:hover { color: var(--tms-primary); }
                 <th class="col-check"><input type="checkbox" class="check-all" data-panel="sell"></th>
                 <th>名称</th>
                 <th>服务</th>
+                <th>供应商</th>
                 <th>收货区域</th>
                 <th>优先级</th>
                 <th>用户等级</th>
@@ -1141,10 +1190,11 @@ th.sortable:hover { color: var(--tms-primary); }
               </tr>
             </thead>
             <tbody id="sellTbody">
-              <tr data-status="published">
+              <tr data-status="published" data-supplier="SUP-2026-001">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('美西普货公布价','sell')">美西普货公布价</span></td>
                 <td><span class="tag tag-blue">海运FCL</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-001')">中远海运集运</span></td>
                 <td>华东</td>
                 <td><span class="mono">1</span></td>
                 <td><span class="tag tag-purple">VIP</span></td>
@@ -1160,6 +1210,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('美西普货公布价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-001')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1168,10 +1220,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="sales-floor">
+              <tr data-status="sales-floor" data-supplier="SUP-2026-002">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('美西销售员底价','sell')">美西销售员底价</span></td>
                 <td><span class="tag tag-blue">海运FCL</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-002')">马士基航运</span></td>
                 <td>华南</td>
                 <td><span class="mono">2</span></td>
                 <td><span class="tag tag-orange">金牌</span></td>
@@ -1187,6 +1240,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('美西销售员底价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-002')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1195,10 +1250,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="cost">
+              <tr data-status="cost" data-supplier="SUP-2026-005">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('欧洲铁运成本价','sell')">欧洲铁运成本价</span></td>
                 <td><span class="tag tag-green">铁运</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-005')">中欧班列物流</span></td>
                 <td>华北</td>
                 <td><span class="mono">3</span></td>
                 <td><span class="tag tag-gray">普通</span></td>
@@ -1214,6 +1270,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('欧洲铁运成本价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-005')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1222,10 +1280,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="published">
+              <tr data-status="published" data-supplier="SUP-2026-004">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('日本空运公布价','sell')">日本空运公布价</span></td>
                 <td><span class="tag tag-orange">空运</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-004')">南方航空货运</span></td>
                 <td>华东</td>
                 <td><span class="mono">5</span></td>
                 <td><span class="tag tag-cyan">银牌</span></td>
@@ -1241,6 +1300,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('日本空运公布价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-004')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1249,10 +1310,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="cost">
+              <tr data-status="cost" data-supplier="SUP-2026-003">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('东南亚海运成本价','sell')">东南亚海运成本价</span></td>
                 <td><span class="tag tag-cyan">海运LCL</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-003')">长荣海运</span></td>
                 <td>华南</td>
                 <td><span class="mono">4</span></td>
                 <td><span class="tag tag-gray">铜牌</span></td>
@@ -1268,6 +1330,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('东南亚海运成本价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-003')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1276,10 +1340,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="sales-floor">
+              <tr data-status="sales-floor" data-supplier="SUP-2026-006">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('欧洲重货底价','sell')">欧洲重货底价</span></td>
                 <td><span class="tag tag-blue">海运FCL</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-006')">赫伯罗特货代</span></td>
                 <td>华中</td>
                 <td><span class="mono">2</span></td>
                 <td><span class="tag tag-purple">VIP</span></td>
@@ -1295,6 +1360,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('欧洲重货底价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-006')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1303,10 +1370,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="published">
+              <tr data-status="published" data-supplier="SUP-2026-008">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('澳新航线公布价','sell')">澳新航线公布价</span></td>
                 <td><span class="tag tag-blue">海运FCL</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-008')">以星航运</span></td>
                 <td>华东</td>
                 <td><span class="mono">6</span></td>
                 <td><span class="tag tag-gray">普通</span></td>
@@ -1322,6 +1390,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('澳新航线公布价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-008')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1330,10 +1400,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="cost">
+              <tr data-status="cost" data-supplier="SUP-2026-004">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('中东空运成本价','sell')">中东空运成本价</span></td>
                 <td><span class="tag tag-orange">空运</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-004')">南方航空货运</span></td>
                 <td>西南</td>
                 <td><span class="mono">7</span></td>
                 <td><span class="tag tag-orange">金牌</span></td>
@@ -1349,6 +1420,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('中东空运成本价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-004')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1357,10 +1430,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="sales-floor">
+              <tr data-status="sales-floor" data-supplier="SUP-2026-001">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('北美冷链底价','sell')">北美冷链底价</span></td>
                 <td><span class="tag tag-blue">海运FCL</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-001')">中远海运集运</span></td>
                 <td>东北</td>
                 <td><span class="mono">1</span></td>
                 <td><span class="tag tag-purple">VIP</span></td>
@@ -1376,6 +1450,8 @@ th.sortable:hover { color: var(--tms-primary); }
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('北美冷链底价','sell')">查看</button>
                     <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-001')">查看供应商报价</button>
+                    <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="copyRate(this)">复制</button>
@@ -1384,10 +1460,11 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="published">
+              <tr data-status="published" data-supplier="SUP-2026-003">
                 <td><input type="checkbox" class="row-check"></td>
                 <td><span class="mono link" onclick="openDetail('印巴航线公布价','sell')">印巴航线公布价</span></td>
                 <td><span class="tag tag-cyan">海运LCL</span></td>
+                <td><span class="link" onclick="viewSupplierQuotes('SUP-2026-003')">长荣海运</span></td>
                 <td>华南</td>
                 <td><span class="mono">8</span></td>
                 <td><span class="tag tag-cyan">银牌</span></td>
@@ -1402,6 +1479,8 @@ th.sortable:hover { color: var(--tms-primary); }
                 <td class="col-action">
                   <div class="action-links">
                     <button class="btn-link" onclick="openDetail('印巴航线公布价','sell')">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="viewSupplierQuotes('SUP-2026-003')">查看供应商报价</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
@@ -1930,6 +2009,89 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
+<!-- Modal: 新增运价 -->
+<div class="modal-mask" id="addRateModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">＋ 新增运价</span>
+      <button class="modal-close" data-close="addRateModal">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="addRateForm">
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>运价名称</label>
+            <input type="text" class="form-control" id="addRateName" placeholder="如：美西普货公布价">
+          </div>
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>服务</label>
+            <select class="form-control" id="addRateService">
+              <option value="">请选择</option>
+              <option value="fcl">海运FCL</option>
+              <option value="lcl">海运LCL</option>
+              <option value="air">空运</option>
+              <option value="rail">铁运</option>
+              <option value="land">陆运</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label"><span class="required">*</span>供应商</label>
+            <select class="form-control" id="addRateSupplier" onchange="updateSupplierSummary()">
+              <option value="">请选择供应商</option>
+            </select>
+          </div>
+          <div class="form-col">
+            <label class="form-label">收货区域</label>
+            <select class="form-control" id="addRateRegion">
+              <option value="">请选择</option>
+              <option value="east">华东</option>
+              <option value="south">华南</option>
+              <option value="north">华北</option>
+              <option value="central">华中</option>
+              <option value="southwest">西南</option>
+              <option value="northeast">东北</option>
+              <option value="northwest">西北</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <div class="form-col" style="flex:1;">
+            <label class="form-label">备注</label>
+            <textarea class="form-control" id="addRateRemark" rows="3" placeholder="请输入备注"></textarea>
+          </div>
+        </div>
+        <div id="addRateSupplierSummary" style="display:none;"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="addRateModal">取消</button>
+      <button class="btn btn-primary" onclick="saveAddRate()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 查看供应商报价 -->
+<div class="modal-mask" id="supplierQuotesModal">
+  <div class="modal modal-xl">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="modal-title" id="supplierQuotesTitle">📋 供应商报价</span>
+        <span class="tag tag-blue" id="supplierQuotesTag">-</span>
+      </div>
+      <button class="modal-close" data-close="supplierQuotesModal">×</button>
+    </div>
+    <div class="modal-body" id="supplierQuotesBody">
+      <!-- 动态填充 -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="supplierQuotesModal">关闭</button>
+      <button class="btn btn-primary" onclick="openAddRateModal()" data-close="supplierQuotesModal">新增运价</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== 全局状态 ==========
 var currentTab = 'sell';
@@ -2007,7 +2169,201 @@ document.addEventListener('DOMContentLoaded', function() {
   if (activeTab) switchTab(activeTab, activePanel);
   updateBatchBtns();
   updateBatchBar();
+  populateSupplierSelect();
 });
+
+// ========== 供应商联动 ==========
+var serviceMap = { fcl:'海运FCL', lcl:'海运LCL', air:'空运', rail:'铁运', land:'陆运' };
+var regionMap = { east:'华东', south:'华南', north:'华北', central:'华中', southwest:'西南', northeast:'东北', northwest:'西北' };
+
+function getSuppliersFromStorage() {
+  var raw = localStorage.getItem('tms_suppliers_v1');
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch(e) { return []; }
+}
+
+function getSupplierById(id) {
+  var suppliers = getSuppliersFromStorage();
+  for (var i = 0; i < suppliers.length; i++) {
+    if (suppliers[i].id === id) return suppliers[i];
+  }
+  return null;
+}
+
+function populateSupplierSelect() {
+  var suppliers = getSuppliersFromStorage();
+  var filterSel = document.getElementById('fSellSupplier');
+  var modalSel = document.getElementById('addRateSupplier');
+  var defaultOption = '<option value="">全部供应商</option>';
+  var modalDefault = '<option value="">请选择供应商</option>';
+
+  if (!suppliers || suppliers.length === 0) {
+    var fallback = [
+      { id:'SUP-2026-001', name:'中远海运集运' },
+      { id:'SUP-2026-002', name:'马士基航运' },
+      { id:'SUP-2026-003', name:'长荣海运' },
+      { id:'SUP-2026-004', name:'南方航空货运' },
+      { id:'SUP-2026-005', name:'中欧班列物流' },
+      { id:'SUP-2026-006', name:'赫伯罗特货代' },
+      { id:'SUP-2026-007', name:'中外运物流' },
+      { id:'SUP-2026-008', name:'以星航运' }
+    ];
+    suppliers = fallback;
+  }
+
+  var options = suppliers.map(function(s){
+    return '<option value="' + s.id + '">' + s.name + '</option>';
+  }).join('');
+
+  if (filterSel) filterSel.innerHTML = defaultOption + options;
+  if (modalSel) modalSel.innerHTML = modalDefault + options;
+}
+
+function openAddRateModal() {
+  document.getElementById('addRateForm').reset();
+  document.getElementById('addRateSupplierSummary').style.display = 'none';
+  document.getElementById('addRateSupplierSummary').innerHTML = '';
+  populateSupplierSelect();
+  document.getElementById('addRateModal').classList.add('show');
+}
+
+function updateSupplierSummary() {
+  var id = document.getElementById('addRateSupplier').value;
+  var box = document.getElementById('addRateSupplierSummary');
+  if (!id) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  var s = getSupplierById(id);
+  if (!s) { box.style.display = 'none'; box.innerHTML = ''; return; }
+
+  var quotes = s.quotes || [];
+  var today = new Date().toISOString().split('T')[0];
+  var validQuotes = quotes.filter(function(q){ return q.validDate >= today && q.status !== 'expired'; });
+  var latest = validQuotes.length > 0 ? validQuotes[validQuotes.length - 1] : (quotes.length > 0 ? quotes[quotes.length - 1] : null);
+
+  var html = ''
+    + '<div style="margin-top:12px;padding:12px;background:var(--tms-primary-bg);border:1px solid var(--tms-primary-light);border-radius:var(--tms-radius);">'
+    +   '<div style="font-weight:600;color:var(--tms-text-1);margin-bottom:8px;">📋 ' + s.name + ' 最新报价摘要</div>'
+    +   '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:13px;color:var(--tms-text-2);">'
+    +     '<div>联系人：' + (s.contact || '-') + '</div>'
+    +     '<div>电话：' + (s.phone || '-') + '</div>'
+    +     '<div>报价文档数：' + quotes.length + '</div>'
+    +     '<div>合作状态：' + (s.status === 'cooperating' ? '合作中' : s.status === 'stopped' ? '已暂停' : '潜在') + '</div>'
+    +   '</div>';
+  if (latest) {
+    html += ''
+      +   '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:var(--tms-radius);border:1px solid var(--tms-border);">'
+      +     '<div style="font-weight:500;margin-bottom:4px;">最近文档：' + latest.fileName + '</div>'
+      +     '<div style="display:flex;gap:16px;font-size:12px;color:var(--tms-text-3);">'
+      +       '<span>上传时间：' + latest.uploadTime + '</span>'
+      +       '<span>有效期至：' + latest.validDate + '</span>'
+      +       '<span>状态：' + (latest.status === 'valid' ? '有效' : latest.status === 'pending' ? '待审核' : '已失效') + '</span>'
+      +     '</div>'
+      +   '</div>';
+  }
+  html += '</div>';
+  box.innerHTML = html;
+  box.style.display = 'block';
+}
+
+function saveAddRate() {
+  var name = document.getElementById('addRateName').value.trim();
+  var service = document.getElementById('addRateService').value;
+  var supplier = document.getElementById('addRateSupplier').value;
+  if (!name) { toast('请输入运价名称', 'warning'); return; }
+  if (!service) { toast('请选择服务类型', 'warning'); return; }
+  if (!supplier) { toast('请选择供应商', 'warning'); return; }
+  document.getElementById('addRateModal').classList.remove('show');
+  toast('运价已保存（演示）', 'success');
+}
+
+function viewSupplierQuotes(supplierId) {
+  var s = getSupplierById(supplierId);
+  if (!s) { toast('未找到供应商信息', 'warning'); return; }
+
+  document.getElementById('supplierQuotesTitle').textContent = '📋 ' + s.name + ' 报价';
+  var tag = document.getElementById('supplierQuotesTag');
+  tag.textContent = s.status === 'cooperating' ? '合作中' : s.status === 'stopped' ? '已暂停' : '潜在';
+  tag.className = 'tag ' + (s.status === 'cooperating' ? 'tag-green' : s.status === 'stopped' ? 'tag-red' : 'tag-blue');
+
+  var quotes = s.quotes || [];
+  var today = new Date().toISOString().split('T')[0];
+  var serviceMap = { fcl:'海运FCL', lcl:'海运LCL', air:'空运', rail:'铁运', land:'陆运' };
+  var latest = quotes.length > 0 ? quotes[quotes.length - 1] : null;
+
+  var basic = ''
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px;">'
+    +   '<div class="summary-card"><div class="summary-label">供应商编号</div><div class="summary-value mono">' + s.id + '</div></div>'
+    +   '<div class="summary-card"><div class="summary-label">服务类型</div><div class="summary-value">' + (serviceMap[s.service] || s.service) + '</div></div>'
+    +   '<div class="summary-card"><div class="summary-label">联系人</div><div class="summary-value">' + (s.contact || '-') + '</div></div>'
+    +   '<div class="summary-card"><div class="summary-label">联系电话</div><div class="summary-value">' + (s.phone || '-') + '</div></div>'
+    +   '<div class="summary-card"><div class="summary-label">邮箱</div><div class="summary-value">' + (s.email || '-') + '</div></div>'
+    +   '<div class="summary-card"><div class="summary-label">地址</div><div class="summary-value">' + (s.address || '-') + '</div></div>'
+    + '</div>';
+
+  var quoteHtml = '';
+  if (quotes.length === 0) {
+    quoteHtml = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">暂无报价文档</div></div>';
+  } else {
+    quoteHtml = ''
+      + '<div class="desc-section-title">📎 报价文档列表</div>'
+      + '<table class="data-table" style="font-size:13px;">'
+      +   '<thead><tr><th>文档名称</th><th>上传时间</th><th>有效期</th><th>状态</th><th>备注</th><th class="col-action">操作</th></tr></thead>'
+      +   '<tbody>';
+    quotes.forEach(function(q){
+      var statusClass = q.status === 'valid' || (q.validDate >= today && q.status !== 'expired') ? 'tag-green' : q.status === 'pending' ? 'tag-orange' : 'tag-red';
+      var statusText = q.status === 'valid' ? '有效' : q.status === 'pending' ? '待审核' : '已失效';
+      if (q.status === 'valid' && q.validDate < today) { statusClass = 'tag-red'; statusText = '已过期'; }
+      quoteHtml += ''
+        + '<tr>'
+        +   '<td><b>' + q.fileName + '</b></td>'
+        +   '<td>' + q.uploadTime + '</td>'
+        +   '<td>' + q.validDate + '</td>'
+        +   '<td><span class="tag ' + statusClass + ' tag-dot">' + statusText + '</span></td>'
+        +   '<td>' + (q.remark || '-') + '</td>'
+        +   '<td class="col-action"><div class="action-links">'
+        +     '<button class="btn-link" onclick="toast(\'查看文档：' + q.fileName + '\',\'info\')">查看</button>'
+        +     '<span class="divider-v"></span>'
+        +     '<button class="btn-link" onclick="toast(\'下载文档：' + q.fileName + '\',\'success\')">下载</button>'
+        +   '</div></td>'
+        + '</tr>';
+    });
+    quoteHtml += '</tbody></table>';
+  }
+
+  // 同服务/区域可比较提示
+  var comparable = '';
+  var allSuppliers = getSuppliersFromStorage();
+  var peers = allSuppliers.filter(function(x){ return x.id !== s.id && x.service === s.service && (x.quotes||[]).length > 0; });
+  if (peers.length > 0) {
+    comparable = ''
+      + '<div class="desc-section-title" style="margin-top:20px;">⚖️ 同服务可比供应商（价格参考）</div>'
+      + '<table class="data-table" style="font-size:13px;">'
+      +   '<thead><tr><th>供应商</th><th>最新报价文档</th><th>有效期</th><th>状态</th><th>价格提示</th></tr></thead>'
+      +   '<tbody>';
+    peers.forEach(function(p){
+      var pq = p.quotes[p.quotes.length - 1];
+      var statusClass = pq.status === 'valid' ? 'tag-green' : pq.status === 'pending' ? 'tag-orange' : 'tag-red';
+      var statusText = pq.status === 'valid' ? '有效' : pq.status === 'pending' ? '待审核' : '已失效';
+      var hint = '<span class="tag tag-blue">可比较</span>';
+      if (pq.status === 'valid' && latest && latest.status === 'valid') {
+        hint = '<span class="tag tag-green">建议对比</span>';
+      } else if (pq.status === 'expired') {
+        hint = '<span class="tag tag-gray">已失效</span>';
+      }
+      comparable += ''
+        + '<tr>'
+        +   '<td><b>' + p.name + '</b></td>'
+        +   '<td>' + pq.fileName + '</td>'
+        +   '<td>' + pq.validDate + '</td>'
+        +   '<td><span class="tag ' + statusClass + ' tag-dot">' + statusText + '</span></td>'
+        +   '<td>' + hint + '</td>'
+        + '</tr>';
+    });
+    comparable += '</tbody></table>';
+  }
+
+  document.getElementById('supplierQuotesBody').innerHTML = basic + quoteHtml + comparable;
+  document.getElementById('supplierQuotesModal').classList.add('show');
+}
 
 // ========== 状态Tab切换 ==========
 function switchTab(el, panel) {
@@ -2065,7 +2421,36 @@ function doQuery(panel) {
     btn.disabled = false;
     btn.innerHTML = originalHTML;
     var tabName = panel === 'sell' ? '销售运价' : '采购运价';
-    toast('[' + tabName + '] 查询完成，共找到 10 条数据', 'success');
+
+    // 销售运价：按供应商/服务/区域/状态等实时过滤
+    if (panel === 'sell') {
+      var supplier = document.getElementById('fSellSupplier').value;
+      var service = document.getElementById('fSellService').value;
+      var region = document.getElementById('fSellRegion').value;
+      var status = document.getElementById('fSellStatus').value;
+      var keyword = document.getElementById('fSellKeyword').value.trim().toLowerCase();
+      var rows = document.querySelectorAll('#sellTbody tr');
+      var count = 0;
+      rows.forEach(function(tr){
+        var show = true;
+        if (supplier && tr.getAttribute('data-supplier') !== supplier) show = false;
+        if (service) {
+          var svcCell = tr.querySelector('td:nth-child(3)');
+          if (svcCell && svcCell.textContent.indexOf(serviceMap[service] || service) === -1) show = false;
+        }
+        if (region) {
+          var regionCell = tr.querySelector('td:nth-child(5)');
+          if (regionCell && regionCell.textContent !== regionMap[region]) show = false;
+        }
+        if (status && tr.getAttribute('data-status') !== status) show = false;
+        if (keyword && tr.textContent.toLowerCase().indexOf(keyword) === -1) show = false;
+        tr.style.display = show ? '' : 'none';
+        if (show) count++;
+      });
+      toast('[' + tabName + '] 查询完成，共找到 ' + count + ' 条数据', 'success');
+    } else {
+      toast('[' + tabName + '] 查询完成，共找到 10 条数据', 'success');
+    }
   }, 800);
 }
 
@@ -2074,6 +2459,7 @@ function resetFilter(panel) {
   if (panel === 'sell') {
     document.getElementById('fSellKeyword').value = '';
     document.getElementById('fSellService').value = '';
+    document.getElementById('fSellSupplier').value = '';
     document.getElementById('fSellRegion').value = '';
     document.getElementById('fSellUserLevel').value = '';
     document.getElementById('fSellUser').value = '';
