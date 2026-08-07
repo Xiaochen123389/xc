@@ -986,40 +986,38 @@ th.sortable:hover { color: var(--tms-primary); }
           </div>
           <div class="stat-icon-wrap">📈</div>
         </div>
-        <div class="stat-card stat-success" onclick="filterByStat('sell','active')">
+        <div class="stat-card stat-success" onclick="filterByStat('sell','published')">
           <div class="stat-info">
-            <div class="stat-label">✅ 生效中</div>
-            <div class="stat-value">215<span style="font-size:16px;font-weight:500;color:var(--tms-text-3);">条</span></div>
-            <div class="stat-trend up">占比 75.2%</div>
+            <div class="stat-label">📢 公布价</div>
+            <div class="stat-value">156<span style="font-size:16px;font-weight:500;color:var(--tms-text-3);">条</span></div>
+            <div class="stat-trend up">占比 54.5%</div>
           </div>
-          <div class="stat-icon-wrap">✅</div>
+          <div class="stat-icon-wrap">📢</div>
         </div>
-        <div class="stat-card stat-warning" onclick="filterByStat('sell','expiring')">
+        <div class="stat-card stat-warning" onclick="filterByStat('sell','sales-floor')">
           <div class="stat-info">
-            <div class="stat-label">⏰ 即将到期</div>
-            <div class="stat-value">32<span style="font-size:16px;font-weight:500;color:var(--tms-text-3);">条</span></div>
-            <div class="stat-trend" style="color:var(--tms-warning);">30天内到期</div>
+            <div class="stat-label">🔒 销售员底价</div>
+            <div class="stat-value">89<span style="font-size:16px;font-weight:500;color:var(--tms-text-3);">条</span></div>
+            <div class="stat-trend" style="color:var(--tms-warning);">内部可见</div>
           </div>
-          <div class="stat-icon-wrap">⏰</div>
+          <div class="stat-icon-wrap">🔒</div>
         </div>
-        <div class="stat-card stat-gray" onclick="filterByStat('sell','draft')">
+        <div class="stat-card stat-gray" onclick="filterByStat('sell','cost')">
           <div class="stat-info">
-            <div class="stat-label">📋 草稿/待审</div>
-            <div class="stat-value">39<span style="font-size:16px;font-weight:500;color:var(--tms-text-3);">条</span></div>
-            <div class="stat-trend text-muted">待审核发布</div>
+            <div class="stat-label">📋 成本价</div>
+            <div class="stat-value">41<span style="font-size:16px;font-weight:500;color:var(--tms-text-3);">条</span></div>
+            <div class="stat-trend text-muted">成本参考</div>
           </div>
           <div class="stat-icon-wrap">📋</div>
         </div>
       </div>
 
-      <!-- Tabs状态筛选 -->
+      <!-- Tabs价格类型筛选 -->
       <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md) var(--tms-radius-md) 0 0;">
         <div class="tabs" id="sellStatusTabs" style="margin-bottom:0;">
-          <div class="tab-item active" data-status="all" onclick="switchTab(this,'sell')">全部<span class="tab-count">286</span></div>
-          <div class="tab-item" data-status="active" onclick="switchTab(this,'sell')">生效中<span class="tab-count" style="background:var(--tms-success-light);color:#389e0d;">215</span></div>
-          <div class="tab-item" data-status="expired" onclick="switchTab(this,'sell')">已过期<span class="tab-count" style="background:var(--tms-border-2);color:var(--tms-text-2);">21</span></div>
-          <div class="tab-item" data-status="draft" onclick="switchTab(this,'sell')">草稿<span class="tab-count" style="background:var(--tms-primary-light);color:var(--tms-primary);">18</span></div>
-          <div class="tab-item" data-status="pending" onclick="switchTab(this,'sell')">待审核<span class="tab-count" style="background:var(--tms-warning-light);color:#d48806;">21</span></div>
+          <div class="tab-item active" data-status="published" onclick="switchTab(this,'sell')">公布价<span class="tab-count">156</span></div>
+          <div class="tab-item" data-status="sales-floor" onclick="switchTab(this,'sell')">销售员底价<span class="tab-count" style="background:var(--tms-success-light);color:#389e0d;">89</span></div>
+          <div class="tab-item" data-status="cost" onclick="switchTab(this,'sell')">成本价<span class="tab-count" style="background:var(--tms-warning-light);color:#d48806;">41</span></div>
         </div>
       </div>
 
@@ -1027,15 +1025,11 @@ th.sortable:hover { color: var(--tms-primary); }
       <div class="filter-bar">
         <div class="filter-grid">
           <div class="filter-item">
-            <label class="filter-label">运价编号</label>
-            <input type="text" class="form-control" id="fSellNo" placeholder="如 SR202607-SHA-LAX-01">
+            <label class="filter-label">关键字</label>
+            <input type="text" class="form-control" id="fSellKeyword" placeholder="请输入名称/服务/区域">
           </div>
           <div class="filter-item">
-            <label class="filter-label">客户名称</label>
-            <input type="text" class="form-control" id="fSellCustomer" placeholder="请输入客户名称">
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">服务类型</label>
+            <label class="filter-label">服务</label>
             <select class="form-control" id="fSellService">
               <option value="">全部</option>
               <option value="fcl">海运FCL</option>
@@ -1046,49 +1040,43 @@ th.sortable:hover { color: var(--tms-primary); }
             </select>
           </div>
           <div class="filter-item">
-            <label class="filter-label">起运港</label>
-            <select class="form-control" id="fSellPol">
-              <option value="">全部起运港</option>
-              <option value="SHA">上海</option>
-              <option value="SZX">深圳</option>
-              <option value="NGB">宁波</option>
-              <option value="QIN">青岛</option>
-              <option value="GZH">广州</option>
-              <option value="TSN">天津</option>
-              <option value="XMN">厦门</option>
+            <label class="filter-label">收货区域</label>
+            <select class="form-control" id="fSellRegion">
+              <option value="">全部区域</option>
+              <option value="east">华东</option>
+              <option value="south">华南</option>
+              <option value="north">华北</option>
+              <option value="central">华中</option>
+              <option value="southwest">西南</option>
+              <option value="northeast">东北</option>
+              <option value="northwest">西北</option>
             </select>
           </div>
           <div class="filter-item">
-            <label class="filter-label">目的港</label>
-            <select class="form-control" id="fSellPod">
-              <option value="">全部目的港</option>
-              <option value="LAX">洛杉矶</option>
-              <option value="LGB">长滩</option>
-              <option value="NYC">纽约</option>
-              <option value="RTM">鹿特丹</option>
-              <option value="HAM">汉堡</option>
-              <option value="TYO">东京</option>
-              <option value="SIN">新加坡</option>
-              <option value="SYD">悉尼</option>
+            <label class="filter-label">用户等级</label>
+            <select class="form-control" id="fSellUserLevel">
+              <option value="">全部等级</option>
+              <option value="vip">VIP</option>
+              <option value="gold">金牌</option>
+              <option value="silver">银牌</option>
+              <option value="bronze">铜牌</option>
+              <option value="normal">普通</option>
             </select>
           </div>
           <div class="filter-item">
-            <label class="filter-label">柜型/等级</label>
-            <select class="form-control" id="fSellContainer">
-              <option value="">全部</option>
-              <option value="20GP">20GP</option>
-              <option value="40GP">40GP</option>
-              <option value="40HQ">40HQ</option>
-              <option value="45HQ">45HQ</option>
-              <option value="+100KG">+100KG</option>
-              <option value="+300KG">+300KG</option>
-              <option value="+500KG">+500KG</option>
-              <option value="+1000KG">+1000KG</option>
-            </select>
+            <label class="filter-label">用户</label>
+            <input type="text" class="form-control" id="fSellUser" placeholder="请输入用户名">
           </div>
           <div class="filter-item">
-            <label class="filter-label">有效期</label>
-            <input type="date" class="form-control" id="fSellValidDate">
+            <label class="filter-label">部门</label>
+            <select class="form-control" id="fSellDept">
+              <option value="">全部部门</option>
+              <option value="sales">销售部</option>
+              <option value="cs">客服部</option>
+              <option value="ops">操作部</option>
+              <option value="bd">商务部</option>
+              <option value="finance">财务部</option>
+            </select>
           </div>
           <div class="filter-item">
             <label class="filter-label">状态</label>
@@ -1120,7 +1108,7 @@ th.sortable:hover { color: var(--tms-primary); }
           <div class="toolbar-right">
             <div class="search-box">
               <span class="search-icon">🔍</span>
-              <input type="text" class="form-control" data-search="#sellTable" placeholder="搜索运价编号/客户/航线">
+              <input type="text" class="form-control" data-search="#sellTable" placeholder="搜索名称/服务/用户/区域">
             </div>
             <button class="btn btn-icon btn-sm" title="刷新" onclick="refreshTable('sell')">
               <span>🔄</span>
@@ -1136,39 +1124,41 @@ th.sortable:hover { color: var(--tms-primary); }
             <thead>
               <tr>
                 <th class="col-check"><input type="checkbox" class="check-all" data-panel="sell"></th>
-                <th>运价编号</th>
-                <th>客户名称</th>
-                <th>航线</th>
-                <th>服务类型</th>
-                <th>柜型/等级</th>
-                <th>运价</th>
-                <th>有效期</th>
-                <th>航程</th>
+                <th>名称</th>
+                <th>服务</th>
+                <th>收货区域</th>
+                <th>优先级</th>
+                <th>用户等级</th>
+                <th>用户</th>
+                <th>最小重量</th>
+                <th>最大重量</th>
+                <th>邮编开头</th>
+                <th>父级</th>
                 <th>状态</th>
+                <th>备注</th>
+                <th>结束时间</th>
                 <th class="col-action">操作</th>
               </tr>
             </thead>
             <tbody id="sellTbody">
-              <tr data-status="active">
+              <tr data-status="published">
                 <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-SHA-LAX-01','sell')">SR202607-SHA-LAX-01</span></td>
+                <td><span class="mono link" onclick="openDetail('美西普货公布价','sell')">美西普货公布价</span></td>
+                <td><span class="tag tag-blue">海运FCL</span></td>
+                <td>华东</td>
+                <td><span class="mono">1</span></td>
+                <td><span class="tag tag-purple">VIP</span></td>
                 <td>华通机械制造有限公司</td>
-                <td><span class="font-mono text-sm">上海 → 洛杉矶</span></td>
-                <td><span class="tag tag-blue">海运FCL</span></td>
-                <td><span class="text-sm">20GP / 40GP / 40HQ</span></td>
-                <td>
-                  <div class="price-multi">
-                    <span class="price-num">$1,200</span>
-                    <span class="price-num">$1,800</span>
-                    <span class="price-num">$2,000</span>
-                  </div>
-                </td>
-                <td><span class="text-muted font-mono text-sm">2026-07-01 ~ 2026-09-30</span></td>
-                <td><span class="text-sm">12天</span></td>
+                <td><span class="mono">0 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">200</span></td>
+                <td><span class="text-sm text-muted">-</span></td>
                 <td><span class="tag tag-green tag-dot">生效中</span></td>
+                <td><span class="text-sm">上海港出运，含THC</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-12-31</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-SHA-LAX-01','sell')">查看</button>
+                    <button class="btn-link" onclick="openDetail('美西普货公布价','sell')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
@@ -1178,25 +1168,24 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="active">
+              <tr data-status="sales-floor">
                 <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-SHA-LGB-02','sell')">SR202607-SHA-LGB-02</span></td>
+                <td><span class="mono link" onclick="openDetail('美西销售员底价','sell')">美西销售员底价</span></td>
+                <td><span class="tag tag-blue">海运FCL</span></td>
+                <td>华南</td>
+                <td><span class="mono">2</span></td>
+                <td><span class="tag tag-orange">金牌</span></td>
                 <td>鑫海钢结构工程</td>
-                <td><span class="font-mono text-sm">上海 → 长滩</span></td>
-                <td><span class="tag tag-blue">海运FCL</span></td>
-                <td><span class="text-sm">40GP / 40HQ</span></td>
-                <td>
-                  <div class="price-multi">
-                    <span class="price-num">$1,750</span>
-                    <span class="price-num">$1,950</span>
-                  </div>
-                </td>
-                <td><span class="text-muted font-mono text-sm">2026-07-05 ~ 2026-09-30</span></td>
-                <td><span class="text-sm">14天</span></td>
+                <td><span class="mono">21 kg</span></td>
+                <td><span class="mono">45 kg</span></td>
+                <td><span class="mono">510</span></td>
+                <td><span class="text-sm">美西普货公布价</span></td>
                 <td><span class="tag tag-green tag-dot">生效中</span></td>
+                <td><span class="text-sm">仅限金牌以上用户</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-11-30</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-SHA-LGB-02','sell')">查看</button>
+                    <button class="btn-link" onclick="openDetail('美西销售员底价','sell')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
@@ -1206,101 +1195,24 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="active">
+              <tr data-status="cost">
                 <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-NGB-RTM-03','sell')">SR202607-NGB-RTM-03</span></td>
-                <td>博瑞风电设备</td>
-                <td><span class="font-mono text-sm">宁波 → 鹿特丹</span></td>
-                <td><span class="tag tag-blue">海运FCL</span></td>
-                <td><span class="text-sm">20GP / 40GP / 40HQ</span></td>
-                <td>
-                  <div class="price-multi">
-                    <span class="price-num">$1,500</span>
-                    <span class="price-num">$2,300</span>
-                    <span class="price-num">$2,500</span>
-                  </div>
-                </td>
-                <td><span class="text-muted font-mono text-sm">2026-07-10 ~ 2026-10-10</span></td>
-                <td><span class="text-sm">28天</span></td>
-                <td><span class="tag tag-green tag-dot">生效中</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-NGB-RTM-03','sell')">查看</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="copyRate(this)">复制</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-status="active">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-SZX-NYC-04','sell')">SR202607-SZX-NYC-04</span></td>
-                <td>鼎盛化工装备</td>
-                <td><span class="font-mono text-sm">深圳 → 纽约</span></td>
-                <td><span class="tag tag-cyan">海运LCL</span></td>
-                <td><span class="text-sm">按CBM</span></td>
-                <td><span class="price-num">$85/CBM</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-07-15 ~ 2026-09-15</span></td>
-                <td><span class="text-sm">22天</span></td>
-                <td><span class="tag tag-green tag-dot">生效中</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-SZX-NYC-04','sell')">查看</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="copyRate(this)">复制</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-status="pending">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-SHA-TYO-05','sell')">SR202607-SHA-TYO-05</span></td>
-                <td>宏远工程机械</td>
-                <td><span class="font-mono text-sm">上海 → 东京</span></td>
-                <td><span class="tag tag-orange">空运</span></td>
-                <td><span class="text-sm">+100KG / +500KG / +1000KG</span></td>
-                <td>
-                  <div class="price-multi">
-                    <span class="price-num">¥28/KG</span>
-                    <span class="price-num">¥25/KG</span>
-                    <span class="price-num">¥22/KG</span>
-                  </div>
-                </td>
-                <td><span class="text-muted font-mono text-sm">2026-08-01 ~ 2026-08-31</span></td>
-                <td><span class="text-sm">3-5天</span></td>
-                <td><span class="tag tag-orange tag-dot">待审核</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-SHA-TYO-05','sell')">查看</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="copyRate(this)">复制</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-status="active">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-QIN-HAM-06','sell')">SR202607-QIN-HAM-06</span></td>
-                <td>天顺轨道装备</td>
-                <td><span class="font-mono text-sm">青岛 → 汉堡</span></td>
+                <td><span class="mono link" onclick="openDetail('欧洲铁运成本价','sell')">欧洲铁运成本价</span></td>
                 <td><span class="tag tag-green">铁运</span></td>
-                <td><span class="text-sm">40HQ</span></td>
-                <td><span class="price-num">$2,800</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-07-01 ~ 2026-12-31</span></td>
-                <td><span class="text-sm">18天</span></td>
+                <td>华北</td>
+                <td><span class="mono">3</span></td>
+                <td><span class="tag tag-gray">普通</span></td>
+                <td>博瑞风电设备</td>
+                <td><span class="mono">0 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">300</span></td>
+                <td><span class="text-sm text-muted">-</span></td>
                 <td><span class="tag tag-green tag-dot">生效中</span></td>
+                <td><span class="text-sm">含报关费及铁路操作费</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-10-31</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-QIN-HAM-06','sell')">查看</button>
+                    <button class="btn-link" onclick="openDetail('欧洲铁运成本价','sell')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
@@ -1310,20 +1222,51 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="draft">
+              <tr data-status="published">
                 <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-SHA-SIN-07','sell')">SR202607-SHA-SIN-07</span></td>
-                <td>瑞华压力容器</td>
-                <td><span class="font-mono text-sm">上海 → 新加坡</span></td>
+                <td><span class="mono link" onclick="openDetail('日本空运公布价','sell')">日本空运公布价</span></td>
+                <td><span class="tag tag-orange">空运</span></td>
+                <td>华东</td>
+                <td><span class="mono">5</span></td>
+                <td><span class="tag tag-cyan">银牌</span></td>
+                <td>鼎盛化工装备</td>
+                <td><span class="mono">100 kg</span></td>
+                <td><span class="mono">500 kg</span></td>
+                <td><span class="mono">200</span></td>
+                <td><span class="text-sm text-muted">-</span></td>
+                <td><span class="tag tag-green tag-dot">生效中</span></td>
+                <td><span class="text-sm">泡货按体积计费</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-09-30</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="openDetail('日本空运公布价','sell')">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="copyRate(this)">复制</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="cost">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="openDetail('东南亚海运成本价','sell')">东南亚海运成本价</span></td>
                 <td><span class="tag tag-cyan">海运LCL</span></td>
-                <td><span class="text-sm">按CBM</span></td>
-                <td><span class="price-num">$65/CBM</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-07-20 ~ 2026-08-20</span></td>
-                <td><span class="text-sm">7天</span></td>
+                <td>华南</td>
+                <td><span class="mono">4</span></td>
+                <td><span class="tag tag-gray">铜牌</span></td>
+                <td>宏远工程机械</td>
+                <td><span class="mono">0 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">518</span></td>
+                <td><span class="text-sm">东南亚拼箱价</span></td>
                 <td><span class="tag tag-blue tag-dot">草稿</span></td>
+                <td><span class="text-sm">待财务审核后发布</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-08-31</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-SHA-SIN-07','sell')">查看</button>
+                    <button class="btn-link" onclick="openDetail('东南亚海运成本价','sell')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
@@ -1333,25 +1276,51 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="expired">
+              <tr data-status="sales-floor">
                 <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202606-NGB-SYD-08','sell')">SR202606-NGB-SYD-08</span></td>
-                <td>恒力石化装备</td>
-                <td><span class="font-mono text-sm">宁波 → 悉尼</span></td>
+                <td><span class="mono link" onclick="openDetail('欧洲重货底价','sell')">欧洲重货底价</span></td>
                 <td><span class="tag tag-blue">海运FCL</span></td>
-                <td><span class="text-sm">20GP / 40GP</span></td>
-                <td>
-                  <div class="price-multi">
-                    <span class="price-num">$900</span>
-                    <span class="price-num">$1,400</span>
+                <td>华中</td>
+                <td><span class="mono">2</span></td>
+                <td><span class="tag tag-purple">VIP</span></td>
+                <td>天顺轨道装备</td>
+                <td><span class="mono">1,000 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">430</span></td>
+                <td><span class="text-sm">欧洲基本港运价</span></td>
+                <td><span class="tag tag-green tag-dot">生效中</span></td>
+                <td><span class="text-sm">重货超重费另计</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-12-31</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="openDetail('欧洲重货底价','sell')">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="copyRate(this)">复制</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
                   </div>
                 </td>
-                <td><span class="text-muted font-mono text-sm">2026-06-01 ~ 2026-07-31</span></td>
-                <td><span class="text-sm">16天</span></td>
+              </tr>
+              <tr data-status="published">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="openDetail('澳新航线公布价','sell')">澳新航线公布价</span></td>
+                <td><span class="tag tag-blue">海运FCL</span></td>
+                <td>华东</td>
+                <td><span class="mono">6</span></td>
+                <td><span class="tag tag-gray">普通</span></td>
+                <td>瑞华压力容器</td>
+                <td><span class="mono">0 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">200</span></td>
+                <td><span class="text-sm text-muted">-</span></td>
                 <td><span class="tag tag-gray tag-dot">已过期</span></td>
+                <td><span class="text-sm">已停止维护，请走新价</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-31</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202606-NGB-SYD-08','sell')">查看</button>
+                    <button class="btn-link" onclick="openDetail('澳新航线公布价','sell')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
@@ -1361,49 +1330,78 @@ th.sortable:hover { color: var(--tms-primary); }
                   </div>
                 </td>
               </tr>
-              <tr data-status="draft">
+              <tr data-status="cost">
                 <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-SHA-LAX-09','sell')">SR202607-SHA-LAX-09</span></td>
-                <td>万通钢构</td>
-                <td><span class="font-mono text-sm">上海边境 → 洛杉矶</span></td>
-                <td><span class="tag tag-gray">陆运</span></td>
-                <td><span class="text-sm">整车</span></td>
-                <td><span class="price-num">¥12,000/车</span></td>
-                <td><span class="text-muted font-mono text-sm">2026-07-25 ~ 2026-10-25</span></td>
-                <td><span class="text-sm">5-7天</span></td>
-                <td><span class="tag tag-blue tag-dot">草稿</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-SHA-LAX-09','sell')">查看</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link" onclick="copyRate(this)">复制</button>
-                    <span class="divider-v"></span>
-                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-status="pending">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="openDetail('SR202607-TSN-LGB-10','sell')">SR202607-TSN-LGB-10</span></td>
-                <td>中远船舶重工</td>
-                <td><span class="font-mono text-sm">天津 → 长滩</span></td>
-                <td><span class="tag tag-blue">海运FCL</span></td>
-                <td><span class="text-sm">40GP / 40HQ / 45HQ</span></td>
-                <td>
-                  <div class="price-multi">
-                    <span class="price-num">$1,700</span>
-                    <span class="price-num">$1,900</span>
-                    <span class="price-num">$2,200</span>
-                  </div>
-                </td>
-                <td><span class="text-muted font-mono text-sm">2026-08-01 ~ 2026-10-31</span></td>
-                <td><span class="text-sm">13天</span></td>
+                <td><span class="mono link" onclick="openDetail('中东空运成本价','sell')">中东空运成本价</span></td>
+                <td><span class="tag tag-orange">空运</span></td>
+                <td>西南</td>
+                <td><span class="mono">7</span></td>
+                <td><span class="tag tag-orange">金牌</span></td>
+                <td>恒力石化装备</td>
+                <td><span class="mono">45 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">610</span></td>
+                <td><span class="text-sm">中东快线价</span></td>
                 <td><span class="tag tag-orange tag-dot">待审核</span></td>
+                <td><span class="text-sm">新航司报价，待确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-10-15</span></td>
                 <td class="col-action">
                   <div class="action-links">
-                    <button class="btn-link" onclick="openDetail('SR202607-TSN-LGB-10','sell')">查看</button>
+                    <button class="btn-link" onclick="openDetail('中东空运成本价','sell')">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="copyRate(this)">复制</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="sales-floor">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="openDetail('北美冷链底价','sell')">北美冷链底价</span></td>
+                <td><span class="tag tag-blue">海运FCL</span></td>
+                <td>东北</td>
+                <td><span class="mono">1</span></td>
+                <td><span class="tag tag-purple">VIP</span></td>
+                <td>万通钢构</td>
+                <td><span class="mono">0 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">110</span></td>
+                <td><span class="text-sm">北美特种柜运价</span></td>
+                <td><span class="tag tag-green tag-dot">生效中</span></td>
+                <td><span class="text-sm">需提前7天订舱</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-11-15</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="openDetail('北美冷链底价','sell')">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="copyRate(this)">复制</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link danger" onclick="deleteItem(this,'sell')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="published">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="openDetail('印巴航线公布价','sell')">印巴航线公布价</span></td>
+                <td><span class="tag tag-cyan">海运LCL</span></td>
+                <td>华南</td>
+                <td><span class="mono">8</span></td>
+                <td><span class="tag tag-cyan">银牌</span></td>
+                <td>中远船舶重工</td>
+                <td><span class="mono">0 kg</span></td>
+                <td><span class="mono">99,999 kg</span></td>
+                <td><span class="mono">510</span></td>
+                <td><span class="text-sm text-muted">-</span></td>
+                <td><span class="tag tag-green tag-dot">生效中</span></td>
+                <td><span class="text-sm">按CBM计费，含港杂</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-12-20</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="openDetail('印巴航线公布价','sell')">查看</button>
                     <span class="divider-v"></span>
                     <button class="btn-link" onclick="toast('编辑功能开发中','info')">编辑</button>
                     <span class="divider-v"></span>
@@ -2002,11 +2000,11 @@ function switchMainTab(tab) {
 document.addEventListener('DOMContentLoaded', function() {
   var params = new URLSearchParams(window.location.search);
   var tab = params.get('tab');
-  if (tab === 'buy') {
-    switchMainTab('buy');
-  } else {
-    switchMainTab('sell');
-  }
+  var activePanel = tab === 'buy' ? 'buy' : 'sell';
+  switchMainTab(activePanel);
+  var tabsId = activePanel === 'sell' ? 'sellStatusTabs' : 'buyStatusTabs';
+  var activeTab = document.querySelector('#' + tabsId + ' .tab-item.active');
+  if (activeTab) switchTab(activeTab, activePanel);
   updateBatchBtns();
   updateBatchBar();
 });
@@ -2038,8 +2036,14 @@ function switchTab(el, panel) {
 function filterByStat(panel, stat) {
   switchMainTab(panel);
   var tabsId = panel === 'sell' ? 'sellStatusTabs' : 'buyStatusTabs';
+  var tbodyId = panel === 'sell' ? 'sellTbody' : 'buyTbody';
   var tabs = document.querySelectorAll('#' + tabsId + ' .tab-item');
   tabs.forEach(function(t){ t.classList.remove('active'); });
+  if (panel === 'sell' && stat === 'all') {
+    if (tabs[0]) tabs[0].classList.add('active');
+    document.querySelectorAll('#' + tbodyId + ' tr').forEach(function(tr){ tr.style.display = ''; });
+    return;
+  }
   var targetStatus = stat;
   if (stat === 'all' || stat === 'carrier') targetStatus = 'all';
   if (stat === 'expiring') targetStatus = 'active';
@@ -2068,13 +2072,12 @@ function doQuery(panel) {
 // ========== 重置 ==========
 function resetFilter(panel) {
   if (panel === 'sell') {
-    document.getElementById('fSellNo').value = '';
-    document.getElementById('fSellCustomer').value = '';
+    document.getElementById('fSellKeyword').value = '';
     document.getElementById('fSellService').value = '';
-    document.getElementById('fSellPol').value = '';
-    document.getElementById('fSellPod').value = '';
-    document.getElementById('fSellContainer').value = '';
-    document.getElementById('fSellValidDate').value = '';
+    document.getElementById('fSellRegion').value = '';
+    document.getElementById('fSellUserLevel').value = '';
+    document.getElementById('fSellUser').value = '';
+    document.getElementById('fSellDept').value = '';
     document.getElementById('fSellStatus').value = '';
   } else {
     document.getElementById('fBuyNo').value = '';
@@ -2091,8 +2094,12 @@ function resetFilter(panel) {
   var tbodyId = panel === 'sell' ? 'sellTbody' : 'buyTbody';
   var tabs = document.querySelectorAll('#' + tabsId + ' .tab-item');
   tabs.forEach(function(t){ t.classList.remove('active'); });
-  var allTab = document.querySelector('#' + tabsId + ' .tab-item[data-status="all"]');
-  if (allTab) allTab.classList.add('active');
+  if (panel === 'sell') {
+    if (tabs[0]) tabs[0].classList.add('active');
+  } else {
+    var allTab = document.querySelector('#' + tabsId + ' .tab-item[data-status="all"]');
+    if (allTab) allTab.classList.add('active');
+  }
   document.querySelectorAll('#' + tbodyId + ' tr').forEach(function(tr){ tr.style.display = ''; });
   toast('筛选条件已重置', 'info');
 }
@@ -2270,10 +2277,12 @@ function openDetail(rateNo, panel) {
   detailNo.textContent = rateNo;
 
   if (panel === 'sell') {
+    var data = getSellRateData(rateNo);
     modalTitle.textContent = '📈 销售运价详情';
     copyBtn.textContent = '复制运价';
-    detailStatus.className = 'tag tag-green tag-dot';
-    detailStatus.textContent = '生效中';
+    var statusClass = data.status === '生效中' ? 'tag-green' : (data.status === '已过期' ? 'tag-gray' : (data.status === '草稿' ? 'tag-blue' : 'tag-orange'));
+    detailStatus.className = 'tag ' + statusClass + ' tag-dot';
+    detailStatus.textContent = data.status;
     detailBody.innerHTML = getSellDetailHTML(rateNo);
   } else {
     modalTitle.textContent = '📉 采购合同详情';
@@ -2288,74 +2297,51 @@ function openDetail(rateNo, panel) {
 
 function getSellDetailHTML(no) {
   var data = getSellRateData(no);
+  var statusClass = data.status === '生效中' ? 'tag-green' : (data.status === '已过期' ? 'tag-gray' : (data.status === '草稿' ? 'tag-blue' : 'tag-orange'));
+  var levelClass = data.level === 'VIP' ? 'tag-purple' : (data.level === '金牌' ? 'tag-orange' : (data.level === '银牌' ? 'tag-cyan' : (data.level === '铜牌' ? 'tag-gray' : 'tag-gray')));
   return ''
     + '<div class="desc-section-title">📋 基本信息</div>'
     + '<div class="desc-list cols-3">'
-    +   '<div class="desc-item"><span class="desc-label">运价编号</span><span class="desc-value mono">' + data.no + '</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">客户</span><span class="desc-value">' + data.customer + '</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">状态</span><span class="desc-value"><span class="tag tag-green tag-dot">生效中</span></span></div>'
-    +   '<div class="desc-item"><span class="desc-label">创建人</span><span class="desc-value">张经理</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">创建日期</span><span class="desc-value mono">2026-07-01</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">名称</span><span class="desc-value">' + data.name + '</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">服务</span><span class="desc-value"><span class="tag tag-blue">' + data.service + '</span></span></div>'
+    +   '<div class="desc-item"><span class="desc-label">收货区域</span><span class="desc-value">' + data.region + '</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">状态</span><span class="desc-value"><span class="tag ' + statusClass + ' tag-dot">' + data.status + '</span></span></div>'
+    +   '<div class="desc-item"><span class="desc-label">结束时间</span><span class="desc-value mono">' + data.endDate + '</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">父级</span><span class="desc-value text-muted">' + data.parent + '</span></div>'
     + '</div>'
-    + '<div class="desc-section-title">🚢 航线信息</div>'
+    + '<div class="desc-section-title">👤 适用对象</div>'
     + '<div class="desc-list cols-3">'
-    +   '<div class="desc-item"><span class="desc-label">起运港</span><span class="desc-value">' + data.pol + '</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">目的港</span><span class="desc-value">' + data.pod + '</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">服务类型</span><span class="desc-value"><span class="tag tag-blue">海运FCL</span></span></div>'
-    +   '<div class="desc-item"><span class="desc-label">航程</span><span class="desc-value">' + data.transit + '</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">中转港</span><span class="desc-value text-muted">直航无中转</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">截关时间</span><span class="desc-value">每周三 16:00</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">用户等级</span><span class="desc-value"><span class="tag ' + levelClass + '">' + data.level + '</span></span></div>'
+    +   '<div class="desc-item"><span class="desc-label">用户</span><span class="desc-value">' + data.user + '</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">部门</span><span class="desc-value">' + data.dept + '</span></div>'
     + '</div>'
-    + '<div class="desc-section-title">💰 运价明细</div>'
-    + '<div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:4px;">'
-    +   '<table class="data-table" style="font-size:13px;">'
-    +     '<thead><tr><th>柜型/等级</th><th>单价</th><th>币别</th><th class="text-right">备注</th></tr></thead>'
-    +     '<tbody>'
-    +       '<tr><td><b>20GP</b></td><td class="price-num">$1,200</td><td>USD</td><td class="text-right text-muted">标准柜</td></tr>'
-    +       '<tr><td><b>40GP</b></td><td class="price-num">$1,800</td><td>USD</td><td class="text-right text-muted">大柜</td></tr>'
-    +       '<tr><td><b>40HQ</b></td><td class="price-num">$2,000</td><td>USD</td><td class="text-right text-muted">高柜</td></tr>'
-    +     '</tbody>'
-    +   '</table>'
+    + '<div class="desc-section-title">⚖️ 重量与邮编规则</div>'
+    + '<div class="desc-list cols-3">'
+    +   '<div class="desc-item"><span class="desc-label">优先级</span><span class="desc-value mono">' + data.priority + '</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">最小重量</span><span class="desc-value mono">' + data.minWeight + '</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">最大重量</span><span class="desc-value mono">' + data.maxWeight + '</span></div>'
+    +   '<div class="desc-item"><span class="desc-label">邮编开头</span><span class="desc-value mono">' + data.zip + '</span></div>'
     + '</div>'
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">'
-    +   '<div style="background:var(--tms-success-light);border-radius:var(--tms-radius);padding:12px 14px;">'
-    +     '<div style="font-size:12px;color:#389e0d;font-weight:600;margin-bottom:6px;">✓ 包含费用</div>'
-    +     '<div style="font-size:12.5px;color:var(--tms-text-2);line-height:1.8;">海运费、THC码头操作费、文件费、订舱费、打单费</div>'
-    +   '</div>'
-    +   '<div style="background:var(--tms-error-light);border-radius:var(--tms-radius);padding:12px 14px;">'
-    +     '<div style="font-size:12px;color:#cf1322;font-weight:600;margin-bottom:6px;">✕ 不包含费用</div>'
-    +     '<div style="font-size:12.5px;color:var(--tms-text-2);line-height:1.8;">报关费、拖车费、保险费、产地证费</div>'
-    +   '</div>'
-    + '</div>'
-    + '<div class="desc-section-title">📎 附加费</div>'
-    + '<div class="summary-card">'
-    +   '<div class="summary-row"><span class="summary-label">BAF 燃油附加费</span><span class="summary-value price-num">$180/柜</span></div>'
-    +   '<div class="summary-row"><span class="summary-label">CAF 货币附加费</span><span class="summary-value price-num">按海运费8%</span></div>'
-    +   '<div class="summary-row"><span class="summary-label">PSS 旺季附加费</span><span class="summary-value price-num">$200/柜</span></div>'
-    +   '<div class="summary-row"><span class="summary-label">AMS / ISF</span><span class="summary-value price-num">$35/$45/票</span></div>'
-    + '</div>'
-    + '<div class="desc-section-title">📅 有效期与备注</div>'
+    + '<div class="desc-section-title">📝 备注</div>'
     + '<div class="desc-list cols-1">'
-    +   '<div class="desc-item"><span class="desc-label">有效期</span><span class="desc-value mono">2026-07-01 ~ 2026-09-30</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">付款条款</span><span class="desc-value">付款买单，月结30天</span></div>'
-    +   '<div class="desc-item"><span class="desc-label">特殊条款</span><span class="desc-value" style="font-weight:400;color:var(--tms-text-2);line-height:1.6;">旺季（7-9月）可能收取GRI综合费率上涨附加费，具体以船公司通知为准。危险品、超限货物需单独确认。</span></div>'
+    +   '<div class="desc-item"><span class="desc-value" style="font-weight:400;color:var(--tms-text-2);line-height:1.6;">' + data.remark + '</span></div>'
     + '</div>';
 }
 
 function getSellRateData(no) {
   var map = {
-    'SR202607-SHA-LAX-01': { no:'SR202607-SHA-LAX-01', customer:'华通机械制造有限公司', pol:'上海 (SHA)', pod:'洛杉矶 (LAX)', transit:'12天' },
-    'SR202607-SHA-LGB-02': { no:'SR202607-SHA-LGB-02', customer:'鑫海钢结构工程', pol:'上海 (SHA)', pod:'长滩 (LGB)', transit:'14天' },
-    'SR202607-NGB-RTM-03': { no:'SR202607-NGB-RTM-03', customer:'博瑞风电设备', pol:'宁波 (NGB)', pod:'鹿特丹 (RTM)', transit:'28天' },
-    'SR202607-SZX-NYC-04': { no:'SR202607-SZX-NYC-04', customer:'鼎盛化工装备', pol:'深圳 (SZX)', pod:'纽约 (NYC)', transit:'22天' },
-    'SR202607-SHA-TYO-05': { no:'SR202607-SHA-TYO-05', customer:'宏远工程机械', pol:'上海 (SHA)', pod:'东京 (TYO)', transit:'3-5天' },
-    'SR202607-QIN-HAM-06': { no:'SR202607-QIN-HAM-06', customer:'天顺轨道装备', pol:'青岛 (QIN)', pod:'汉堡 (HAM)', transit:'18天' },
-    'SR202607-SHA-SIN-07': { no:'SR202607-SHA-SIN-07', customer:'瑞华压力容器', pol:'上海 (SHA)', pod:'新加坡 (SIN)', transit:'7天' },
-    'SR202606-NGB-SYD-08': { no:'SR202606-NGB-SYD-08', customer:'恒力石化装备', pol:'宁波 (NGB)', pod:'悉尼 (SYD)', transit:'16天' },
-    'SR202607-SHA-LAX-09': { no:'SR202607-SHA-LAX-09', customer:'万通钢构', pol:'上海 (SHA)', pod:'洛杉矶 (LAX)', transit:'5-7天' },
-    'SR202607-TSN-LGB-10': { no:'SR202607-TSN-LGB-10', customer:'中远船舶重工', pol:'天津 (TSN)', pod:'长滩 (LGB)', transit:'13天' }
+    '美西普货公布价': { name:'美西普货公布价', service:'海运FCL', region:'华东', priority:'1', level:'VIP', user:'华通机械制造有限公司', dept:'销售部', minWeight:'0 kg', maxWeight:'99,999 kg', zip:'200', parent:'-', status:'生效中', remark:'上海港出运，含THC', endDate:'2026-12-31' },
+    '美西销售员底价': { name:'美西销售员底价', service:'海运FCL', region:'华南', priority:'2', level:'金牌', user:'鑫海钢结构工程', dept:'销售部', minWeight:'21 kg', maxWeight:'45 kg', zip:'510', parent:'美西普货公布价', status:'生效中', remark:'仅限金牌以上用户', endDate:'2026-11-30' },
+    '欧洲铁运成本价': { name:'欧洲铁运成本价', service:'铁运', region:'华北', priority:'3', level:'普通', user:'博瑞风电设备', dept:'操作部', minWeight:'0 kg', maxWeight:'99,999 kg', zip:'300', parent:'-', status:'生效中', remark:'含报关费及铁路操作费', endDate:'2026-10-31' },
+    '日本空运公布价': { name:'日本空运公布价', service:'空运', region:'华东', priority:'5', level:'银牌', user:'鼎盛化工装备', dept:'销售部', minWeight:'100 kg', maxWeight:'500 kg', zip:'200', parent:'-', status:'生效中', remark:'泡货按体积计费', endDate:'2026-09-30' },
+    '东南亚海运成本价': { name:'东南亚海运成本价', service:'海运LCL', region:'华南', priority:'4', level:'铜牌', user:'宏远工程机械', dept:'商务部', minWeight:'0 kg', maxWeight:'99,999 kg', zip:'518', parent:'东南亚拼箱价', status:'草稿', remark:'待财务审核后发布', endDate:'2026-08-31' },
+    '欧洲重货底价': { name:'欧洲重货底价', service:'海运FCL', region:'华中', priority:'2', level:'VIP', user:'天顺轨道装备', dept:'销售部', minWeight:'1,000 kg', maxWeight:'99,999 kg', zip:'430', parent:'欧洲基本港运价', status:'生效中', remark:'重货超重费另计', endDate:'2026-12-31' },
+    '澳新航线公布价': { name:'澳新航线公布价', service:'海运FCL', region:'华东', priority:'6', level:'普通', user:'瑞华压力容器', dept:'客服部', minWeight:'0 kg', maxWeight:'99,999 kg', zip:'200', parent:'-', status:'已过期', remark:'已停止维护，请走新价', endDate:'2026-07-31' },
+    '中东空运成本价': { name:'中东空运成本价', service:'空运', region:'西南', priority:'7', level:'金牌', user:'恒力石化装备', dept:'操作部', minWeight:'45 kg', maxWeight:'99,999 kg', zip:'610', parent:'中东快线价', status:'待审核', remark:'新航司报价，待确认', endDate:'2026-10-15' },
+    '北美冷链底价': { name:'北美冷链底价', service:'海运FCL', region:'东北', priority:'1', level:'VIP', user:'万通钢构', dept:'销售部', minWeight:'0 kg', maxWeight:'99,999 kg', zip:'110', parent:'北美特种柜运价', status:'生效中', remark:'需提前7天订舱', endDate:'2026-11-15' },
+    '印巴航线公布价': { name:'印巴航线公布价', service:'海运LCL', region:'华南', priority:'8', level:'银牌', user:'中远船舶重工', dept:'商务部', minWeight:'0 kg', maxWeight:'99,999 kg', zip:'510', parent:'-', status:'生效中', remark:'按CBM计费，含港杂', endDate:'2026-12-20' }
   };
-  return map[no] || map['SR202607-SHA-LAX-01'];
+  return map[no] || map['美西普货公布价'];
 }
 
 function getBuyDetailHTML(no) {
