@@ -1,0 +1,330 @@
+{
+  "data": [
+    {
+      "id": "page-login",
+      "title": "登录页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785336000000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-c2028341",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/login.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-dashboard",
+      "title": "总控平台",
+      "type": "page",
+      "version": 2,
+      "createdAt": 1785316647904,
+      "canvasData": {
+        "x": 620,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-ff5ceffb",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/dashboard.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-waybill-list",
+      "title": "运单管理",
+      "type": "page",
+      "version": 2,
+      "createdAt": 1785316647904,
+      "canvasData": {
+        "x": 1240,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-4d5f772d",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/waybill-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-waybill-create",
+      "title": "创建运单",
+      "type": "page",
+      "version": 2,
+      "createdAt": 1785316647904,
+      "canvasData": {
+        "x": 1860,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-f4b85203",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/waybill-create.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-bill-list",
+      "title": "提单管理",
+      "type": "page",
+      "version": 2,
+      "createdAt": 1785316647904,
+      "canvasData": {
+        "x": 2480,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-81070a65",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/bill-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-bill-create",
+      "title": "提单配货",
+      "type": "page",
+      "version": 2,
+      "createdAt": 1785316647904,
+      "canvasData": {
+        "x": 3100,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-f6b32680",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/bill-create.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-customer",
+      "title": "客户管理",
+      "type": "page",
+      "version": 2,
+      "createdAt": 1785316647904,
+      "canvasData": {
+        "x": 3720,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-9b843cf2",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/customer.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-service",
+      "title": "服务管理",
+      "type": "page",
+      "version": 2,
+      "createdAt": 1785316647904,
+      "canvasData": {
+        "x": 4340,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-fc655ecd",
+          "measuredAt": 1786151647837
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/service.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "pending-page-receivable",
+      "title": "receivable",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 4960,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-receivable-enhanced",
+      "title": "receivable-enhanced",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 5580,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-rates",
+      "title": "rates",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 6200,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-bill-writeoff",
+      "title": "bill-writeoff",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 6820,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-cs-data",
+      "title": "cs-data",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 7440,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-customer-flow",
+      "title": "customer-flow",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 8060,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-demo-entry",
+      "title": "demo-entry",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 8680,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-document-data",
+      "title": "document-data",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 9300,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    },
+    {
+      "id": "pending-page-receivable-report",
+      "title": "receivable-report",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785999705736,
+      "canvasData": {
+        "x": 9920,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": ""
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "沃利供应链TMS",
+    "visualEditorEnabled": false,
+    "showEdge": false
+  }
+}
