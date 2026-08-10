@@ -2629,6 +2629,9 @@ function getDeptAuditBadge(status){
   if(status === 'pending') return '<span class="tag tag-orange tag-dot dept-audit-badge">待审核</span>';
   if(status === 'diff') return '<span class="tag tag-red tag-dot dept-audit-badge">差异</span>';
   if(status === 'normal') return '<span class="tag tag-green tag-dot dept-audit-badge">已确认</span>';
+  if(status === 'audited') return '<span class="tag tag-blue tag-dot dept-audit-badge">已审核</span>';
+  if(status === 'adjusted') return '<span class="tag tag-green tag-dot dept-audit-badge">已补差</span>';
+  if(status === 'rejected') return '<span class="tag tag-red tag-dot dept-audit-badge">已驳回</span>';
   return '<span class="tag tag-gray dept-audit-badge">—</span>';
 }
 
@@ -2727,6 +2730,85 @@ function submitDeptItemAudit(){
   toast('部门数据差异审核已提交','success');
 }
 
+// ========== 部门数据：财务审核 / 补差 / 驳回 ==========
+function auditDeptItem(dept, idx){
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var deptObj = ap.deptData.find(function(d){ return d.dept === dept; });
+  if(!deptObj || !deptObj.items[idx]) return;
+  var item = deptObj.items[idx];
+  item.auditStatus = 'audited';
+  ap.logs.unshift({time:new Date().toLocaleString('zh-CN',{hour12:false}), operator:'王财务', change:'财务审核' + dept + '数据「' + item.name + '」：审核通过，可进行补差'});
+  renderDeptData();
+  renderOperationLogs();
+  toast('已审核，现在可进行补差操作', 'success');
+}
+
+var rejectTarget = null;
+function openDeptReject(dept, idx){
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var deptObj = ap.deptData.find(function(d){ return d.dept === dept; });
+  if(!deptObj || !deptObj.items[idx]) return;
+  rejectTarget = { dept: dept, idx: idx };
+  document.getElementById('deptRejectInfo').textContent = dept + ' · ' + deptObj.items[idx].name + '（' + fmtMoney(deptObj.items[idx].amount) + '）';
+  document.getElementById('deptRejectReason').value = '';
+  openModal('deptRejectModal');
+}
+
+function submitDeptReject(){
+  if(!rejectTarget) { closeModal('deptRejectModal'); return; }
+  var reason = document.getElementById('deptRejectReason').value.trim();
+  if(!reason){ toast('请填写驳回原因，便于部门修改', 'error'); return; }
+  var ap = getAp(currentApNo);
+  var deptObj = ap.deptData.find(function(d){ return d.dept === rejectTarget.dept; });
+  var item = deptObj.items[rejectTarget.idx];
+  item.auditStatus = 'rejected';
+  item.rejectReason = reason;
+  ap.logs.unshift({time:new Date().toLocaleString('zh-CN',{hour12:false}), operator:'王财务', change:'驳回' + rejectTarget.dept + '数据「' + item.name + '」：' + reason + '，待部门重新修改'});
+  closeModal('deptRejectModal');
+  renderDeptData();
+  renderOperationLogs();
+  toast('已驳回，等待部门重新修改数据', 'warning');
+  rejectTarget = null;
+}
+
+var diffTarget = null;
+function openDeptDiff(dept, idx){
+  var ap = getAp(currentApNo);
+  if(!ap) return;
+  var deptObj = ap.deptData.find(function(d){ return d.dept === dept; });
+  if(!deptObj || !deptObj.items[idx]) return;
+  var item = deptObj.items[idx];
+  if((item.auditStatus || 'normal') !== 'audited'){ toast('已审核才可以进行补差操作', 'warning'); return; }
+  diffTarget = { dept: dept, idx: idx };
+  document.getElementById('deptDiffInfo').textContent = dept + ' · ' + item.name;
+  document.getElementById('deptDiffOldAmount').textContent = fmtMoney(item.amount);
+  document.getElementById('deptDiffAmount').value = '';
+  document.getElementById('deptDiffReason').value = '';
+  openModal('deptDiffModal');
+}
+
+function submitDeptDiff(){
+  if(!diffTarget) { closeModal('deptDiffModal'); return; }
+  var diff = parseFloat(document.getElementById('deptDiffAmount').value);
+  if(isNaN(diff) || diff === 0){ toast('请填写补差金额（可为负数）', 'error'); return; }
+  var reason = document.getElementById('deptDiffReason').value.trim();
+  var ap = getAp(currentApNo);
+  var deptObj = ap.deptData.find(function(d){ return d.dept === diffTarget.dept; });
+  var item = deptObj.items[diffTarget.idx];
+  var old = item.amount;
+  item.amount = old + diff;
+  item.auditStatus = 'adjusted';
+  ap.logs.unshift({time:new Date().toLocaleString('zh-CN',{hour12:false}), operator:'王财务', change:'财务补差' + diffTarget.dept + '数据「' + item.name + '」：' + fmtMoney(old) + ' → ' + fmtMoney(item.amount) + (reason ? '，原因：' + reason : '')});
+  closeModal('deptDiffModal');
+  renderDeptData();
+  renderEstimatedFeePanel();
+  renderOperationLogs();
+  toast('补差完成，金额已更新', 'success');
+  diffTarget = null;
+}
+
 function renderDeptData(){
   var container = document.getElementById('deptDataSection');
   if(!container) return;
@@ -2752,9 +2834,17 @@ function renderDeptData(){
         var badge = getDeptAuditBadge(status);
         var action = '';
         if(status === 'pending' || status === 'diff'){
-          action = '<button class="btn btn-sm btn-primary" onclick="openDeptItemAudit(\'' + d.dept + '\',' + idx + ')">审核</button>';
-        } else {
+          action = '<button class="btn btn-sm btn-primary" onclick="auditDeptItem(\'' + d.dept + '\',' + idx + ')">审核</button> ' +
+                   '<button class="btn btn-sm btn-danger" onclick="openDeptReject(\'' + d.dept + '\',' + idx + ')">驳回</button>';
+        } else if(status === 'audited'){
+          action = '<button class="btn btn-sm btn-primary" onclick="openDeptDiff(\'' + d.dept + '\',' + idx + ')">补差</button> ' +
+                   '<button class="btn btn-sm btn-danger" onclick="openDeptReject(\'' + d.dept + '\',' + idx + ')">驳回</button>';
+        } else if(status === 'rejected'){
+          action = '<span style="color:var(--tms-text-3);font-size:12px;">已驳回，待部门修改</span>';
+        } else if(status === 'adjusted'){
           action = '<span style="color:var(--tms-text-3);font-size:12px;">—</span>';
+        } else {
+          action = '<button class="btn btn-sm" onclick="auditDeptItem(\'' + d.dept + '\',' + idx + ')">审核</button>';
         }
         html += '<tr class="' + rowClass + '"><td>' + it.name + '</td><td class="text-right" style="font-weight:600;">' + fmtMoney(it.amount) + '</td><td>' + it.time + '</td><td>' + it.operator + '</td><td>' + badge + '</td><td class="col-action dept-item-actions">' + action + '</td></tr>';
       });
@@ -3102,5 +3192,54 @@ window.addEventListener('DOMContentLoaded', function(){
   });
 })();
 </script>
+
+<!-- Modal: 驳回部门数据 -->
+<div class="modal-mask" id="deptRejectModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">↩️ 驳回部门数据</span>
+      <button class="modal-close" data-close="deptRejectModal">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--tms-text-2);margin-bottom:10px;">驳回对象：<b id="deptRejectInfo">—</b></p>
+      <div class="form-group">
+        <label class="form-label">驳回原因 <span style="color:var(--tms-error);">*</span></label>
+        <textarea class="form-control" id="deptRejectReason" rows="3" placeholder="请说明数据错误之处，部门将按此原因重新修改数据"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="deptRejectModal">取消</button>
+      <button class="btn btn-danger" onclick="submitDeptReject()">确认驳回</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 财务补差 -->
+<div class="modal-mask" id="deptDiffModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">💹 财务补差</span>
+      <button class="modal-close" data-close="deptDiffModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="dept-audit-summary">
+        <div class="row"><span>补差对象</span><span id="deptDiffInfo" class="new">—</span></div>
+        <div class="row"><span>当前金额</span><span id="deptDiffOldAmount" class="old">¥0.00</span></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">补差金额（可为负数） <span style="color:var(--tms-error);">*</span></label>
+        <input type="number" step="0.01" class="form-control" id="deptDiffAmount" placeholder="如：200 或 -150">
+      </div>
+      <div class="form-group">
+        <label class="form-label">补差原因</label>
+        <input type="text" class="form-control" id="deptDiffReason" placeholder="如：重量差异补收 / 报价调整">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="deptDiffModal">取消</button>
+      <button class="btn btn-primary" onclick="submitDeptDiff()">确认补差</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
