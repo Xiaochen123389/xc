@@ -1765,13 +1765,22 @@ th.sortable:hover { color: var(--tms-primary); }
         </table>
       </div>
 
-      <div class="desc-section-title">💵 费用明细</div>
+      <div class="desc-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>💵 订单费用</span>
+        <span style="display:flex;gap:8px;">
+          <button class="btn btn-sm" id="btnFeeAuditToggle" onclick="toggleFeeAudit()">🔓 反审计</button>
+          <button class="btn btn-sm btn-primary" onclick="addOrderFee()">＋ 增加费用</button>
+        </span>
+      </div>
+      <div id="feeAuditHint" style="display:none;background:var(--tms-warning-light,#fff7e6);border:1px solid var(--tms-warning,#faad14);color:#874d00;border-radius:var(--tms-radius);padding:8px 12px;font-size:12px;margin-bottom:8px;">已反审计：费用处于可修改状态，修改完成后请点击"重新审计"锁定。</div>
+      <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:8px;">
+        <table class="data-table" style="font-size:13px;">
+          <thead><tr><th>费用科目</th><th class="text-right">金额</th><th>审计状态</th><th class="col-action">操作</th></tr></thead>
+          <tbody id="orderFeeTbody"></tbody>
+        </table>
+      </div>
       <div class="summary-card">
-        <div class="summary-row"><span class="summary-label">海运费（基本运费）</span><span class="summary-value">¥82,000.000</span></div>
-        <div class="summary-row"><span class="summary-label">附加费（BAF/CAF/旺季）</span><span class="summary-value">¥10,500.000</span></div>
-        <div class="summary-row"><span class="summary-label">码头操作费（THC）</span><span class="summary-value">¥3,600.000</span></div>
-        <div class="summary-row"><span class="summary-label">文件费/放单费</span><span class="summary-value">¥2,400.000</span></div>
-        <div class="summary-row total"><span>合计应付</span><span class="summary-value">¥98,500.000</span></div>
+        <div class="summary-row total"><span>合计应付</span><span class="summary-value" id="orderFeeTotal">¥0</span></div>
       </div>
 
       <div class="desc-section-title">📝 付款记录</div>
@@ -3241,5 +3250,80 @@ window.addEventListener('DOMContentLoaded', function(){
     </div>
   </div>
 </div>
+
+<script>
+/* ========== 应付订单费用：反审计 / 重新审计 / 增加费用 ========== */
+(function(){
+  'use strict';
+  function fmtM(n){ return '¥' + Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+  var orderFeeStore = {};
+  var feeAuditState = {}; // apNo -> true 已审计（默认）
+
+  function defaultFees(apNo){
+    var ap = getAp(apNo);
+    var amt = ap ? (Number(ap.baseAmount) || 0) : 0;
+    return [
+      { name:'海运费（基本运费）', amount: Math.round(amt * 0.832) },
+      { name:'附加费（BAF/CAF/旺季）', amount: Math.round(amt * 0.107) },
+      { name:'码头操作费（THC）', amount: Math.round(amt * 0.037) },
+      { name:'文件费/放单费', amount: Math.round(amt * 0.024) }
+    ];
+  }
+  function getFees(apNo){ if(!orderFeeStore[apNo]) orderFeeStore[apNo] = defaultFees(apNo); return orderFeeStore[apNo]; }
+  function isFeeAudited(apNo){ return feeAuditState[apNo] !== false; }
+
+  function renderOrderFees(apNo){
+    var tbody = document.getElementById('orderFeeTbody');
+    if(!tbody) return;
+    var fees = getFees(apNo);
+    var audited = isFeeAudited(apNo);
+    var total = 0;
+    tbody.innerHTML = fees.map(function(f, i){
+      var amt = Number(f.amount) || 0;
+      total += amt;
+      var editable = !audited || f.added;
+      if(!editable){
+        return '<tr><td>' + f.name + '</td><td class="text-right" style="font-weight:600;">' + fmtM(amt) + '</td><td><span class="tag tag-blue tag-dot">已审计</span></td><td class="col-action"><span style="color:var(--tms-text-3);font-size:12px;">—</span></td></tr>';
+      }
+      return '<tr><td><input type="text" class="form-control" style="width:160px;display:inline-block;" value="' + f.name + '" onchange="updateOrderFeeName(\'' + apNo + '\',' + i + ',this.value)"></td>' +
+        '<td class="text-right"><input type="number" step="0.01" class="form-control" style="width:140px;display:inline-block;" value="' + amt + '" onchange="updateOrderFee(\'' + apNo + '\',' + i + ',this.value)"></td>' +
+        '<td><span class="tag tag-orange tag-dot">未审计</span></td>' +
+        '<td class="col-action"><button class="btn-link danger" onclick="removeOrderFee(\'' + apNo + '\',' + i + ')">删除</button></td></tr>';
+    }).join('');
+    document.getElementById('orderFeeTotal').textContent = fmtM(total);
+    var btn = document.getElementById('btnFeeAuditToggle');
+    if(btn) btn.innerHTML = audited ? '🔓 反审计' : '🔒 重新审计';
+    var hint = document.getElementById('feeAuditHint');
+    if(hint) hint.style.display = audited ? 'none' : 'block';
+  }
+
+  window.toggleFeeAudit = function(){
+    var apNo = currentApNo;
+    if(!apNo) return;
+    var now = isFeeAudited(apNo);
+    feeAuditState[apNo] = !now;
+    renderOrderFees(apNo);
+    toast(now ? '已反审计，费用可修改' : '已重新审计，费用已锁定', 'success');
+  };
+  window.addOrderFee = function(){
+    var apNo = currentApNo;
+    if(!apNo) return;
+    getFees(apNo).push({ name:'新增费用', amount:0, added:true });
+    renderOrderFees(apNo);
+    toast('已新建增加费用，请填写科目与金额', 'success');
+  };
+  window.updateOrderFee = function(apNo, i, val){ getFees(apNo)[i].amount = parseFloat(val) || 0; renderOrderFees(apNo); };
+  window.updateOrderFeeName = function(apNo, i, val){ getFees(apNo)[i].name = val || '费用'; };
+  window.removeOrderFee = function(apNo, i){ getFees(apNo).splice(i, 1); renderOrderFees(apNo); toast('费用已删除', 'info'); };
+
+  // 打开详情时同步渲染订单费用
+  var origOpenDetail = openDetail;
+  openDetail = function(apNo){
+    origOpenDetail(apNo);
+    renderOrderFees(apNo);
+  };
+})();
+</script>
 </body>
 </html>
