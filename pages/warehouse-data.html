@@ -1010,6 +1010,10 @@ th.sortable:hover { color: var(--tms-primary); }
           <button class="btn" onclick="exportData()">
             <span>⬇</span>导出数据
           </button>
+          <button class="btn" onclick="clickCostImport()">
+            <span>📥</span>导入成本价格表
+          </button>
+          <input type="file" id="costPriceFileInput" accept=".csv,.xlsx,.xls" style="display:none;" onchange="onCostFileSelected(this)">
           <button class="btn btn-primary" onclick="openWarehouseModal()">
             <span>＋</span>新增海外仓费用
           </button>
@@ -1116,7 +1120,6 @@ th.sortable:hover { color: var(--tms-primary); }
       <div class="card">
         <div class="table-toolbar">
           <div class="toolbar-left">
-            <button class="btn btn-sm btn-primary" onclick="openImportBillModal()">📥 导入供应商账单流水</button>
             <button class="btn btn-sm" id="btnBatchExport" disabled onclick="batchAction('export')">批量导出</button>
             <button class="btn btn-sm" id="btnBatchReport" disabled onclick="batchAction('report')">批量上报</button>
             <button class="btn btn-sm btn-danger" id="btnBatchDelete" disabled onclick="batchAction('delete')">批量删除</button>
@@ -1151,7 +1154,6 @@ th.sortable:hover { color: var(--tms-primary); }
                 <th class="sortable" data-sort="currency">币种</th>
                 <th class="sortable" data-sort="operator">仓库操作员</th>
                 <th class="sortable" data-sort="status">状态</th>
-                <th style="min-width:110px;">预计应收</th>
                 <th class="sortable" data-sort="createTime">创建时间</th>
                 <th class="col-action">操作</th>
               </tr>
@@ -2196,141 +2198,125 @@ window.addEventListener('DOMContentLoaded', function(){
 })();
 </script>
 
-<!-- Modal: 导入供应商账单流水 -->
-<div class="modal-mask" id="importBillModal">
+<!-- Modal: 成本价格表（预计应收） -->
+<div class="modal-mask" id="costPriceModal">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">📥 导入订单供应商账单流水</span>
-      <button class="modal-close" data-close="importBillModal">×</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="modal-title">💹 成本价格表（预计应收）</span>
+        <span class="tag tag-blue" id="costPriceFileName">—</span>
+      </div>
+      <button class="modal-close" data-close="costPriceModal">×</button>
     </div>
     <div class="modal-body">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-        <input type="file" id="importBillFile" accept=".csv,.txt,.xlsx" class="form-control" style="flex:1;">
-        <button class="btn" onclick="loadBillSample()">载入示例数据</button>
-      </div>
-      <div class="form-group">
-        <label class="form-label">账单流水内容（每行一条：运单号,客户,供应商,金额）</label>
-        <textarea id="importBillText" class="form-control" rows="8" placeholder="WY202607A001,华通机械制造有限公司,中远海运集运,3200&#10;WY202607B021,鑫海钢结构工程,马士基航运,1500"></textarea>
-      </div>
-      <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
+      <p style="font-size:13px;color:var(--tms-text-2);margin-bottom:12px;">根据导入文件自动生成：成本价格 + 加价率 → 预计应收。确认后可同步为应收预估数据。</p>
+      <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;max-height:380px;overflow-y:auto;">
         <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>运单号</th><th>客户</th><th>供应商</th><th class="text-right">预计应收金额</th></tr></thead>
-          <tbody id="importBillPreview"></tbody>
+          <thead><tr><th>客户</th><th>运单号</th><th>费用项目</th><th class="text-right">成本价格</th><th class="text-right">加价率</th><th class="text-right">预计应收</th></tr></thead>
+          <tbody id="costPriceTbody"></tbody>
         </table>
+      </div>
+      <div class="summary-card" style="margin-top:12px;">
+        <div class="summary-row"><span class="summary-label">成本合计</span><span class="summary-value" id="costSumCost">¥0.00</span></div>
+        <div class="summary-row"><span class="summary-label">预计应收合计</span><span class="summary-value" id="costSumAr" style="color:var(--tms-primary);">¥0.00</span></div>
+        <div class="summary-row total"><span>预计毛利</span><span class="summary-value" id="costSumProfit" style="color:var(--tms-success);">¥0.00</span></div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-close="importBillModal">取消</button>
-      <button class="btn btn-primary" onclick="submitImportBill()">确认导入</button>
+      <button class="btn" data-close="costPriceModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmCostPrice()">✓ 确认并同步预计应收</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ========== 供应商账单流水导入 / 预计应收同步 ========== */
+/* ========== 导入成本价格表（预计应收） ========== */
 (function(){
   'use strict';
-  var EST_KEY = 'tms_est_ar_v1';
-
-  function getEstData(){
-    try { return JSON.parse(localStorage.getItem(EST_KEY)) || []; } catch(e){ return []; }
-  }
-  function saveEstData(list){
-    localStorage.setItem(EST_KEY, JSON.stringify(list));
-  }
-  window.getEstArData = getEstData;
-
   function fmtM(n){ return '¥' + Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2, maximumFractionDigits:2}); }
 
-  // ---------- 导入弹窗 ----------
-  window.openImportBillModal = function(){
-    document.getElementById('importBillText').value = '';
-    document.getElementById('importBillPreview').innerHTML = '';
-    openModal('importBillModal');
+  window.clickCostImport = function(){
+    document.getElementById('costPriceFileInput').click();
   };
 
-  window.loadBillSample = function(){
-    document.getElementById('importBillText').value =
-      'WY202607A001,华通机械制造有限公司,中远海运集运,3200\n' +
-      'WY202607A005,华通机械制造有限公司,中远海运集运,1800\n' +
-      'WY202607B021,鑫海钢结构工程,马士基航运,1500\n' +
-      'WY202607C045,博瑞风电设备,长荣海运,2600';
-    previewBillText();
-  };
+  // 演示用默认成本数据（当导入 xlsx 或无法解析时使用）
+  var DEMO_ROWS = [
+    { customer:'华通机械制造有限公司', waybill:'WY202608A001', item:'入库操作费', cost:1200, markup:15 },
+    { customer:'华通机械制造有限公司', waybill:'WY202608A001', item:'仓储费（30天）', cost:2600, markup:20 },
+    { customer:'华通机械制造有限公司', waybill:'WY202608A001', item:'出库派送费', cost:3800, markup:18 },
+    { customer:'鑫海钢结构工程', waybill:'WY202608A002', item:'入库操作费', cost:900, markup:15 },
+    { customer:'鑫海钢结构工程', waybill:'WY202608A002', item:'仓储费（30天）', cost:1800, markup:20 },
+    { customer:'博瑞风电设备', waybill:'WY202608A003', item:'入库操作费', cost:1500, markup:15 },
+    { customer:'博瑞风电设备', waybill:'WY202608A003', item:'增值服务费（贴标）', cost:650, markup:25 }
+  ];
 
-  function parseBillText(){
+  function parseCsv(text){
     var rows = [];
-    (document.getElementById('importBillText').value || '').split(/\n+/).forEach(function(line){
-      var p = line.split(/[,，\t]/).map(function(s){ return s.trim(); });
-      if(p.length >= 4 && p[0] && !isNaN(parseFloat(p[3]))){
-        rows.push({ waybill:p[0], customer:p[1], supplier:p[2], amount:parseFloat(p[3]) });
+    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    lines.forEach(function(line, li){
+      var cols = line.split(/[,，\t;]/).map(function(c){ return c.trim(); });
+      if(li === 0 && /客户|费用|成本/.test(line)) return; // 表头
+      if(cols.length >= 4){
+        rows.push({
+          customer: cols[0] || '未知客户',
+          waybill: cols[1] || '-',
+          item: cols[2] || '费用',
+          cost: parseFloat(cols[3]) || 0,
+          markup: parseFloat(cols[4]) || 15
+        });
       }
     });
     return rows;
   }
-  function previewBillText(){
-    var rows = parseBillText();
-    document.getElementById('importBillPreview').innerHTML = rows.length === 0
-      ? '<tr><td colspan="4" style="text-align:center;color:var(--tms-text-3);padding:16px;">暂无可解析数据</td></tr>'
-      : rows.map(function(r){
-          return '<tr><td class="mono">' + r.waybill + '</td><td>' + r.customer + '</td><td>' + r.supplier + '</td><td class="text-right" style="font-weight:600;">' + fmtM(r.amount) + '</td></tr>';
-        }).join('');
-  }
-  document.addEventListener('input', function(e){
-    if(e.target && e.target.id === 'importBillText') previewBillText();
-  });
-  document.addEventListener('change', function(e){
-    if(e.target && e.target.id === 'importBillFile'){
-      var f = e.target.files && e.target.files[0];
-      if(!f) return;
-      if(/\.(csv|txt)$/i.test(f.name)){
-        var reader = new FileReader();
-        reader.onload = function(){ document.getElementById('importBillText').value = String(reader.result || ''); previewBillText(); };
-        reader.readAsText(f, 'utf-8');
-      } else {
-        toast('演示环境支持 csv/txt 文本流水，或点击"载入示例数据"', 'info');
-      }
-    }
-  });
 
-  window.submitImportBill = function(){
-    var rows = parseBillText();
-    if(rows.length === 0){ toast('请先填写或载入账单流水数据', 'error'); return; }
-    var list = getEstData();
-    var now = new Date().toLocaleString('zh-CN',{hour12:false});
-    rows.forEach(function(r){
-      var old = list.find(function(x){ return x.waybill === r.waybill && x.supplier === r.supplier; });
-      if(old){ old.amount = r.amount; old.time = now; }
-      else list.push({ waybill:r.waybill, customer:r.customer, supplier:r.supplier, amount:r.amount, time:now });
-    });
-    saveEstData(list);
-    closeModal('importBillModal');
-    injectEstArCells();
-    toast('已导入 ' + rows.length + ' 条供应商账单流水，预计应收已同步至订单与应收数据', 'success');
+  window.onCostFileSelected = function(input){
+    var file = input.files && input.files[0];
+    if(!file) return;
+    toast('正在解析文件：' + file.name, 'info');
+    var isCsv = /\.csv$/i.test(file.name);
+    var finish = function(rows){
+      setTimeout(function(){
+        if(!rows || rows.length === 0){ toast('未从文件中解析到有效数据，已使用示例成本数据', 'warning'); rows = DEMO_ROWS; }
+        renderCostPrice(file.name, rows);
+        openModal('costPriceModal');
+        toast('成本价格表生成成功，共 ' + rows.length + ' 条', 'success');
+      }, 700);
+    };
+    if(isCsv){
+      var reader = new FileReader();
+      reader.onload = function(e){ finish(parseCsv(String(e.target.result))); };
+      reader.onerror = function(){ finish(DEMO_ROWS); };
+      reader.readAsText(file);
+    } else {
+      finish(DEMO_ROWS);
+    }
+    input.value = '';
   };
 
-  // ---------- 订单表注入预计应收列 ----------
-  function injectEstArCells(){
-    var list = getEstData();
-    var map = {};
-    list.forEach(function(x){ map[x.waybill] = (map[x.waybill] || 0) + (Number(x.amount) || 0); });
-    document.querySelectorAll('#warehouseTbody tr').forEach(function(tr){
-      var cell = tr.querySelector('.est-ar-cell');
-      if(!cell){ cell = tr.insertCell(tr.cells.length - 2); cell.className = 'est-ar-cell'; }
-      var wb = (tr.getAttribute('data-waybill') || '').trim();
-      var amt = map[wb];
-      cell.innerHTML = amt ? '<span class="tag tag-purple" style="font-weight:600;">' + fmtM(amt) + '</span>' : '<span style="color:var(--tms-text-3);">—</span>';
-    });
+  function renderCostPrice(fileName, rows){
+    window._costRows = rows;
+    document.getElementById('costPriceFileName').textContent = fileName;
+    var sumCost = 0, sumAr = 0;
+    document.getElementById('costPriceTbody').innerHTML = rows.map(function(r){
+      var ar = Math.round(r.cost * (1 + r.markup / 100) * 100) / 100;
+      sumCost += r.cost; sumAr += ar;
+      return '<tr><td>' + r.customer + '</td><td class="mono">' + r.waybill + '</td><td>' + r.item + '</td>' +
+        '<td class="text-right" style="font-weight:600;">' + fmtM(r.cost) + '</td>' +
+        '<td class="text-right">' + r.markup + '%</td>' +
+        '<td class="text-right" style="font-weight:700;color:var(--tms-primary);">' + fmtM(ar) + '</td></tr>';
+    }).join('');
+    document.getElementById('costSumCost').textContent = fmtM(sumCost);
+    document.getElementById('costSumAr').textContent = fmtM(sumAr);
+    document.getElementById('costSumProfit').textContent = fmtM(sumAr - sumCost);
   }
-  window.injectEstArCells = injectEstArCells;
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectEstArCells);
-  else injectEstArCells();
-  // 表格重渲染后补注入
-  var mo = new MutationObserver(function(){ injectEstArCells(); });
-  var tbody = document.getElementById('warehouseTbody');
-  if(tbody) mo.observe(tbody, { childList:true });
-  window.addEventListener('storage', function(e){ if(e.key === EST_KEY) injectEstArCells(); });
+  window.confirmCostPrice = function(){
+    var rows = window._costRows || [];
+    if(rows.length === 0){ closeModal('costPriceModal'); return; }
+    var sumAr = rows.reduce(function(s,r){ return s + Math.round(r.cost * (1 + r.markup / 100) * 100) / 100; }, 0);
+    closeModal('costPriceModal');
+    toast('已同步预计应收 ' + fmtM(sumAr) + '（' + rows.length + ' 条成本明细）', 'success');
+  };
 })();
 </script>
 
