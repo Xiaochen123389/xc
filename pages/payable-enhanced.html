@@ -1769,13 +1769,14 @@ th.sortable:hover { color: var(--tms-primary); }
         <span>💵 订单费用</span>
         <span style="display:flex;gap:8px;">
           <button class="btn btn-sm" id="btnFeeAuditToggle" onclick="toggleFeeAudit()">🔓 反审计</button>
+          <button class="btn btn-sm" onclick="openApportionModal()">⚖ 批量平摊费用</button>
           <button class="btn btn-sm btn-primary" onclick="addOrderFee()">＋ 增加费用</button>
         </span>
       </div>
       <div id="feeAuditHint" style="display:none;background:var(--tms-warning-light,#fff7e6);border:1px solid var(--tms-warning,#faad14);color:#874d00;border-radius:var(--tms-radius);padding:8px 12px;font-size:12px;margin-bottom:8px;">已反审计：费用处于可修改状态，修改完成后请点击"重新审计"锁定。</div>
       <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:8px;">
         <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>费用科目</th><th class="text-right">金额</th><th>审计状态</th><th class="col-action">操作</th></tr></thead>
+          <thead><tr><th style="width:36px;"><input type="checkbox" title="全选" onchange="toggleAllFeeChecks(this)"></th><th>费用科目</th><th class="text-right">金额</th><th>审计状态</th><th class="col-action">操作</th></tr></thead>
           <tbody id="orderFeeTbody"></tbody>
         </table>
       </div>
@@ -3283,13 +3284,17 @@ window.addEventListener('DOMContentLoaded', function(){
       var amt = Number(f.amount) || 0;
       total += amt;
       var editable = !audited || f.added;
+      var checkTd = '<td><input type="checkbox" class="fee-check" data-idx="' + i + '"></td>';
+      var basisShort = {chargeWeight:'收费重',tickets:'票',boxes:'箱数',volume:'体积'};
+      var apTag = f.apportion ? ' <span class="tag tag-purple tag-dot">已平摊·' + (basisShort[f.apportion.basis] || '') + '</span>' : '';
+      var viewLink = f.apportion ? '<button class="btn-link" onclick="viewApportion(' + i + ')">查看平摊</button> ' : '';
       if(!editable){
-        return '<tr><td>' + f.name + '</td><td class="text-right" style="font-weight:600;">' + fmtM(amt) + '</td><td><span class="tag tag-blue tag-dot">已审计</span></td><td class="col-action"><span style="color:var(--tms-text-3);font-size:12px;">—</span></td></tr>';
+        return '<tr>' + checkTd + '<td>' + f.name + apTag + '</td><td class="text-right" style="font-weight:600;">' + fmtM(amt) + '</td><td><span class="tag tag-blue tag-dot">已审计</span></td><td class="col-action">' + viewLink + '<span style="color:var(--tms-text-3);font-size:12px;">—</span></td></tr>';
       }
-      return '<tr><td><input type="text" class="form-control" style="width:160px;display:inline-block;" value="' + f.name + '" onchange="updateOrderFeeName(\'' + apNo + '\',' + i + ',this.value)"></td>' +
+      return '<tr>' + checkTd + '<td><input type="text" class="form-control" style="width:160px;display:inline-block;" value="' + f.name + '" onchange="updateOrderFeeName(\'' + apNo + '\',' + i + ',this.value)">' + apTag + '</td>' +
         '<td class="text-right"><input type="number" step="0.01" class="form-control" style="width:140px;display:inline-block;" value="' + amt + '" onchange="updateOrderFee(\'' + apNo + '\',' + i + ',this.value)"></td>' +
         '<td><span class="tag tag-orange tag-dot">未审计</span></td>' +
-        '<td class="col-action"><button class="btn-link danger" onclick="removeOrderFee(\'' + apNo + '\',' + i + ')">删除</button></td></tr>';
+        '<td class="col-action">' + viewLink + '<button class="btn-link danger" onclick="removeOrderFee(\'' + apNo + '\',' + i + ')">删除</button></td></tr>';
     }).join('');
     document.getElementById('orderFeeTotal').textContent = fmtM(total);
     var btn = document.getElementById('btnFeeAuditToggle');
@@ -3316,12 +3321,126 @@ window.addEventListener('DOMContentLoaded', function(){
   window.updateOrderFee = function(apNo, i, val){ getFees(apNo)[i].amount = parseFloat(val) || 0; renderOrderFees(apNo); };
   window.updateOrderFeeName = function(apNo, i, val){ getFees(apNo)[i].name = val || '费用'; };
   window.removeOrderFee = function(apNo, i){ getFees(apNo).splice(i, 1); renderOrderFees(apNo); toast('费用已删除', 'info'); };
+  window.getApOrderFees = getFees;
+  window.renderApOrderFees = renderOrderFees;
 
   // 打开详情时同步渲染订单费用
   var origOpenDetail = openDetail;
   openDetail = function(apNo){
     origOpenDetail(apNo);
     renderOrderFees(apNo);
+  };
+})();
+</script>
+
+<!-- Modal: 批量平摊费用 -->
+<div class="modal-mask" id="feeApportionModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">⚖ 批量平摊费用</span>
+      <button class="modal-close" data-close="feeApportionModal">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--tms-text-2);margin-bottom:12px;">平摊费用：<b id="apportionFeeNames">—</b>，合计金额 <b id="apportionTotal" style="color:var(--tms-primary);">¥0.00</b></p>
+      <div class="form-group">
+        <label class="form-label">平摊方式</label>
+        <div class="audit-radio-group">
+          <label class="audit-radio"><input type="radio" name="apportionBasis" value="chargeWeight" checked onchange="renderApportionPreview()"> 按收费重</label>
+          <label class="audit-radio"><input type="radio" name="apportionBasis" value="tickets" onchange="renderApportionPreview()"> 按票</label>
+          <label class="audit-radio"><input type="radio" name="apportionBasis" value="boxes" onchange="renderApportionPreview()"> 按箱数</label>
+          <label class="audit-radio"><input type="radio" name="apportionBasis" value="volume" onchange="renderApportionPreview()"> 按体积</label>
+        </div>
+      </div>
+      <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
+        <table class="data-table" style="font-size:13px;">
+          <thead><tr><th>运单号</th><th class="text-right">平摊依据值</th><th class="text-right">占比</th><th class="text-right">平摊金额</th></tr></thead>
+          <tbody id="apportionPreviewTbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="feeApportionModal">取消</button>
+      <button class="btn btn-primary" onclick="submitApportion()">确认平摊</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== 批量平摊费用 ========== */
+(function(){
+  'use strict';
+  function fmtM(n){ return '¥' + Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  var BASIS_LABEL = { chargeWeight:'收费重', tickets:'票', boxes:'箱数', volume:'体积' };
+  var BASIS_UNIT = { chargeWeight:' kg', tickets:' 票', boxes:' 箱', volume:' m³' };
+  // 关联运单的平摊依据数据（演示）
+  var WAYBILLS = [
+    { no:'WY202607A012', chargeWeight:18500, tickets:1, boxes:320, volume:68.5 },
+    { no:'WY202607A013', chargeWeight:12000, tickets:1, boxes:210, volume:45.2 },
+    { no:'WY202607A014', chargeWeight:8000,  tickets:1, boxes:150, volume:30.3 }
+  ];
+
+  function getCheckedIdx(){
+    return Array.prototype.slice.call(document.querySelectorAll('#orderFeeTbody .fee-check:checked')).map(function(c){
+      return parseInt(c.getAttribute('data-idx'), 10);
+    });
+  }
+  window.toggleAllFeeChecks = function(el){
+    document.querySelectorAll('#orderFeeTbody .fee-check').forEach(function(c){ c.checked = el.checked; });
+  };
+
+  window.openApportionModal = function(){
+    var fees = window.getApOrderFees(currentApNo);
+    var idxs = getCheckedIdx();
+    if(idxs.length === 0){ toast('请先勾选需要平摊的费用', 'warning'); return; }
+    var total = 0, names = [];
+    idxs.forEach(function(i){ total += Number(fees[i].amount) || 0; names.push(fees[i].name); });
+    window._apportionTotal = total;
+    window._apportionIdx = idxs;
+    document.getElementById('apportionFeeNames').textContent = names.join('、');
+    document.getElementById('apportionTotal').textContent = fmtM(total);
+    renderApportionPreview();
+    openModal('feeApportionModal');
+  };
+
+  window.renderApportionPreview = function(){
+    var basis = document.querySelector('input[name="apportionBasis"]:checked').value;
+    var total = window._apportionTotal || 0;
+    var sum = WAYBILLS.reduce(function(s,w){ return s + (Number(w[basis]) || 0); }, 0);
+    var acc = 0;
+    var rows = WAYBILLS.map(function(w, i){
+      var share = (i === WAYBILLS.length - 1) ? Math.round((total - acc) * 100) / 100 : Math.round(total * (Number(w[basis]) || 0) / sum * 100) / 100;
+      acc += share;
+      return { no:w.no, val:w[basis], pct: sum > 0 ? Math.round((Number(w[basis]) || 0) / sum * 1000) / 10 : 0, amt: share };
+    });
+    window._apportionRows = rows;
+    document.getElementById('apportionPreviewTbody').innerHTML = rows.map(function(r){
+      return '<tr><td class="mono">' + r.no + '</td><td class="text-right">' + Number(r.val).toLocaleString('zh-CN') + BASIS_UNIT[basis] + '</td><td class="text-right">' + r.pct + '%</td><td class="text-right" style="font-weight:600;">' + fmtM(r.amt) + '</td></tr>';
+    }).join('');
+  };
+
+  window.submitApportion = function(){
+    var fees = window.getApOrderFees(currentApNo);
+    var basis = document.querySelector('input[name="apportionBasis"]:checked').value;
+    (window._apportionIdx || []).forEach(function(i){
+      if(fees[i]) fees[i].apportion = { basis: basis, rows: window._apportionRows };
+    });
+    closeModal('feeApportionModal');
+    window.renderApOrderFees(currentApNo);
+    toast('已按' + BASIS_LABEL[basis] + '平摊 ' + (window._apportionIdx || []).length + ' 项费用', 'success');
+  };
+
+  window.viewApportion = function(i){
+    var fees = window.getApOrderFees(currentApNo);
+    var f = fees[i];
+    if(!f || !f.apportion) return;
+    window._apportionTotal = Number(f.amount) || 0;
+    window._apportionIdx = [i];
+    document.getElementById('apportionFeeNames').textContent = f.name;
+    document.getElementById('apportionTotal').textContent = fmtM(f.amount);
+    var radio = document.querySelector('input[name="apportionBasis"][value="' + f.apportion.basis + '"]');
+    if(radio) radio.checked = true;
+    renderApportionPreview();
+    openModal('feeApportionModal');
   };
 })();
 </script>
