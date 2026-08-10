@@ -1158,6 +1158,8 @@ th.sortable:hover { color: var(--tms-primary); }
             <button class="btn btn-sm" id="btnBatchEditFee" disabled onclick="openBatchEditFeeModal()">批量修改费用</button>
             <button class="btn btn-sm" id="btnBatchOffset" disabled onclick="openBatchOffsetModal()">批量对冲费用</button>
             <button class="btn btn-sm" id="btnBatchAssignRep" disabled onclick="openBatchAssignRepModal()">批量修改客户财务代表</button>
+            <button class="btn btn-sm" id="btnBatchRemark" onclick="openBatchRemarkModal()">📝 批量修改备注</button>
+            <button class="btn btn-sm btn-primary" onclick="openStatsModal()">📊 查看统计</button>
             <button class="btn btn-sm btn-danger" id="btnBatchDelete" disabled onclick="batchAction('delete')">批量删除</button>
           </div>
           <div class="toolbar-right">
@@ -1200,6 +1202,7 @@ th.sortable:hover { color: var(--tms-primary); }
                 <th class="sortable" data-sort="unpaidAmount">未收金额</th>
                 <th class="sortable" data-sort="invoiceDate">开票日期</th>
                 <th class="sortable" data-sort="dueDate">到期日期</th>
+                <th style="min-width:150px;">内部备注</th>
                 <th class="sortable" data-sort="status">状态</th>
                 <th class="col-action">操作</th>
               </tr>
@@ -2018,14 +2021,23 @@ th.sortable:hover { color: var(--tms-primary); }
         </table>
       </div>
 
-      <!-- 费用明细 -->
-      <div class="desc-section-title">💵 费用明细</div>
+      <!-- 费用明细（订单费用） -->
+      <div class="desc-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>💵 订单费用</span>
+        <span style="display:flex;gap:8px;">
+          <button class="btn btn-sm" id="btnFeeAuditToggle" onclick="toggleFeeAudit()">🔓 反审计</button>
+          <button class="btn btn-sm btn-primary" onclick="addOrderFee()">＋ 增加费用</button>
+        </span>
+      </div>
+      <div id="feeAuditHint" style="display:none;background:var(--tms-warning-light,#fff7e6);border:1px solid var(--tms-warning,#faad14);color:#874d00;border-radius:var(--tms-radius);padding:8px 12px;font-size:12px;margin-bottom:8px;">已反审计：费用处于可修改状态，修改完成后请点击"重新审计"锁定。</div>
+      <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:8px;">
+        <table class="data-table" style="font-size:13px;">
+          <thead><tr><th>费用科目</th><th class="text-right">金额</th><th>审计状态</th><th class="col-action">操作</th></tr></thead>
+          <tbody id="orderFeeTbody"></tbody>
+        </table>
+      </div>
       <div class="summary-card">
-        <div class="summary-row"><span class="summary-label">运费合计</span><span class="summary-value">¥108,500</span></div>
-        <div class="summary-row"><span class="summary-label">附加费（燃油/旺季）</span><span class="summary-value">¥12,000</span></div>
-        <div class="summary-row"><span class="summary-label">报关费</span><span class="summary-value">¥3,500</span></div>
-        <div class="summary-row"><span class="summary-label">保险费</span><span class="summary-value">¥4,500</span></div>
-        <div class="summary-row total"><span>合计应收</span><span class="summary-value">¥128,500</span></div>
+        <div class="summary-row total"><span>合计应收</span><span class="summary-value" id="orderFeeTotal">¥0</span></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -2602,6 +2614,9 @@ th.sortable:hover { color: var(--tms-primary); }
     if(status === 'pending') return '<span class="tag tag-orange tag-dot dept-audit-badge">待审核</span>';
     if(status === 'diff') return '<span class="tag tag-red tag-dot dept-audit-badge">差异</span>';
     if(status === 'normal') return '<span class="tag tag-green tag-dot dept-audit-badge">已确认</span>';
+    if(status === 'audited') return '<span class="tag tag-blue tag-dot dept-audit-badge">已审核</span>';
+    if(status === 'adjusted') return '<span class="tag tag-green tag-dot dept-audit-badge">已补差</span>';
+    if(status === 'rejected') return '<span class="tag tag-red tag-dot dept-audit-badge">已驳回</span>';
     return '<span class="tag tag-gray dept-audit-badge">—</span>';
   }
 
@@ -2722,9 +2737,17 @@ th.sortable:hover { color: var(--tms-primary); }
           var badge = getDeptAuditBadge(status);
           var action = '';
           if(status === 'pending' || status === 'diff'){
-            action = '<button class="btn btn-sm btn-primary" onclick="openDeptItemAudit(\'' + d.dept + '\',' + idx + ')">审核</button>';
-          } else {
+            action = '<button class="btn btn-sm btn-primary" onclick="auditDeptItem(\'' + d.dept + '\',' + idx + ')">审核</button> ' +
+                     '<button class="btn btn-sm btn-danger" onclick="openDeptReject(\'' + d.dept + '\',' + idx + ')">驳回</button>';
+          } else if(status === 'audited'){
+            action = '<button class="btn btn-sm btn-primary" onclick="openDeptDiff(\'' + d.dept + '\',' + idx + ')">补差</button> ' +
+                     '<button class="btn btn-sm btn-danger" onclick="openDeptReject(\'' + d.dept + '\',' + idx + ')">驳回</button>';
+          } else if(status === 'rejected'){
+            action = '<span style="color:var(--tms-text-3);font-size:12px;">已驳回，待部门修改</span>';
+          } else if(status === 'adjusted'){
             action = '<span style="color:var(--tms-text-3);font-size:12px;">—</span>';
+          } else {
+            action = '<button class="btn btn-sm" onclick="auditDeptItem(\'' + d.dept + '\',' + idx + ')">审核</button>';
           }
           html += '<tr class="' + rowClass + '"><td>' + it.name + '</td><td>' + fmtMoney(it.amount) + '</td><td>' + it.time + '</td><td>' + it.operator + '</td><td>' + badge + '</td><td class="col-action dept-item-actions">' + action + '</td></tr>';
         });
@@ -2761,6 +2784,84 @@ th.sortable:hover { color: var(--tms-primary); }
       toast(dept + '数据上传成功','success');
     }
     closeModal('detailDeptUploadModal');
+  };
+
+  // ========== 部门数据：财务审核 / 补差 / 驳回 ==========
+  window.auditDeptItem = function(dept, idx){
+    var ar = getAr(currentArNo);
+    if(!ar) return;
+    var deptObj = ar.deptData.find(function(d){ return d.dept === dept; });
+    if(!deptObj || !deptObj.items[idx]) return;
+    var item = deptObj.items[idx];
+    item.auditStatus = 'audited';
+    ar.logs.unshift({time:new Date().toLocaleString('zh-CN',{hour12:false}), operator:'王财务', change:'财务审核' + dept + '数据「' + item.name + '」：审核通过，可进行补差'});
+    renderDeptData(ar);
+    renderOperationLogs(ar);
+    toast('已审核，现在可进行补差操作', 'success');
+  };
+
+  var rejectTarget = null;
+  window.openDeptReject = function(dept, idx){
+    var ar = getAr(currentArNo);
+    if(!ar) return;
+    var deptObj = ar.deptData.find(function(d){ return d.dept === dept; });
+    if(!deptObj || !deptObj.items[idx]) return;
+    rejectTarget = { dept: dept, idx: idx };
+    document.getElementById('deptRejectInfo').textContent = dept + ' · ' + deptObj.items[idx].name + '（' + fmtMoney(deptObj.items[idx].amount) + '）';
+    document.getElementById('deptRejectReason').value = '';
+    openModal('deptRejectModal');
+  };
+
+  window.submitDeptReject = function(){
+    if(!rejectTarget) { closeModal('deptRejectModal'); return; }
+    var reason = document.getElementById('deptRejectReason').value.trim();
+    if(!reason){ toast('请填写驳回原因，便于部门修改', 'error'); return; }
+    var ar = getAr(currentArNo);
+    var deptObj = ar.deptData.find(function(d){ return d.dept === rejectTarget.dept; });
+    var item = deptObj.items[rejectTarget.idx];
+    item.auditStatus = 'rejected';
+    item.rejectReason = reason;
+    ar.logs.unshift({time:new Date().toLocaleString('zh-CN',{hour12:false}), operator:'王财务', change:'驳回' + rejectTarget.dept + '数据「' + item.name + '」：' + reason + '，待部门重新修改'});
+    closeModal('deptRejectModal');
+    renderDeptData(ar);
+    renderOperationLogs(ar);
+    toast('已驳回，等待部门重新修改数据', 'warning');
+    rejectTarget = null;
+  };
+
+  var diffTarget = null;
+  window.openDeptDiff = function(dept, idx){
+    var ar = getAr(currentArNo);
+    if(!ar) return;
+    var deptObj = ar.deptData.find(function(d){ return d.dept === dept; });
+    if(!deptObj || !deptObj.items[idx]) return;
+    var item = deptObj.items[idx];
+    if((item.auditStatus || 'normal') !== 'audited'){ toast('已审核才可以进行补差操作', 'warning'); return; }
+    diffTarget = { dept: dept, idx: idx };
+    document.getElementById('deptDiffInfo').textContent = dept + ' · ' + item.name;
+    document.getElementById('deptDiffOldAmount').textContent = fmtMoney(item.amount);
+    document.getElementById('deptDiffAmount').value = '';
+    document.getElementById('deptDiffReason').value = '';
+    openModal('deptDiffModal');
+  };
+
+  window.submitDeptDiff = function(){
+    if(!diffTarget) { closeModal('deptDiffModal'); return; }
+    var diff = parseFloat(document.getElementById('deptDiffAmount').value);
+    if(isNaN(diff) || diff === 0){ toast('请填写补差金额（可为负数）', 'error'); return; }
+    var reason = document.getElementById('deptDiffReason').value.trim();
+    var ar = getAr(currentArNo);
+    var deptObj = ar.deptData.find(function(d){ return d.dept === diffTarget.dept; });
+    var item = deptObj.items[diffTarget.idx];
+    var old = item.amount;
+    item.amount = old + diff;
+    item.auditStatus = 'adjusted';
+    ar.logs.unshift({time:new Date().toLocaleString('zh-CN',{hour12:false}), operator:'王财务', change:'财务补差' + diffTarget.dept + '数据「' + item.name + '」：' + fmtMoney(old) + ' → ' + fmtMoney(item.amount) + (reason ? '，原因：' + reason : '')});
+    closeModal('deptDiffModal');
+    renderDeptData(ar);
+    renderOperationLogs(ar);
+    toast('补差完成，金额已更新', 'success');
+    diffTarget = null;
   };
 
   window.integrateDeptData = function(){
@@ -3053,6 +3154,7 @@ th.sortable:hover { color: var(--tms-primary); }
         '<td><span style="color:var(--tms-error);font-weight:600;">' + fmtMoney(total) + '</span></td>' +
         '<td><span class="text-muted font-mono text-sm">-</span></td>' +
         '<td><span class="text-muted font-mono text-sm">-</span></td>' +
+        '<td class="remark-cell"><input type="text" class="remark-input" data-ar-no="' + no + '" placeholder="填写内部备注"></td>' +
         '<td><span class="tag tag-gray tag-dot">待收款</span></td>' +
         '<td class="col-action"><div class="action-links"><button class="btn-link" onclick="openDetail(\'' + no + '\')">查看</button><span class="divider-v"></span><button class="btn-link" onclick="toast(\'对账功能开发中\',\'info\')">对账</button><span class="divider-v"></span><button class="btn-link danger" onclick="deleteItem(this)">删除</button></div></td>';
       tbody.insertBefore(tr, tbody.firstChild);
@@ -3089,6 +3191,23 @@ th.sortable:hover { color: var(--tms-primary); }
   document.addEventListener('DOMContentLoaded', function(){
     filterArWaybills();
   });
+
+  // 页面加载后为静态行注入内部备注输入框
+  function initRemarkCells(){
+    document.querySelectorAll('#receivableTbody tr').forEach(function(tr){
+      if(tr.querySelector('.remark-cell')) return;
+      var cell = tr.insertCell(tr.cells.length - 2);
+      cell.className = 'remark-cell';
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'remark-input';
+      input.placeholder = '填写内部备注';
+      input.setAttribute('data-ar-no', tr.getAttribute('data-ar-no') || '');
+      cell.appendChild(input);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRemarkCells);
+  else initRemarkCells();
 })();
 
 </script>
@@ -3152,6 +3271,285 @@ th.sortable:hover { color: var(--tms-primary); }
       refreshDeptDataIfOpen();
     }
   });
+})();
+</script>
+
+<style>
+.remark-input{width:100%;min-width:120px;border:1px solid var(--tms-border);border-radius:6px;padding:4px 8px;font-size:12px;background:var(--tms-card,#fff);color:var(--tms-text);}
+.remark-input:focus{outline:none;border-color:var(--tms-primary);}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.stats-item{border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);padding:10px 14px;background:var(--tms-card,#fff);}
+.stats-item .lbl{font-size:12px;color:var(--tms-text-3);margin-bottom:4px;}
+.stats-item .val{font-size:16px;font-weight:700;color:var(--tms-text-1);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;}
+.stats-item .val.money{color:var(--tms-primary);}
+.stats-item .val.green{color:var(--tms-success);}
+.stats-item .val.red{color:var(--tms-error);}
+</style>
+
+<!-- Modal: 批量修改内部备注 -->
+<div class="modal-mask" id="batchRemarkModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">📝 批量修改内部备注</span>
+      <button class="modal-close" data-close="batchRemarkModal">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--tms-text-2);margin-bottom:10px;">将为选中的 <b id="batchRemarkCount">0</b> 条账单统一填写以下内部备注：</p>
+      <textarea class="form-control" id="batchRemarkText" rows="4" placeholder="请输入内部备注内容，如：月结客户，注意回款时间"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="batchRemarkModal">取消</button>
+      <button class="btn btn-primary" onclick="submitBatchRemark()">确认修改</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 查看统计 -->
+<div class="modal-mask" id="statsModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="modal-title">📊 应收数据统计</span>
+        <span class="tag tag-blue" id="statsScope">全部账单</span>
+      </div>
+      <button class="modal-close" data-close="statsModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="statsModal">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 驳回部门数据 -->
+<div class="modal-mask" id="deptRejectModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">↩️ 驳回部门数据</span>
+      <button class="modal-close" data-close="deptRejectModal">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--tms-text-2);margin-bottom:10px;">驳回对象：<b id="deptRejectInfo">—</b></p>
+      <div class="form-group">
+        <label class="form-label">驳回原因 <span style="color:var(--tms-error);">*</span></label>
+        <textarea class="form-control" id="deptRejectReason" rows="3" placeholder="请说明数据错误之处，部门将按此原因重新修改数据"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="deptRejectModal">取消</button>
+      <button class="btn btn-danger" onclick="submitDeptReject()">确认驳回</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 财务补差 -->
+<div class="modal-mask" id="deptDiffModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">💹 财务补差</span>
+      <button class="modal-close" data-close="deptDiffModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="dept-audit-summary">
+        <div class="row"><span>补差对象</span><span id="deptDiffInfo" class="new">—</span></div>
+        <div class="row"><span>当前金额</span><span id="deptDiffOldAmount" class="old">¥0.00</span></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">补差金额（可为负数） <span style="color:var(--tms-error);">*</span></label>
+        <input type="number" step="0.01" class="form-control" id="deptDiffAmount" placeholder="如：200 或 -150">
+      </div>
+      <div class="form-group">
+        <label class="form-label">补差原因</label>
+        <input type="text" class="form-control" id="deptDiffReason" placeholder="如：重量差异补收 / 报价调整">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="deptDiffModal">取消</button>
+      <button class="btn btn-primary" onclick="submitDeptDiff()">确认补差</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== 内部备注 / 查看统计 / 订单费用（反审计、增加费用） ========== */
+(function(){
+  'use strict';
+  function fmtM(n){ return '¥' + Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function fmtKg(n){ return Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1}) + ' kg'; }
+  function fmtM3(n){ return Number(n).toLocaleString('zh-CN',{maximumFractionDigits:2}) + ' m³'; }
+
+  // ---------- 批量修改内部备注 ----------
+  function getSelectedRows(){
+    return Array.prototype.slice.call(document.querySelectorAll('#receivableTbody tr')).filter(function(tr){
+      var c = tr.querySelector('.row-check');
+      return c && c.checked;
+    });
+  }
+  window.openBatchRemarkModal = function(){
+    var rows = getSelectedRows();
+    if(rows.length === 0){ toast('请先勾选需要修改备注的账单', 'warning'); return; }
+    document.getElementById('batchRemarkCount').textContent = rows.length;
+    document.getElementById('batchRemarkText').value = '';
+    openModal('batchRemarkModal');
+  };
+  window.submitBatchRemark = function(){
+    var val = document.getElementById('batchRemarkText').value.trim();
+    if(!val){ toast('请输入备注内容', 'error'); return; }
+    var rows = getSelectedRows();
+    rows.forEach(function(tr){
+      var input = tr.querySelector('.remark-input');
+      if(input){ input.value = val; input.dispatchEvent(new Event('input', {bubbles:true})); }
+    });
+    closeModal('batchRemarkModal');
+    toast('已批量修改 ' + rows.length + ' 条账单的内部备注', 'success');
+  };
+  document.addEventListener('input', function(e){
+    if(e.target.classList && e.target.classList.contains('remark-input')){
+      // 备注即时保存提示（轻量）
+      e.target.style.borderColor = 'var(--tms-success)';
+      setTimeout(function(){ e.target.style.borderColor = ''; }, 600);
+    }
+  });
+
+  // ---------- 查看统计 ----------
+  function parseNum(v){
+    var m = String(v || '').replace(/[,，\s]/g,'').match(/-?\d+(\.\d+)?/);
+    return m ? parseFloat(m[0]) : 0;
+  }
+  function collectRows(){
+    var sel = getSelectedRows();
+    var all = Array.prototype.slice.call(document.querySelectorAll('#receivableTbody tr'));
+    return { rows: sel.length > 0 ? sel : all, scoped: sel.length > 0 };
+  }
+  window.openStatsModal = function(){
+    var c = collectRows();
+    var customers = {};
+    var t = { waybills:0, boxes:0, custActual:0, custVolWeight:0, custVolume:0, recvActual:0, recvVolWeight:0, chargeWeight:0, recvVolume:0, ar:0, paidAr:0, unpaidAr:0, ap:0, paidAp:0, unpaidAp:0, cost:0, commission:0, gross:0, profit:0, declared:0 };
+    c.rows.forEach(function(tr){
+      var cw = parseNum(tr.getAttribute('data-charge-weight'));
+      var ar = parseNum(tr.getAttribute('data-ar-amount'));
+      var paid = parseNum(tr.getAttribute('data-paid-amount'));
+      var unpaid = parseNum(tr.getAttribute('data-unpaid-amount'));
+      var cust = tr.getAttribute('data-customer') || '未知客户';
+      customers[cust] = 1;
+      var wbText = tr.cells[4] ? tr.cells[4].textContent : '';
+      var wbMatch = wbText.match(/(\d+)\s*单/);
+      t.waybills += wbMatch ? parseInt(wbMatch[1],10) : 1;
+      t.boxes += Math.round(cw / 680);
+      t.custActual += cw * 0.92;
+      t.custVolWeight += cw * 0.85;
+      t.custVolume += cw / 167;
+      t.recvActual += cw * 0.93;
+      t.recvVolWeight += cw * 0.86;
+      t.chargeWeight += cw;
+      t.recvVolume += cw / 167 * 0.98;
+      t.ar += ar; t.paidAr += paid; t.unpaidAr += unpaid;
+      var ap = ar * 0.72, paidAp = paid * 0.72;
+      t.ap += ap; t.paidAp += paidAp; t.unpaidAp += ap - paidAp;
+      t.cost += ap * 0.92;
+      t.commission += ar * 0.03;
+      t.gross += ar - ap * 0.92;
+      t.profit += ar - ap * 0.92 - ar * 0.03;
+      t.declared += ar * 1.25;
+    });
+    var items = [
+      ['客户数', Object.keys(customers).length, ''],
+      ['运单数', t.waybills, ''],
+      ['箱数', t.boxes, ''],
+      ['客户实重', fmtKg(t.custActual), ''],
+      ['客户材积重', fmtKg(t.custVolWeight), ''],
+      ['客户体积', fmtM3(t.custVolume), ''],
+      ['收货实重', fmtKg(t.recvActual), ''],
+      ['收货材积重', fmtKg(t.recvVolWeight), ''],
+      ['收费重', fmtKg(t.chargeWeight), ''],
+      ['收货体积', fmtM3(t.recvVolume), ''],
+      ['应收', fmtM(t.ar), 'money'],
+      ['已支付应收', fmtM(t.paidAr), 'green'],
+      ['未支付应收', fmtM(t.unpaidAr), 'red'],
+      ['应付', fmtM(t.ap), 'money'],
+      ['已支付应付', fmtM(t.paidAp), 'green'],
+      ['未支付应付', fmtM(t.unpaidAp), 'red'],
+      ['销售成本', fmtM(t.cost), ''],
+      ['销售提成', fmtM(t.commission), ''],
+      ['毛利', fmtM(t.gross), 'green'],
+      ['销售利润', fmtM(t.profit), 'green'],
+      ['申报价值', fmtM(t.declared), '']
+    ];
+    document.getElementById('statsScope').textContent = c.scoped ? '选中 ' + c.rows.length + ' 条账单' : '全部 ' + c.rows.length + ' 条账单';
+    document.getElementById('statsGrid').innerHTML = items.map(function(it){
+      return '<div class="stats-item"><div class="lbl">' + it[0] + '</div><div class="val ' + it[2] + '">' + it[1] + '</div></div>';
+    }).join('');
+    openModal('statsModal');
+  };
+
+  // ---------- 订单费用：反审计 / 增加费用 ----------
+  var orderFeeStore = {};
+  var feeAuditState = {}; // arNo -> true 已审计（默认）
+  function defaultFees(arNo){
+    var ar = window.getAr ? window.getAr(arNo) : null;
+    var amt = ar ? (ar.amount || 0) : 0;
+    return [
+      { name:'运费', amount: Math.round(amt * 0.844) },
+      { name:'附加费（燃油/旺季）', amount: Math.round(amt * 0.094) },
+      { name:'报关费', amount: Math.round(amt * 0.027) },
+      { name:'保险费', amount: Math.round(amt * 0.035) }
+    ];
+  }
+  function getFees(arNo){ if(!orderFeeStore[arNo]) orderFeeStore[arNo] = defaultFees(arNo); return orderFeeStore[arNo]; }
+  function isFeeAudited(arNo){ return feeAuditState[arNo] !== false; }
+
+  window.renderOrderFees = function(arNo){
+    var tbody = document.getElementById('orderFeeTbody');
+    if(!tbody) return;
+    var fees = getFees(arNo);
+    var audited = isFeeAudited(arNo);
+    var total = 0;
+    tbody.innerHTML = fees.map(function(f, i){
+      var amt = Number(f.amount) || 0;
+      total += amt;
+      var editable = !audited || f.added;
+      if(!editable){
+        return '<tr><td>' + f.name + '</td><td class="text-right" style="font-weight:600;">' + fmtM(amt) + '</td><td><span class="tag tag-blue tag-dot">已审计</span></td><td class="col-action"><span style="color:var(--tms-text-3);font-size:12px;">—</span></td></tr>';
+      }
+      return '<tr><td><input type="text" class="form-control" style="width:160px;display:inline-block;" value="' + f.name + '" onchange="updateOrderFeeName(\'' + arNo + '\',' + i + ',this.value)"></td>' +
+        '<td class="text-right"><input type="number" step="0.01" class="form-control" style="width:140px;display:inline-block;" value="' + amt + '" onchange="updateOrderFee(\'' + arNo + '\',' + i + ',this.value)"></td>' +
+        '<td><span class="tag tag-orange tag-dot">未审计</span></td>' +
+        '<td class="col-action"><button class="btn-link danger" onclick="removeOrderFee(\'' + arNo + '\',' + i + ')">删除</button></td></tr>';
+    }).join('');
+    document.getElementById('orderFeeTotal').textContent = fmtM(total);
+    var btn = document.getElementById('btnFeeAuditToggle');
+    if(btn) btn.innerHTML = audited ? '🔓 反审计' : '🔒 重新审计';
+    var hint = document.getElementById('feeAuditHint');
+    if(hint) hint.style.display = audited ? 'none' : 'block';
+  };
+
+  window.toggleFeeAudit = function(){
+    var arNo = window.currentArNo;
+    if(!arNo) return;
+    var now = isFeeAudited(arNo);
+    feeAuditState[arNo] = !now;
+    renderOrderFees(arNo);
+    toast(now ? '已反审计，费用可修改' : '已重新审计，费用已锁定', 'success');
+  };
+  window.addOrderFee = function(){
+    var arNo = window.currentArNo;
+    if(!arNo) return;
+    getFees(arNo).push({ name:'新增费用', amount:0, added:true });
+    renderOrderFees(arNo);
+    toast('已新建增加费用，请填写科目与金额', 'success');
+  };
+  window.updateOrderFee = function(arNo, i, val){ getFees(arNo)[i].amount = parseFloat(val) || 0; renderOrderFees(arNo); };
+  window.updateOrderFeeName = function(arNo, i, val){ getFees(arNo)[i].name = val || '费用'; };
+  window.removeOrderFee = function(arNo, i){ getFees(arNo).splice(i, 1); renderOrderFees(arNo); toast('费用已删除', 'info'); };
+
+  // 打开详情时同步渲染订单费用
+  var origOpenDetail = window.openDetail;
+  window.openDetail = function(arNo){
+    origOpenDetail(arNo);
+    renderOrderFees(arNo);
+  };
 })();
 </script>
 </body>
