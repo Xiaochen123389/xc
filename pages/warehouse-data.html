@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海外仓数据 - TMS供应链管理系统</title>
+    <style id="theme-vars">
+:root {
+  /* === 品牌主色（现代化蓝色）=== */
+  --tms-primary: #1677ff;
+  --tms-primary-hover: #4096ff;
+  --tms-primary-active: #0958d9;
+  --tms-primary-light: #e6f4ff;
+  --tms-primary-bg: #f0f7ff;
+
+  /* === 语义色 === */
+  --tms-success: #52c41a;
+  --tms-success-light: #f6ffed;
+  --tms-warning: #faad14;
+  --tms-warning-light: #fffbe6;
+  --tms-error: #ff4d4f;
+  --tms-error-light: #fff2f0;
+  --tms-info: #1677ff;
+  --tms-info-light: #e6f4ff;
+  --tms-processing: #1677ff;
+
+  /* === 中性色 === */
+  --tms-text-1: #1f2937;
+  --tms-text: #111827;
+  --tms-text-2: #4b5563;
+  --tms-text-3: #9ca3af;
+  --tms-text-4: #d1d5db;
+  --tms-border: #e5e7eb;
+  --tms-border-2: #f3f4f6;
+  --tms-bg: #f5f7fa;
+  --tms-bg-white: #ffffff;
+  --tms-bg-hover: #f9fafb;
+
+  /* === 侧边栏 === */
+  --tms-sidebar-bg: #1d2939;
+  --tms-sidebar-hover: rgba(255,255,255,.06);
+  --tms-sidebar-active: rgba(22,119,255,.18);
+  --tms-sidebar-active-bar: #1677ff;
+  --tms-sidebar-text: rgba(255,255,255,.65);
+  --tms-sidebar-text-active: #fff;
+  --tms-sidebar-group: rgba(255,255,255,.35);
+
+  /* === 阴影 === */
+  --tms-shadow-sm: 0 1px 2px rgba(16,24,40,.04);
+  --tms-shadow: 0 1px 3px rgba(16,24,40,.08), 0 1px 2px rgba(16,24,40,.04);
+  --tms-shadow-md: 0 4px 8px -2px rgba(16,24,40,.1), 0 2px 4px -2px rgba(16,24,40,.06);
+  --tms-shadow-lg: 0 12px 16px -4px rgba(16,24,40,.08), 0 4px 6px -2px rgba(16,24,40,.04);
+  --tms-shadow-xl: 0 20px 24px -4px rgba(16,24,40,.12), 0 8px 8px -4px rgba(16,24,40,.06);
+
+  /* === 圆角 === */
+  --tms-radius-sm: 4px;
+  --tms-radius: 6px;
+  --tms-radius-md: 8px;
+  --tms-radius-lg: 12px;
+  --tms-radius-xl: 16px;
+
+  /* === 语义别名（head contract 所需）=== */
+  --tms-background: var(--tms-bg);
+  --tms-foreground: #111827;
+  --tms-card: #ffffff;
+  --tms-muted: #9ca3af;
+  --tms-radius-sm: 4px;
+  --tms-radius-md: 6px;
+  --tms-radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; height:100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  color: var(--tms-text);
+  background: var(--tms-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--tms-primary); text-decoration: none; transition: color .15s; }
+a:hover { color: var(--tms-primary-hover); }
+button { font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+
+/* ========== 按钮 ========== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 34px; padding: 0 16px; border-radius: var(--tms-radius);
+  font-size: 14px; font-weight: 500; line-height: 1; cursor: pointer;
+  border: 1px solid var(--tms-border); background: #fff; color: var(--tms-text-1);
+  transition: all .2s cubic-bezier(.4,0,.2,1); white-space: nowrap;
+}
+.btn:hover { color: var(--tms-primary); border-color: var(--tms-primary); background: var(--tms-primary-bg); }
+.btn-primary { background: var(--tms-primary); border-color: var(--tms-primary); color: #fff; box-shadow: 0 1px 2px rgba(22,119,255,.2); }
+.btn-primary:hover { background: var(--tms-primary-hover); border-color: var(--tms-primary-hover); color: #fff; box-shadow: 0 4px 10px rgba(22,119,255,.3); }
+.btn-danger { background: var(--tms-error); border-color: var(--tms-error); color: #fff; }
+.btn-danger:hover { background: #ff7875; border-color: #ff7875; color: #fff; }
+.btn-success { background: var(--tms-success); border-color: var(--tms-success); color: #fff; }
+.btn-success:hover { background: #73d13d; border-color: #73d13d; color: #fff; }
+.btn-ghost { border: none; background: transparent; color: var(--tms-primary); padding: 0 8px; }
+.btn-ghost:hover { background: var(--tms-primary-light); }
+.btn-link { border: none; background: transparent; color: var(--tms-primary); padding: 0; height: auto; font-weight: 400; }
+.btn-link:hover { color: var(--tms-primary-hover); background: transparent; }
+.btn-sm { height: 28px; padding: 0 12px; font-size: 13px; }
+.btn-lg { height: 40px; padding: 0 24px; font-size: 15px; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; pointer-events: none; }
+.btn-icon { width: 34px; padding: 0; }
+.btn-icon.btn-sm { width: 28px; }
+
+/* ========== 表单 ========== */
+.form-label { display: block; font-size: 14px; color: var(--tms-text-1); margin-bottom: 6px; font-weight: 500; }
+.form-label .required { color: var(--tms-error); margin-right: 4px; }
+.form-control {
+  height: 34px; padding: 0 12px; width: 100%;
+  border: 1px solid var(--tms-border); border-radius: var(--tms-radius);
+  font-size: 14px; background: #fff; color: var(--tms-text); outline: none;
+  transition: all .2s;
+}
+.form-control:hover { border-color: var(--tms-text-4); }
+.form-control:focus { border-color: var(--tms-primary); box-shadow: 0 0 0 3px rgba(22,119,255,.12); }
+.form-control::placeholder { color: var(--tms-text-3); }
+.form-control.error { border-color: var(--tms-error); }
+.form-control.error:focus { box-shadow: 0 0 0 3px rgba(255,77,79,.12); }
+textarea.form-control { height: auto; padding: 8px 12px; min-height: 80px; resize: vertical; line-height: 1.5; }
+select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' stroke='%239ca3af' fill='none' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+.form-row { display: flex; gap: 20px; margin-bottom: 18px; }
+.form-col { flex: 1; min-width: 0; }
+.form-error-msg { font-size: 12px; color: var(--tms-error); margin-top: 4px; display: none; }
+.form-control.error + .form-error-msg { display: block; }
+.form-help { font-size: 12px; color: var(--tms-text-3); margin-top: 4px; }
+.form-group { margin-bottom: 0; }
+
+/* ========== 标签 Tag ========== */
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 12px; line-height: 20px; font-weight: 500; }
+.tag-blue { background: var(--tms-primary-light); color: var(--tms-primary); }
+.tag-green { background: var(--tms-success-light); color: #389e0d; }
+.tag-orange { background: var(--tms-warning-light); color: #d48806; }
+.tag-red { background: var(--tms-error-light); color: #cf1322; }
+.tag-gray { background: var(--tms-border-2); color: var(--tms-text-2); }
+.tag-cyan { background: #e6fffb; color: #08979c; }
+.tag-purple { background: #f9f0ff; color: #722ed1; }
+.tag-dot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ========== 卡片 ========== */
+.card { background: #fff; border-radius: var(--tms-radius-md); box-shadow: var(--tms-shadow-sm); border: 1px solid var(--tms-border-2); }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--tms-border-2); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 15px; font-weight: 600; color: var(--tms-text); display: flex; align-items: center; gap: 8px; }
+.card-title-bar { width: 3px; height: 14px; background: var(--tms-primary); border-radius: 2px; }
+.card-extra { font-size: 13px; color: var(--tms-text-3); }
+.card-body { padding: 20px; }
+.card-body.compact { padding: 12px 20px; }
+
+/* ========== 表格 ========== */
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; background: #fff; }
+.data-table thead th {
+  background: #fafbfc; padding: 12px 16px; text-align: left; font-weight: 600;
+  color: var(--tms-text-2); border-bottom: 1px solid var(--tms-border);
+  white-space: nowrap; font-size: 13px; position: sticky; top: 0; z-index: 1;
+}
+.data-table tbody td { padding: 12px 16px; border-bottom: 1px solid var(--tms-border-2); color: var(--tms-text-1); vertical-align: middle; }
+.data-table tbody tr { transition: background .15s; }
+.data-table tbody tr:hover { background: var(--tms-primary-bg); }
+.data-table tbody tr.selected { background: #e6f4ff; }
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table .col-check { width: 40px; }
+.data-table .col-action { width: auto; white-space: nowrap; text-align: right; }
+.data-table .link { color: var(--tms-primary); cursor: pointer; font-weight: 500; }
+.data-table .link:hover { color: var(--tms-primary-hover); text-decoration: underline; }
+.data-table .mono { font-family: "SF Mono", Consolas, Monaco, monospace; font-size: 12.5px; color: var(--tms-text-1); }
+.table-wrapper { overflow-x: auto; }
+
+/* ========== 侧边栏 ========== */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 224px;
+  background: var(--tms-sidebar-bg); z-index: 50;
+  display: flex; flex-direction: column;
+  transition: width .25s;
+}
+.sidebar-logo {
+  height: 56px; display: flex; align-items: center; padding: 0 20px;
+  border-bottom: 1px solid rgba(255,255,255,.06); gap: 10px; flex-shrink: 0;
+}
+.sidebar-logo-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, #1677ff, #69b1ff);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 16px;
+  box-shadow: 0 4px 10px rgba(22,119,255,.4);
+}
+.sidebar-logo-text { color: #fff; font-size: 15px; font-weight: 600; letter-spacing: .3px; line-height: 1.2; }
+.sidebar-logo-text small { display: block; font-size: 10px; color: rgba(255,255,255,.5); font-weight: 400; letter-spacing: 1px; margin-top: 2px; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 0; }
+.sidebar-nav::-webkit-scrollbar { width: 0; }
+.nav-group-title {
+  padding: 14px 20px 6px; font-size: 11px; color: var(--tms-sidebar-group);
+  text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 20px; height: 40px; margin: 2px 8px;
+  color: var(--tms-sidebar-text); font-size: 13.5px; cursor: pointer;
+  border-radius: 6px; transition: all .15s; position: relative;
+  border-left: none;
+}
+.nav-item:hover { color: #fff; background: var(--tms-sidebar-hover); }
+.nav-item.active {
+  color: #fff; background: var(--tms-sidebar-active);
+  box-shadow: inset 3px 0 0 var(--tms-sidebar-active-bar);
+  font-weight: 500;
+}
+.nav-icon { width: 18px; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.nav-badge { margin-left: auto; background: var(--tms-error); color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600; min-width: 18px; text-align: center; line-height: 16px; }
+.nav-caret { margin-left: auto; font-size: 10px; transition: transform .2s; opacity: .5; }
+.nav-item.expanded .nav-caret { transform: rotate(90deg); }
+.submenu { padding: 2px 0; display: none; }
+.nav-item.expanded + .submenu { display: block; }
+.submenu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 20px 0 50px; height: 34px; margin: 1px 8px;
+  color: var(--tms-sidebar-text); font-size: 13px; cursor: pointer;
+  border-radius: 6px; transition: all .15s;
+}
+.submenu-item:hover { color: #fff; background: var(--tms-sidebar-hover); }
+.submenu-item.active { color: var(--tms-primary); background: rgba(22,119,255,.1); font-weight: 500; }
+.submenu-item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .5; }
+.submenu-item.active::before { opacity: 1; background: var(--tms-primary); }
+.sidebar-footer { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.06); }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 6px; cursor: pointer; transition: background .15s; }
+.sidebar-user:hover { background: var(--tms-sidebar-hover); }
+.sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #1677ff, #36cfc9); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name { color: #fff; font-size: 13px; font-weight: 500; }
+.sidebar-user-role { color: rgba(255,255,255,.45); font-size: 11px; margin-top: 2px; }
+
+/* ========== 顶部 Header ========== */
+.app-header {
+  height: 56px; background: #fff; border-bottom: 1px solid var(--tms-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px 0 248px; position: sticky; top: 0; z-index: 30;
+  box-shadow: var(--tms-shadow-sm);
+}
+.header-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--tms-text-3); }
+.header-breadcrumb a { color: var(--tms-text-3); }
+.header-breadcrumb a:hover { color: var(--tms-primary); }
+.header-breadcrumb .sep { color: var(--tms-text-4); }
+.header-breadcrumb .current { color: var(--tms-text-1); font-weight: 500; }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.header-icon-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--tms-text-2); transition: all .15s;
+  position: relative;
+}
+.header-icon-btn:hover { background: var(--tms-bg-hover); color: var(--tms-primary); }
+.header-badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--tms-error); border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-sizing: content-box; }
+.header-divider { width: 1px; height: 20px; background: var(--tms-border); margin: 0 4px; }
+.header-user { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 8px; cursor: pointer; transition: background .15s; }
+.header-user:hover { background: var(--tms-bg-hover); }
+.header-user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg,#1677ff,#36cfc9); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+.header-user-name { font-size: 13px; color: var(--tms-text-1); font-weight: 500; }
+
+/* ========== 主内容区 ========== */
+.app-main { margin-left: 224px; padding: 20px 24px; min-height: calc(100vh - 56px); }
+.page-title-bar { margin-bottom: 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--tms-text); margin: 0 0 6px; letter-spacing: -.3px; }
+.page-subtitle { font-size: 13px; color: var(--tms-text-3); margin: 0; }
+.page-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* ========== 统计卡 ========== */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.stat-card {
+  background: #fff; border-radius: var(--tms-radius-md); padding: 20px;
+  border: 1px solid var(--tms-border-2); box-shadow: var(--tms-shadow-sm);
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; transition: all .25s cubic-bezier(.4,0,.2,1);
+  position: relative; overflow: hidden;
+}
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--tms-primary); opacity: .8; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--tms-shadow-md); border-color: var(--tms-primary-light); }
+.stat-card.stat-success::before { background: var(--tms-success); }
+.stat-card.stat-warning::before { background: var(--tms-warning); }
+.stat-card.stat-error::before { background: var(--tms-error); }
+.stat-card.stat-cyan::before { background: #13c2c2; }
+.stat-info { display: flex; flex-direction: column; gap: 6px; }
+.stat-label { font-size: 13px; color: var(--tms-text-3); display: flex; align-items: center; gap: 6px; }
+.stat-value { font-size: 28px; font-weight: 700; color: var(--tms-text); line-height: 1; letter-spacing: -.5px; font-feature-settings: 'tnum'; }
+.stat-trend { font-size: 12px; display: inline-flex; align-items: center; gap: 3px; }
+.stat-trend.up { color: var(--tms-success); }
+.stat-trend.down { color: var(--tms-error); }
+.stat-icon-wrap {
+  width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; font-size: 22px; background: var(--tms-primary-light); color: var(--tms-primary);
+}
+.stat-success .stat-icon-wrap { background: var(--tms-success-light); color: var(--tms-success); }
+.stat-warning .stat-icon-wrap { background: var(--tms-warning-light); color: var(--tms-warning); }
+.stat-error .stat-icon-wrap { background: var(--tms-error-light); color: var(--tms-error); }
+.stat-cyan .stat-icon-wrap { background: #e6fffb; color: #13c2c2; }
+
+/* ========== 筛选栏 ========== */
+.filter-bar {
+  background: #fff; padding: 16px 20px; border-radius: var(--tms-radius-md);
+  margin-bottom: 16px; border: 1px solid var(--tms-border-2);
+  box-shadow: var(--tms-shadow-sm);
+}
+.filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 20px; margin-bottom: 14px; }
+.filter-grid.compact { grid-template-columns: repeat(3, 1fr); }
+.filter-item { display: flex; flex-direction: column; gap: 5px; }
+.filter-label { font-size: 12.5px; color: var(--tms-text-2); font-weight: 500; }
+.filter-item .form-control { height: 32px; font-size: 13px; }
+.filter-actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; border-top: 1px dashed var(--tms-border-2); }
+
+/* ========== 操作栏 ========== */
+.table-toolbar {
+  background: #fff; padding: 12px 20px; border-bottom: 1px solid var(--tms-border-2);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.toolbar-left { display: flex; gap: 8px; align-items: center; }
+.toolbar-right { display: flex; gap: 8px; align-items: center; }
+.search-box { position: relative; }
+.search-box .form-control { height: 32px; padding-left: 34px; width: 240px; font-size: 13px; }
+.search-box .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--tms-text-3); font-size: 14px; pointer-events: none; }
+
+/* ========== Tabs ========== */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--tms-border); margin-bottom: -1px; background: #fff; padding: 0 20px; }
+.tab-item {
+  padding: 14px 18px; font-size: 14px; color: var(--tms-text-2); cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all .15s;
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 500; margin-bottom: -1px;
+}
+.tab-item:hover { color: var(--tms-primary); }
+.tab-item.active { color: var(--tms-primary); border-bottom-color: var(--tms-primary); }
+.tab-count { background: var(--tms-border-2); color: var(--tms-text-2); font-size: 11px; padding: 0 6px; border-radius: 10px; line-height: 16px; font-weight: 600; }
+.tab-item.active .tab-count { background: var(--tms-primary-light); color: var(--tms-primary); }
+
+/* ========== 分段控件 ========== */
+.segmented { display: inline-flex; padding: 3px; background: var(--tms-bg); border-radius: var(--tms-radius); gap: 2px; }
+.segmented-item { padding: 4px 12px; font-size: 13px; color: var(--tms-text-2); cursor: pointer; border-radius: 4px; transition: all .15s; }
+.segmented-item:hover { color: var(--tms-primary); }
+.segmented-item.active { background: #fff; color: var(--tms-text-1); font-weight: 500; box-shadow: var(--tms-shadow-sm); }
+
+/* ========== 分页 ========== */
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #fff; border-top: 1px solid var(--tms-border-2); border-radius: 0 0 var(--tms-radius-md) var(--tms-radius-md); }
+.pagination-info { font-size: 13px; color: var(--tms-text-3); }
+.pagination-pages { display: flex; gap: 4px; align-items: center; }
+.page-btn {
+  min-width: 32px; height: 32px; padding: 0 10px; border: 1px solid var(--tms-border);
+  border-radius: var(--tms-radius); background: #fff; cursor: pointer; font-size: 13px;
+  display: inline-flex; align-items: center; justify-content: center; color: var(--tms-text-1);
+  transition: all .15s;
+}
+.page-btn:hover:not(:disabled) { color: var(--tms-primary); border-color: var(--tms-primary); }
+.page-btn.active { background: var(--tms-primary); color: #fff; border-color: var(--tms-primary); font-weight: 500; }
+.page-btn:disabled { opacity: .4; cursor: not-allowed; }
+.page-jumper { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--tms-text-3); margin-left: 12px; }
+.page-jumper input { width: 48px; height: 28px; border: 1px solid var(--tms-border); border-radius: var(--tms-radius-sm); text-align: center; font-size: 13px; outline: none; }
+.page-jumper input:focus { border-color: var(--tms-primary); }
+
+/* ========== Modal ========== */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(15,23,42,.5);
+  z-index: 1000; display: none; align-items: flex-start; justify-content: center;
+  padding-top: 80px; backdrop-filter: blur(2px);
+}
+.modal-mask.show { display: flex; animation: fadeIn .2s ease; }
+.modal {
+  background: #fff; border-radius: var(--tms-radius-lg); width: 560px; max-width: 90vw;
+  max-height: calc(100vh - 140px); display: flex; flex-direction: column;
+  box-shadow: var(--tms-shadow-xl); animation: modalIn .25s cubic-bezier(.4,0,.2,1);
+}
+.modal.modal-sm { width: 420px; }
+.modal.modal-lg { width: 780px; }
+.modal.modal-xl { width: 1000px; }
+.modal-header {
+  padding: 18px 24px 14px; border-bottom: 1px solid var(--tms-border-2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-size: 16px; font-weight: 600; color: var(--tms-text); }
+.modal-close {
+  width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--tms-text-3); font-size: 18px; border: none; background: transparent;
+  transition: all .15s;
+}
+.modal-close:hover { background: var(--tms-bg-hover); color: var(--tms-text); }
+.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 12px 24px; border-top: 1px solid var(--tms-border-2); display: flex; justify-content: flex-end; gap: 8px; background: #fafbfc; border-radius: 0 0 var(--tms-radius-lg) var(--tms-radius-lg); }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+@keyframes modalIn { from{opacity:0;transform:translateY(-20px) scale(.98);} to{opacity:1;transform:translateY(0) scale(1);} }
+
+/* ========== Price Items ========== */
+.price-items-section { border: 1px solid var(--tms-border); border-radius: var(--tms-radius-md); padding: 12px; background: var(--tms-bg-1); margin-bottom: 18px; }
+.price-items-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.price-items-title { font-size: 14px; font-weight: 600; color: var(--tms-text); }
+.price-items-total { font-size: 14px; color: var(--tms-text-2); }
+.price-items-total strong { color: var(--tms-primary); font-size: 16px; margin-left: 4px; }
+.price-item-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.price-item-row .form-control { margin-bottom: 0; }
+.price-item-row .price-type-select { flex: 1; }
+.price-item-row .price-amount-input { width: 140px; flex-shrink: 0; }
+.price-item-row .btn-remove { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--tms-bg-hover); color: var(--tms-text-3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.price-item-row .btn-remove:hover { background: var(--tms-error-light); color: var(--tms-error); }
+.price-items-empty { font-size: 13px; color: var(--tms-text-3); text-align: center; padding: 12px 0; }
+.ar-ap-tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+.ar-ap-tag.receivable { background: #e6f7ff; color: #096dd9; }
+.ar-ap-tag.payable { background: #fff7e6; color: #d46b08; }
+
+/* ========== Toast ========== */
+.toast-container { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast {
+  background: #fff; padding: 10px 16px; border-radius: var(--tms-radius-md);
+  box-shadow: var(--tms-shadow-lg); display: flex; align-items: center; gap: 10px;
+  font-size: 14px; min-width: 240px; border-left: 3px solid var(--tms-primary);
+  animation: toastIn .3s cubic-bezier(.4,0,.2,1); pointer-events: auto;
+}
+.toast.success { border-left-color: var(--tms-success); }
+.toast.error { border-left-color: var(--tms-error); }
+.toast.warning { border-left-color: var(--tms-warning); }
+.toast-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.toast-icon.info { background: var(--tms-primary); }
+.toast-icon.success { background: var(--tms-success); }
+.toast-icon.error { background: var(--tms-error); }
+.toast-icon.warning { background: var(--tms-warning); }
+@keyframes toastIn { from{opacity:0;transform:translateY(-12px);} to{opacity:1;transform:translateY(0);} }
+
+/* ========== Steps ========== */
+.steps { display: flex; margin-bottom: 32px; padding: 0 20px; }
+.step { flex: 1; text-align: center; position: relative; }
+.step:not(:last-child)::after {
+  content: ''; position: absolute; top: 16px; left: calc(50% + 22px); right: calc(-50% + 22px);
+  height: 2px; background: var(--tms-border);
+}
+.step.done:not(:last-child)::after { background: var(--tms-primary); }
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--tms-border);
+  background: #fff; color: var(--tms-text-3); display: inline-flex; align-items: center;
+  justify-content: center; font-size: 14px; font-weight: 600; position: relative; z-index: 1;
+  transition: all .2s;
+}
+.step.done .step-circle { background: var(--tms-primary); border-color: var(--tms-primary); color: #fff; }
+.step.active .step-circle { border-color: var(--tms-primary); color: var(--tms-primary); box-shadow: 0 0 0 4px rgba(22,119,255,.12); }
+.step-label { margin-top: 8px; font-size: 13px; color: var(--tms-text-3); font-weight: 500; }
+.step.done .step-label { color: var(--tms-text-1); }
+.step.active .step-label { color: var(--tms-primary); }
+.step.active { cursor: pointer; }
+
+/* ========== Dropdown ========== */
+.dropdown-wrap { position: relative; }
+.dropdown-menu {
+  position: absolute; top: calc(100% + 6px); right: 0; min-width: 180px;
+  background: #fff; border-radius: var(--tms-radius-md); box-shadow: var(--tms-shadow-lg);
+  padding: 6px; z-index: 100; display: none; border: 1px solid var(--tms-border-2);
+}
+.dropdown-menu.show { display: block; animation: fadeIn .15s ease; }
+.dropdown-item {
+  padding: 8px 12px; font-size: 13.5px; color: var(--tms-text-1); cursor: pointer;
+  border-radius: var(--tms-radius-sm); display: flex; align-items: center; gap: 10px;
+  transition: background .1s;
+}
+.dropdown-item:hover { background: var(--tms-primary-bg); color: var(--tms-primary); }
+.dropdown-item.danger { color: var(--tms-error); }
+.dropdown-item.danger:hover { background: var(--tms-error-light); color: var(--tms-error); }
+.dropdown-divider { height: 1px; background: var(--tms-border-2); margin: 4px 6px; }
+.dropdown-item .dd-icon { width: 16px; text-align: center; font-size: 14px; color: var(--tms-text-3); }
+.dropdown-item:hover .dd-icon { color: var(--tms-primary); }
+.dropdown-item.danger .dd-icon { color: var(--tms-error); }
+
+/* ========== Upload ========== */
+.upload-zone {
+  border: 2px dashed var(--tms-border); border-radius: var(--tms-radius-md);
+  padding: 32px; text-align: center; cursor: pointer; transition: all .2s;
+  background: #fafbfc;
+}
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--tms-primary); background: var(--tms-primary-bg); }
+.upload-icon { font-size: 40px; color: var(--tms-text-4); margin-bottom: 10px; }
+
+/* ========== 时间线 ========== */
+.timeline { padding-left: 8px; }
+.timeline-item { position: relative; padding: 0 0 22px 24px; }
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-item::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: -4px; width: 2px; background: var(--tms-border); }
+.timeline-item:last-child::before { display: none; }
+.timeline-dot { position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid var(--tms-border); }
+.timeline-item.done .timeline-dot { background: var(--tms-primary); border-color: var(--tms-primary); }
+.timeline-item.active .timeline-dot { background: var(--tms-warning); border-color: var(--tms-warning); box-shadow: 0 0 0 4px rgba(250,173,20,.15); }
+.timeline-time { font-size: 12px; color: var(--tms-text-3); margin-bottom: 3px; font-feature-settings: 'tnum'; }
+.timeline-title { font-size: 14px; color: var(--tms-text-1); font-weight: 500; }
+.timeline-desc { font-size: 12.5px; color: var(--tms-text-3); margin-top: 3px; }
+
+/* ========== 进度条 ========== */
+.progress { height: 6px; background: var(--tms-border-2); border-radius: 3px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--tms-primary), #4096ff); border-radius: 3px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.progress.success .progress-bar { background: linear-gradient(90deg, #52c41a, #73d13d); }
+.progress.warning .progress-bar { background: linear-gradient(90deg, #faad14, #ffc53d); }
+.progress.exception .progress-bar { background: linear-gradient(90deg, #ff4d4f, #ff7875); }
+
+/* ========== Switch ========== */
+.switch { position: relative; display: inline-block; width: 44px; height: 22px; cursor: pointer; }
+.switch input { display: none; }
+.switch-track { position: absolute; inset: 0; background: #bfbfbf; border-radius: 22px; transition: .25s; }
+.switch-thumb { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: .25s; box-shadow: 0 2px 4px rgba(0,0,0,.2); }
+.switch input:checked + .switch-track { background: var(--tms-primary); }
+.switch input:checked ~ .switch-thumb { left: 24px; }
+
+/* ========== 复选框 ========== */
+input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; accent-color: var(--tms-primary); cursor: pointer; vertical-align: middle; }
+.checkbox-wrapper { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: var(--tms-text-1); user-select: none; }
+
+/* ========== 空状态 ========== */
+.empty { padding: 60px 20px; text-align: center; color: var(--tms-text-3); }
+.empty-icon { font-size: 56px; color: var(--tms-text-4); margin-bottom: 12px; opacity: .6; }
+.empty-text { font-size: 14px; margin-bottom: 12px; }
+
+/* ========== 骨架屏 ========== */
+.skeleton { height: 14px; background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%); background-size: 200% 100%; animation: skel 1.2s infinite; border-radius: 4px; margin-bottom: 8px; }
+@keyframes skel { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+/* ========== 批量操作栏 ========== */
+.batch-bar {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1f2937; color: #fff; border-radius: var(--tms-radius-md);
+  padding: 10px 16px; display: none; align-items: center; gap: 16px;
+  z-index: 200; box-shadow: var(--tms-shadow-xl);
+}
+.batch-bar.show { display: flex; animation: batchIn .3s cubic-bezier(.4,0,.2,1); }
+@keyframes batchIn { from{opacity:0;transform:translate(-50%,20px);} to{opacity:1;transform:translate(-50%,0);} }
+.batch-count { font-size: 13px; color: #fff; font-weight: 500; }
+.batch-bar .btn { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.2); color: #fff; height: 28px; padding: 0 12px; font-size: 12px; }
+.batch-bar .btn:hover { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.3); color: #fff; }
+.batch-bar .btn.btn-primary { background: var(--tms-primary); border-color: var(--tms-primary); }
+.batch-bar .btn.btn-danger { background: var(--tms-error); border-color: var(--tms-error); }
+.batch-close { cursor: pointer; color: rgba(255,255,255,.6); padding: 4px; border-radius: 4px; }
+.batch-close:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+/* ========== 图标（使用 unicode / inline SVG） ========== */
+.i { font-style: normal; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+
+/* ========== 登录页专属 ========== */
+.login-layout {
+  min-height: 100vh; display: flex; background: #fff;
+  position: relative; overflow: hidden;
+}
+.login-hero {
+  flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; z-index: 1;
+  background: linear-gradient(135deg, #0958d9 0%, #1677ff 40%, #36cfc9 100%);
+  color: #fff; overflow: hidden;
+}
+.login-hero::before {
+  content: ''; position: absolute; top: -30%; right: -20%; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 60%);
+  border-radius: 50%;
+}
+.login-hero::after {
+  content: ''; position: absolute; bottom: -20%; left: -10%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 60%);
+  border-radius: 50%;
+}
+.login-brand { display: flex; align-items: center; gap: 12px; color: #fff; position: relative; z-index: 2; }
+.login-brand-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,.2); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,.15); border: 1px solid rgba(255,255,255,.3); }
+.login-brand-name { font-size: 20px; font-weight: 700; }
+.login-brand-sub { font-size: 12px; color: rgba(255,255,255,.7); }
+.login-hero-content { max-width: 480px; position: relative; z-index: 2; }
+.login-hero-title { font-size: 36px; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 16px; letter-spacing: -0.5px; }
+.login-hero-title span { color: #a0e8ff; }
+.login-hero-desc { font-size: 15px; color: rgba(255,255,255,.8); line-height: 1.7; margin-bottom: 36px; }
+.login-features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.login-feature { display: flex; gap: 12px; padding: 14px; background: rgba(255,255,255,.12); backdrop-filter: blur(10px); border-radius: var(--tms-radius-md); border: 1px solid rgba(255,255,255,.18); transition: all .2s; }
+.login-feature:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+.login-feature-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,.2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.login-feature-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.login-feature-desc { font-size: 11.5px; color: rgba(255,255,255,.7); line-height: 1.4; }
+.login-footer { font-size: 12px; color: rgba(255,255,255,.6); position: relative; z-index: 2; }
+.login-box-wrap { width: 480px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 40px; position: relative; z-index: 1; }
+.login-card { width: 100%; background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(22,119,255,.15); }
+.login-title { font-size: 24px; font-weight: 700; color: var(--tms-text); margin-bottom: 6px; }
+.login-sub { font-size: 14px; color: var(--tms-text-3); margin-bottom: 28px; }
+.login-input-group { position: relative; margin-bottom: 18px; }
+.login-input-group .form-control { height: 44px; padding-left: 42px; font-size: 14px; border-radius: var(--tms-radius-md); }
+.login-input-group .form-control:focus { box-shadow: 0 0 0 3px rgba(22,119,255,.1); }
+.login-input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--tms-text-3); font-size: 16px; }
+.login-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--tms-text-3); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+.login-eye:hover { color: var(--tms-primary); background: var(--tms-bg-hover); }
+.login-captcha { display: flex; gap: 10px; margin-bottom: 18px; }
+.login-captcha .form-control { flex: 1; height: 44px; border-radius: var(--tms-radius-md); padding-left: 14px; }
+.captcha-img { width: 110px; height: 44px; border-radius: var(--tms-radius-md); background: linear-gradient(135deg,#e8f0fe,#d6e8ff); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; letter-spacing: 4px; color: var(--tms-primary); cursor: pointer; font-family: "Courier New", monospace; font-style: italic; user-select: none; border: 1px solid var(--tms-border); transition: all .2s; }
+.captcha-img:hover { background: linear-gradient(135deg,#d6e8ff,#c2d9ff); }
+.login-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 13px; }
+.login-btn { width: 100%; height: 44px; font-size: 15px; border-radius: var(--tms-radius-md); font-weight: 600; }
+.login-error { color: var(--tms-error); font-size: 12px; margin-top: -12px; margin-bottom: 12px; min-height: 18px; }
+
+/* ========== 两栏布局 ========== */
+.layout-2col { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+.layout-2col-wide { grid-template-columns: 1fr 400px; }
+.sticky-col { position: sticky; top: 76px; align-self: start; }
+
+/* ========== 详情描述列表 ========== */
+.desc-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 24px; }
+.desc-item { display: flex; gap: 8px; font-size: 13.5px; }
+.desc-label { color: var(--tms-text-3); min-width: 80px; flex-shrink: 0; }
+.desc-value { color: var(--tms-text-1); font-weight: 500; word-break: break-word; flex: 1; }
+.desc-list.cols-1 { grid-template-columns: 1fr; }
+.desc-list.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.desc-section-title { font-size: 14px; font-weight: 600; color: var(--tms-text); margin: 20px 0 14px; padding-left: 10px; border-left: 3px solid var(--tms-primary); }
+.desc-section-title:first-child { margin-top: 0; }
+
+/* ========== 汇总/结果面板 ========== */
+.summary-card { background: linear-gradient(135deg, #f8faff, #f0f7ff); border: 1px solid var(--tms-primary-light); border-radius: var(--tms-radius-md); padding: 16px 18px; }
+.summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13.5px; color: var(--tms-text-2); border-bottom: 1px dashed rgba(22,119,255,.15); }
+.summary-row:last-child { border-bottom: none; }
+.summary-row.total { padding-top: 12px; margin-top: 4px; border-top: 2px solid var(--tms-primary); border-bottom: none; font-size: 16px; font-weight: 700; color: var(--tms-primary); }
+.summary-label { color: var(--tms-text-2); }
+.summary-value { color: var(--tms-text-1); font-weight: 500; font-feature-settings: 'tnum'; }
+.summary-row.total .summary-value { color: var(--tms-primary); font-size: 20px; }
+
+/* ========== 服务/客户卡片 ========== */
+.entity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.entity-card {
+  background: #fff; border: 2px solid var(--tms-border-2); border-radius: var(--tms-radius-md);
+  padding: 18px; cursor: pointer; transition: all .2s; position: relative;
+}
+.entity-card:hover { border-color: #91caff; box-shadow: var(--tms-shadow-md); transform: translateY(-2px); }
+.entity-card.selected { border-color: var(--tms-primary); background: var(--tms-primary-bg); box-shadow: 0 0 0 3px rgba(22,119,255,.08); }
+.entity-check { position: absolute; top: -9px; right: -9px; width: 22px; height: 22px; border-radius: 50%; background: var(--tms-primary); color: #fff; display: none; align-items: center; justify-content: center; font-size: 12px; box-shadow: var(--tms-shadow); }
+.entity-card.selected .entity-check { display: flex; }
+.entity-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.entity-logo { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+.entity-title { font-size: 15px; font-weight: 600; color: var(--tms-text); margin-bottom: 2px; }
+.entity-sub { font-size: 12px; color: var(--tms-text-3); }
+.entity-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: var(--tms-text-3); }
+.entity-meta b { color: var(--tms-text-2); font-weight: 500; }
+
+/* ========== 图表柱 ========== */
+.bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 220px; padding: 0 8px 0; }
+.bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
+.bar-fill { width: 100%; max-width: 44px; background: linear-gradient(180deg, #1677ff, #69b1ff); border-radius: 6px 6px 0 0; transition: height 1s cubic-bezier(.4,0,.2,1); position: relative; min-height: 4px; }
+.bar-fill:hover { background: linear-gradient(180deg, #0958d9, #1677ff); }
+.bar-val { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--tms-text-2); font-weight: 600; white-space: nowrap; font-feature-settings: 'tnum'; }
+.bar-label { font-size: 12px; color: var(--tms-text-3); }
+
+/* ========== 工具类 ========== */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-6 { gap: 24px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-5 { margin-bottom: 20px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.w-full { width: 100%; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.font-mono { font-family: "SF Mono", Consolas, Monaco, monospace; }
+.text-sm { font-size: 12.5px; }
+.text-muted { color: var(--tms-text-3); }
+.font-semibold { font-weight: 600; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.divider { height: 1px; background: var(--tms-border-2); margin: 16px 0; }
+.loading-spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========== 响应式 ========== */
+@media (max-width: 1280px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .filter-grid { grid-template-columns: repeat(3, 1fr); }
+  .entity-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ========== 排序指示 ========== */
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable::after { content: '⇅'; margin-left: 6px; color: var(--tms-text-4); font-size: 10px; font-weight: 400; }
+th.sortable.sort-asc::after { content: '↑'; color: var(--tms-primary); }
+th.sortable.sort-desc::after { content: '↓'; color: var(--tms-primary); }
+th.sortable:hover { color: var(--tms-primary); }
+
+/* ========== 链接按钮组 ========== */
+.action-links { display: inline-flex; gap: 2px; }
+.action-links .btn-link { padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+.action-links .btn-link:hover { background: var(--tms-primary-light); }
+.action-links .divider-v { width: 1px; height: 12px; background: var(--tms-border); align-self: center; }
+.action-links .btn-link.danger { color: var(--tms-error); }
+.action-links .btn-link.danger:hover { background: var(--tms-error-light); }
+
+/* ========== 地址卡片 ========== */
+.address-card { padding: 16px; border: 1px solid var(--tms-border-2); border-radius: var(--tms-radius-md); transition: all .2s; cursor: pointer; background: #fff; }
+.address-card:hover { border-color: var(--tms-primary); box-shadow: var(--tms-shadow); }
+.address-tag { display: inline-block; padding: 1px 6px; font-size: 11px; border-radius: 3px; margin-right: 6px; font-weight: 500; }
+.address-tag.default { background: var(--tms-primary-light); color: var(--tms-primary); }
+.address-tag.home { background: var(--tms-success-light); color: #389e0d; }
+.address-tag.company { background: #f9f0ff; color: #722ed1; }
+.address-name { font-size: 15px; font-weight: 600; color: var(--tms-text); margin: 6px 0 4px; }
+.address-phone { font-size: 13px; color: var(--tms-text-2); font-feature-settings: 'tnum'; }
+.address-detail { font-size: 12.5px; color: var(--tms-text-3); margin-top: 6px; line-height: 1.5; }
+
+/* ========== 双卡片并排布局 ========== */
+.card-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card-pair .card { display: flex; flex-direction: column; }
+
+/* ========== 简单列表 ========== */
+.simple-list { padding: 0; }
+.simple-list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; border-bottom: 1px solid var(--tms-border-2);
+  transition: background .15s; cursor: pointer;
+}
+.simple-list-item:last-child { border-bottom: none; }
+.simple-list-item:hover { background: var(--tms-primary-bg); }
+.simple-list-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+.simple-list-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--tms-primary-light); color: var(--tms-primary); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.simple-list-title { font-size: 13.5px; color: var(--tms-text-1); font-weight: 500; margin-bottom: 2px; }
+.simple-list-sub { font-size: 12px; color: var(--tms-text-3); }
+.simple-list-right { text-align: right; flex-shrink: 0; }
+.simple-list-value { font-size: 13px; color: var(--tms-text-1); font-weight: 600; font-feature-settings: 'tnum'; }
+.simple-list-time { font-size: 11.5px; color: var(--tms-text-3); margin-top: 2px; }
+
+/* ========== 待办事项 ========== */
+.todo-list { padding: 4px 0; }
+.todo-item {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px 20px;
+  border-bottom: 1px solid var(--tms-border-2); transition: background .15s;
+}
+.todo-item:last-child { border-bottom: none; }
+.todo-item:hover { background: var(--tms-bg-hover); }
+.todo-item input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
+.todo-content { flex: 1; min-width: 0; }
+.todo-text { font-size: 13.5px; color: var(--tms-text-1); line-height: 1.5; transition: all .2s; }
+.todo-item.done .todo-text { text-decoration: line-through; color: var(--tms-text-3); }
+.todo-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.todo-time { font-size: 11.5px; color: var(--tms-text-3); }
+
+/* ========== 主题切换按钮 ========== */
+.theme-toggle {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--tms-text-2); transition: all .15s; font-size: 18px;
+}
+.theme-toggle:hover { background: var(--tms-bg-hover); color: var(--tms-primary); }
+
+/* ========== 导航 Tooltip ========== */
+.nav-item[data-tip] { position: relative; }
+.nav-item[data-tip]::after {
+  content: attr(data-tip); position: absolute; left: calc(100% + 8px); top: 50%;
+  transform: translateY(-50%); background: #1f2937; color: #fff; padding: 4px 10px;
+  border-radius: 4px; font-size: 12px; white-space: nowrap; z-index: 200;
+  opacity: 0; pointer-events: none; transition: opacity .15s;
+}
+.nav-item[data-tip]:hover::after { opacity: 1; }
+
+/* ========== hidden 工具类 ========== */
+.hidden { display: none !important; }
+
+/* ========== 登录按钮loading状态 ========== */
+.login-btn.loading { pointer-events: none; opacity: .8; }
+.login-btn .loading-spin { border-top-color: #fff; border-color: rgba(255,255,255,.3); border-top-color: #fff; }
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tms-background);
+    --color-foreground: var(--tms-foreground);
+    --color-card: var(--tms-card);
+    --color-primary: var(--tms-primary);
+    --color-muted: var(--tms-muted);
+    --color-border: var(--tms-border);
+    --radius-sm: var(--tms-radius-sm);
+    --radius-md: var(--tms-radius-md);
+    --radius-lg: var(--tms-radius-lg);
+    --radius-xl: var(--tms-radius-xl);
+  }
+  @layer base {
+    body { background: var(--tms-background); color: var(--tms-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tms-background); }
+      .text-background { color: var(--tms-background); }
+      .border-background { border-color: var(--tms-background); }
+      .ring-background { --tw-ring-color: var(--tms-background); }
+      .bg-foreground { background-color: var(--tms-foreground); }
+      .text-foreground { color: var(--tms-foreground); }
+      .border-foreground { border-color: var(--tms-foreground); }
+      .ring-foreground { --tw-ring-color: var(--tms-foreground); }
+      .bg-card { background-color: var(--tms-card); }
+      .text-card { color: var(--tms-card); }
+      .border-card { border-color: var(--tms-card); }
+      .ring-card { --tw-ring-color: var(--tms-card); }
+      .bg-primary { background-color: var(--tms-primary); }
+      .text-primary { color: var(--tms-primary); }
+      .border-primary { border-color: var(--tms-primary); }
+      .ring-primary { --tw-ring-color: var(--tms-primary); }
+      .bg-muted { background-color: var(--tms-muted); }
+      .text-muted { color: var(--tms-muted); }
+      .border-muted { border-color: var(--tms-muted); }
+      .ring-muted { --tw-ring-color: var(--tms-muted); }
+      .bg-border { background-color: var(--tms-border); }
+      .text-border { color: var(--tms-border); }
+      .border-border { border-color: var(--tms-border); }
+      .ring-border { --tw-ring-color: var(--tms-border); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<!-- Toast 容器 -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-mask" id="confirmMask">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">确认操作</div>
+    <div class="confirm-msg" id="confirmMsg">确定执行此操作吗？</div>
+    <div class="confirm-actions">
+      <button class="btn" id="confirmCancel">取消</button>
+      <button class="btn btn-primary" id="confirmOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">T</div>
+      <div class="sidebar-logo-text">
+        TMS 供应链
+        <small>SMART LOGISTICS</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">概览</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span>工作台</span>
+      </a>
+
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">📦</span>
+        <span>运单管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="waybill-list.html" class="submenu-item">运单列表</a>
+        <a href="waybill-create.html" class="submenu-item">创建运单</a>
+      </div>
+
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">🚢</span>
+        <span>提单管理</span>
+        <span class="nav-badge">12</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="bill-list.html" class="submenu-item">提单列表</a>
+        <a href="bill-create.html" class="submenu-item">创建提单</a>
+      </div>
+
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">📏</span>
+        <span>超限管理</span>
+        <span class="nav-badge">3</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="oversize.html" class="submenu-item">超限货物</a>
+        <a href="#" class="submenu-item" onclick="toast('超限审批开发中','info')">超限审批</a>
+      </div>
+
+      <div class="nav-group-title">财务管理</div>
+      <div class="nav-item has-sub expanded" onclick="void(0)">
+        <span class="nav-icon">💰</span>
+        <span>应收管理</span>
+        <span class="nav-badge">5</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
+        <a href="customer-flow.html" class="submenu-item">客户流水</a>
+        <a href="bill-writeoff.html" class="submenu-item">账单核销</a>
+        <a href="receivable-report.html" class="submenu-item">应收报表</a>
+      </div>
+
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">🧾</span>
+        <span>应付管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="payable-enhanced.html" class="submenu-item">应付账单</a>
+      </div>
+
+      <div class="nav-group-title">数据视图</div>
+      <a href="receivable-enhanced.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>应收数据</span>
+      </a>
+      <a href="payable-enhanced.html" class="nav-item">
+        <span class="nav-icon">📉</span>
+        <span>应付数据</span>
+      </a>
+      <a href="document-data.html" class="nav-item">
+        <span class="nav-icon">📄</span>
+        <span>单证数据</span>
+      </a>
+      <a href="cs-data.html" class="nav-item">
+        <span class="nav-icon">🎧</span>
+        <span>客服数据</span>
+      </a>
+      <a href="warehouse-data.html" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>海外仓数据</span>
+      </a>
+
+      <div class="nav-group-title">基础数据</div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">💹</span>
+        <span>运价管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="rates.html?tab=sell" class="submenu-item">销售运价</a>
+        <a href="rates.html?tab=buy" class="submenu-item">采购运价</a>
+      </div>
+      <a href="service.html" class="nav-item">
+        <span class="nav-icon">🛣️</span>
+        <span>服务管理</span>
+      </a>
+      <a href="address.html" class="nav-item">
+        <span class="nav-icon">📍</span>
+        <span>地址簿</span>
+      </a>
+
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item" onclick="toast('系统设置功能开发中','info')">
+        <span class="nav-icon">⚙️</span>
+        <span>系统设置</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">王</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">王主管</div>
+          <div class="sidebar-user-role">系统管理员</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+<header class="app-header">
+      <div class="header-breadcrumb">
+        <a href="dashboard.html">首页</a>
+        <span class="sep">/</span>
+        <a href="#">财务管理</a>
+        <span class="sep">/</span>
+        <span class="current">海外仓数据</span>
+      </div>
+      <div class="header-right">
+        <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
+        <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">
+          🔔
+          <span class="header-badge">3</span>
+        </div>
+        <div class="theme-toggle" title="主题切换" onclick="toast('主题切换功能开发中','info')">🌙</div>
+        <div class="header-divider"></div>
+        <div class="dropdown-wrap">
+          <div class="header-user" data-dropdown="userMenu">
+            <div class="header-user-avatar">王</div>
+            <span class="header-user-name">王主管</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+<main class="app-main">
+      <!-- 页面标题区 -->
+      <div class="page-title-bar">
+        <div>
+          <h1 class="page-title">🏠 海外仓数据</h1>
+          <p class="page-subtitle">海外仓费用数据与仓储操作记录管理</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn" onclick="exportData()">
+            <span>⬇</span>导出数据
+          </button>
+          <button class="btn btn-primary" onclick="openWarehouseModal()">
+            <span>＋</span>新增海外仓费用
+          </button>
+        </div>
+      </div>
+
+      <!-- 数据视角 Tab（导航链接） -->
+      <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md) var(--tms-radius-md) 0 0;">
+        <div class="tabs" id="viewTabs" style="margin-bottom:0;">
+          <a href="receivable-enhanced.html" class="tab-item" data-view="receivable">应收数据</a>
+          <a href="payable-enhanced.html" class="tab-item" data-view="payable">应付数据</a>
+          <a href="document-data.html" class="tab-item" data-view="document">单证数据</a>
+          <a href="cs-data.html" class="tab-item" data-view="service">客服数据</a>
+          <a href="warehouse-data.html" class="tab-item active" data-view="warehouse">海外仓数据</a>
+        </div>
+      </div>
+
+      <!-- 统计卡 -->
+      <div class="stat-grid">
+        <div class="stat-card stat-cyan" onclick="filterByStat('all')">
+          <div class="stat-info">
+            <div class="stat-label">🏠 海外仓费用总额</div>
+            <div class="stat-value">¥18,600</div>
+            <div class="stat-trend up">↑ ¥2.1K 较上月</div>
+          </div>
+          <div class="stat-icon-wrap">🏠</div>
+        </div>
+        <div class="stat-card stat-success" onclick="filterByStat('storage')">
+          <div class="stat-info">
+            <div class="stat-label">📦 仓储费</div>
+            <div class="stat-value">¥10,200</div>
+            <div class="stat-trend up">占比 54.8%</div>
+          </div>
+          <div class="stat-icon-wrap">📦</div>
+        </div>
+        <div class="stat-card" onclick="filterByStat('operation')">
+          <div class="stat-info">
+            <div class="stat-label">🚜 操作费</div>
+            <div class="stat-value">¥5,400</div>
+            <div class="stat-trend" style="color:var(--tms-primary);">占比 29.0%</div>
+          </div>
+          <div class="stat-icon-wrap">🚜</div>
+        </div>
+        <div class="stat-card stat-warning" onclick="filterByStat('other')">
+          <div class="stat-info">
+            <div class="stat-label">📋 其他费用</div>
+            <div class="stat-value">¥3,000</div>
+            <div class="stat-trend" style="color:var(--tms-text-3);">含托盘/装卸</div>
+          </div>
+          <div class="stat-icon-wrap">📋</div>
+        </div>
+      </div>
+
+      <!-- 状态筛选 Tabs -->
+      <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md) var(--tms-radius-md) 0 0;">
+        <div class="tabs" id="statusTabs" style="margin-bottom:0;">
+          <div class="tab-item active" data-status="all" onclick="switchTab(this)">全部<span class="tab-count">12</span></div>
+          <div class="tab-item" data-status="pending" onclick="switchTab(this)">待确认<span class="tab-count" style="background:var(--tms-border-2);color:var(--tms-text-2);">3</span></div>
+          <div class="tab-item" data-status="confirmed" onclick="switchTab(this)">已确认<span class="tab-count" style="background:var(--tms-success-light);color:#389e0d;">7</span></div>
+          <div class="tab-item" data-status="reported" onclick="switchTab(this)">已上报<span class="tab-count" style="background:var(--tms-warning-light);color:#d48806;">2</span></div>
+        </div>
+      </div>
+
+      <!-- 筛选卡片 -->
+      <div class="filter-bar">
+        <div class="filter-grid">
+          <div class="filter-item">
+            <label class="filter-label">入库单号/运单号</label>
+            <input type="text" class="form-control" id="fWaybill" placeholder="请输入入库单号或运单号">
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">仓库名称</label>
+            <input type="text" class="form-control" id="fCustomer" placeholder="请输入仓库名称">
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">费用类型</label>
+            <select class="form-control" id="fFeeType">
+              <option value="">全部</option>
+              <option value="storage">仓储费</option>
+              <option value="operation">操作费</option>
+              <option value="pallet">托盘费</option>
+              <option value="loading">装卸费</option>
+              <option value="other">其他</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">日期范围</label>
+            <div class="date-range">
+              <input type="date" class="form-control" id="fDateStart">
+              <span class="date-range-sep">~</span>
+              <input type="date" class="form-control" id="fDateEnd">
+            </div>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="btn" onclick="resetFilter()">重置</button>
+          <button class="btn btn-primary" id="btnQuery" onclick="doQuery()">
+            <span>🔍</span>查询
+          </button>
+        </div>
+      </div>
+
+      <!-- 表格卡片 -->
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="toolbar-left">
+            <button class="btn btn-sm" id="btnBatchExport" disabled onclick="batchAction('export')">批量导出</button>
+            <button class="btn btn-sm" id="btnBatchReport" disabled onclick="batchAction('report')">批量上报</button>
+            <button class="btn btn-sm btn-danger" id="btnBatchDelete" disabled onclick="batchAction('delete')">批量删除</button>
+          </div>
+          <div class="toolbar-right">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="form-control" data-search="#warehouseTable" placeholder="搜索入库单号/仓库名称">
+            </div>
+            <button class="btn btn-icon btn-sm" title="刷新" onclick="refreshTable()">
+              <span>🔄</span>
+            </button>
+            <button class="btn btn-icon btn-sm" title="列设置" onclick="toast('列设置开发中','info')">
+              <span>⚙️</span>
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="exportData()">
+              <span>⬇</span>导出
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table" id="warehouseTable">
+            <thead>
+              <tr>
+                <th class="col-check"><input type="checkbox" class="check-all"></th>
+                <th class="sortable" data-sort="waybill">入库单号/运单号</th>
+                <th class="sortable" data-sort="warehouse">仓库名称</th>
+                <th class="sortable" data-sort="arApType">应收/应付</th>
+                <th class="sortable" data-sort="feeSubject">费用科目</th>
+                <th class="sortable" data-sort="amount">金额</th>
+                <th class="sortable" data-sort="currency">币种</th>
+                <th class="sortable" data-sort="operator">仓库操作员</th>
+                <th class="sortable" data-sort="status">状态</th>
+                <th class="sortable" data-sort="createTime">创建时间</th>
+                <th class="col-action">操作</th>
+              </tr>
+            </thead>
+            <tbody id="warehouseTbody">
+              <tr data-status="confirmed" data-waybill="WY202607A001" data-warehouse="LAX9仓" data-amount="1800" data-create-time="2026-07-28 10:30">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607A001','info')">WY202607A001</span></td>
+                <td>LAX9仓</td>
+                <td><span class="tag tag-cyan">仓储费</span></td>
+                <td><span class="money-cell">¥1,800.000</span></td>
+                <td>USD</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-green tag-dot">已确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-28 10:30</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="pending" data-waybill="WY202607B021" data-warehouse="KUL9仓" data-amount="800" data-create-time="2026-07-27 14:20">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607B021','info')">WY202607B021</span></td>
+                <td>KUL9仓</td>
+                <td><span class="tag tag-blue">操作费</span></td>
+                <td><span class="money-cell">¥800.000</span></td>
+                <td>CNY</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-gray tag-dot">待确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-27 14:20</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="confirmed" data-waybill="WY202607C045" data-warehouse="LAX9仓" data-amount="450" data-create-time="2026-07-26 09:15">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607C045','info')">WY202607C045</span></td>
+                <td>LAX9仓</td>
+                <td><span class="tag tag-orange">托盘费</span></td>
+                <td><span class="money-cell">¥450.000</span></td>
+                <td>USD</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-green tag-dot">已确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-26 09:15</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="reported" data-waybill="WY202607D068" data-warehouse="HKG8仓" data-amount="1200" data-create-time="2026-07-25 16:40">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607D068','info')">WY202607D068</span></td>
+                <td>HKG8仓</td>
+                <td><span class="tag tag-purple">装卸费</span></td>
+                <td><span class="money-cell">¥1,200.000</span></td>
+                <td>CNY</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-orange tag-dot">已上报</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-25 16:40</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="confirmed" data-waybill="WY202607E092" data-warehouse="LAX9仓" data-amount="2200" data-create-time="2026-07-24 11:05">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607E092','info')">WY202607E092</span></td>
+                <td>LAX9仓</td>
+                <td><span class="tag tag-cyan">仓储费</span></td>
+                <td><span class="money-cell">¥2,200.000</span></td>
+                <td>USD</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-green tag-dot">已确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-24 11:05</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="pending" data-waybill="WY202607F103" data-warehouse="KUL9仓" data-amount="600" data-create-time="2026-07-23 13:50">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607F103','info')">WY202607F103</span></td>
+                <td>KUL9仓</td>
+                <td><span class="tag tag-orange">托盘费</span></td>
+                <td><span class="money-cell">¥600.000</span></td>
+                <td>CNY</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-gray tag-dot">待确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-23 13:50</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="confirmed" data-waybill="WY202607G118" data-warehouse="HKG8仓" data-amount="950" data-create-time="2026-07-22 08:30">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607G118','info')">WY202607G118</span></td>
+                <td>HKG8仓</td>
+                <td><span class="tag tag-blue">操作费</span></td>
+                <td><span class="money-cell">¥950.000</span></td>
+                <td>CNY</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-green tag-dot">已确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-22 08:30</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="reported" data-waybill="WY202607H134" data-warehouse="LAX9仓" data-amount="1500" data-create-time="2026-07-21 15:25">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607H134','info')">WY202607H134</span></td>
+                <td>LAX9仓</td>
+                <td><span class="tag tag-cyan">仓储费</span></td>
+                <td><span class="money-cell">¥1,500.000</span></td>
+                <td>USD</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-orange tag-dot">已上报</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-21 15:25</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="pending" data-waybill="WY202607I156" data-warehouse="KUL9仓" data-amount="700" data-create-time="2026-07-20 10:10">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607I156','info')">WY202607I156</span></td>
+                <td>KUL9仓</td>
+                <td><span class="tag tag-purple">装卸费</span></td>
+                <td><span class="money-cell">¥700.000</span></td>
+                <td>CNY</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-gray tag-dot">待确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-20 10:10</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="confirmed" data-waybill="WY202607J178" data-warehouse="HKG8仓" data-amount="400" data-create-time="2026-07-19 14:45">
+                <td><input type="checkbox" class="row-check"></td>
+                <td><span class="mono link" onclick="toast('查看运单 WY202607J178','info')">WY202607J178</span></td>
+                <td>HKG8仓</td>
+                <td><span class="tag tag-orange">托盘费</span></td>
+                <td><span class="money-cell">¥400.000</span></td>
+                <td>CNY</td>
+                <td>Warehouse</td>
+                <td><span class="tag tag-green tag-dot">已确认</span></td>
+                <td><span class="text-muted font-mono text-sm">2026-07-19 14:45</span></td>
+                <td class="col-action">
+                  <div class="action-links">
+                    <button class="btn-link" onclick="viewDetail(this)">查看</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="editDetail(this)">编辑</button>
+                    <span class="divider-v"></span>
+                    <button class="btn-link" onclick="reportItem(this)">上报</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination">
+          <div class="pagination-info">共 <b>12</b> 条记录，每页 <b>10</b> 条</div>
+          <div class="pagination-pages">
+            <button class="page-btn" disabled onclick="changePage(this)">‹</button>
+            <button class="page-btn active" onclick="changePage(this)">1</button>
+            <button class="page-btn" onclick="changePage(this)">2</button>
+            <button class="page-btn" onclick="changePage(this)">3</button>
+            <button class="page-btn" onclick="changePage(this)">4</button>
+            <button class="page-btn" onclick="changePage(this)">5</button>
+            <span class="text-sm text-muted">...</span>
+            <button class="page-btn" onclick="changePage(this)">9</button>
+            <button class="page-btn" onclick="changePage(this)">›</button>
+            <div class="page-jumper">跳至 <input type="number" min="1" max="9" value="1" onkeydown="if(event.key==='Enter'){goToPage(this.value);}"> 页</div>
+          </div>
+        </div>
+      </div>
+</main>
+
+<!-- 海外仓费用 新增/编辑 模态框 -->
+<div class="modal-mask" id="warehouseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="warehouseModalTitle">新增海外仓费用</span>
+      <button class="modal-close" data-close="warehouseModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="wId">
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>运单号</label>
+          <input type="text" class="form-control" id="wWaybill" placeholder="请输入入库单号/运单号">
+        </div>
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>客户名称</label>
+          <input type="text" class="form-control" id="wCustomer" placeholder="请输入客户名称/仓库名称">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>应收/应付</label>
+          <select class="form-control" id="wArApType">
+            <option value="receivable">应收</option>
+            <option value="payable">应付</option>
+          </select>
+        </div>
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>币种</label>
+          <input type="text" class="form-control" id="wCurrency" value="CNY" placeholder="CNY / USD">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>操作人</label>
+          <input type="text" class="form-control" id="wOperator" placeholder="请输入操作人">
+        </div>
+        <div class="form-col"></div>
+      </div>
+      <div class="price-items-section">
+        <div class="price-items-header">
+          <span class="price-items-title">价格明细</span>
+          <span class="price-items-total">合计：<strong id="wPriceTotal">0.00</strong></span>
+        </div>
+        <div id="wPriceItemsList"></div>
+        <button type="button" class="btn btn-sm" onclick="addWarehousePriceItem()" style="margin-top:6px;">＋ 添加价格</button>
+      </div>
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="form-col">
+          <label class="form-label">备注</label>
+          <textarea class="form-control" id="wRemark" rows="3" placeholder="请输入备注"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="warehouseModal">取消</button>
+      <button class="btn btn-primary" id="warehouseSaveBtn" onclick="saveWarehouseRecord()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== Toast ==========
+function toast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
+  var iconMap = { info:'i', success:'✓', error:'✕', warning:'!' };
+  t.innerHTML = '<span class="toast-icon ' + type + '">' + (iconMap[type]||'i') + '</span><span>' + msg + '</span>';
+  container.appendChild(t);
+  setTimeout(function(){ t.style.opacity = '0'; t.style.transform = 'translateY(-12px)'; t.style.transition = 'all .3s'; }, 2500);
+  setTimeout(function(){ t.remove(); }, 2800);
+}
+
+// ========== Confirm Dialog ==========
+var _confirmCb = null;
+function confirmDialog(title, msg, cb, okText, okType) {
+  document.getElementById('confirmTitle').textContent = title || '确认操作';
+  document.getElementById('confirmMsg').innerHTML = msg || '确定执行此操作吗？';
+  var okBtn = document.getElementById('confirmOk');
+  okBtn.textContent = okText || '确定';
+  okBtn.className = 'btn ' + (okType === 'danger' ? 'btn-danger' : okType === 'primary' ? 'btn-primary' : 'btn-primary');
+  _confirmCb = cb;
+  document.getElementById('confirmMask').classList.add('show');
+}
+document.getElementById('confirmCancel').onclick = function() {
+  document.getElementById('confirmMask').classList.remove('show');
+  _confirmCb = null;
+};
+document.getElementById('confirmOk').onclick = function() {
+  document.getElementById('confirmMask').classList.remove('show');
+  if (_confirmCb) { var cb = _confirmCb; _confirmCb = null; cb(); }
+};
+document.getElementById('confirmMask').addEventListener('click', function(e) {
+  if (e.target === this) { this.classList.remove('show'); _confirmCb = null; }
+});
+
+// ========== Modal close ==========
+document.addEventListener('click', function(e) {
+  var closeId = e.target.getAttribute('data-close');
+  if (closeId) {
+    document.getElementById(closeId).classList.remove('show');
+  }
+});
+
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ========== Init ==========
+document.addEventListener('DOMContentLoaded', function() {
+  updateBatchBtns();
+});
+
+// ========== Checkbox / batch ==========
+document.addEventListener('change', function(e) {
+  if (e.target.matches('.row-check') || e.target.matches('.check-all')) {
+    if (e.target.matches('.check-all')) {
+      var card = e.target.closest('.card');
+      var isChecked = e.target.checked;
+      card.querySelectorAll('tbody .row-check').forEach(function(c){
+        if (c.closest('tr').style.display !== 'none') c.checked = isChecked;
+      });
+    }
+    setTimeout(updateBatchBtns, 10);
+  }
+});
+
+function updateBatchBtns() {
+  var card = document.querySelector('#warehouseTable').closest('.card');
+  var checked = card.querySelectorAll('tbody .row-check:checked').length;
+  var btns = ['btnBatchExport','btnBatchReport','btnBatchDelete'];
+  btns.forEach(function(id){
+    var b = document.getElementById(id);
+    if (b) b.disabled = checked === 0;
+  });
+}
+
+// ========== 数据视角 Tab（页面跳转） ==========
+function switchViewTab(view) {
+  var urlMap = {
+    receivable: 'receivable.html',
+    payable: 'payable.html',
+    document: 'document-data.html',
+    service: 'cs-data.html',
+    warehouse: 'warehouse-data.html'
+  };
+  var labels = {receivable:'应收数据',payable:'应付数据',document:'单证数据',service:'客服数据',warehouse:'海外仓数据'};
+  if (urlMap[view]) {
+    toast('正在跳转至：' + labels[view], 'info');
+    setTimeout(function(){ window.location.href = urlMap[view]; }, 300);
+  }
+}
+
+// ========== 状态筛选 Tabs ==========
+function switchTab(el) {
+  var tabs = document.querySelectorAll('#statusTabs .tab-item');
+  tabs.forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  var status = el.getAttribute('data-status');
+  var rows = document.querySelectorAll('#warehouseTbody tr');
+  var count = 0;
+  rows.forEach(function(tr){
+    if (status === 'all' || tr.getAttribute('data-status') === status) {
+      tr.style.display = '';
+      count++;
+    } else {
+      tr.style.display = 'none';
+    }
+  });
+  var labels = {all:'全部',pending:'待确认',confirmed:'已确认',reported:'已上报',uploaded:'已上传'};
+  toast('已筛选：' + labels[status] + '（当前显示' + count + '条）', 'info');
+}
+
+function filterByStat(feeType) {
+  if (feeType === 'all') {
+    var tabs = document.querySelectorAll('#statusTabs .tab-item');
+    tabs.forEach(function(t){ t.classList.remove('active'); });
+    document.querySelector('#statusTabs .tab-item[data-status="all"]').classList.add('active');
+    document.querySelectorAll('#warehouseTbody tr').forEach(function(tr){ tr.style.display = ''; });
+    toast('已显示全部海外仓费用', 'info');
+    return;
+  }
+  var feeTypeSelect = document.getElementById('fFeeType');
+  if (feeTypeSelect) feeTypeSelect.value = feeType;
+  doQuery();
+}
+
+// ========== 表格排序 ==========
+var sortState = { column: null, direction: 'asc' };
+document.addEventListener('click', function(e){
+  var th = e.target.closest('th.sortable');
+  if (!th) return;
+  var table = th.closest('table');
+  var col = th.getAttribute('data-sort');
+  if (!col) return;
+  var newDir = (sortState.column === col && sortState.direction === 'asc') ? 'desc' : 'asc';
+  sortState = { column: col, direction: newDir };
+  table.querySelectorAll('th.sortable').forEach(function(h){ h.classList.remove('sort-asc','sort-desc'); });
+  th.classList.add(newDir === 'asc' ? 'sort-asc' : 'sort-desc');
+  sortTable(table, col, newDir);
+});
+
+function sortTable(table, col, dir) {
+  var tbody = table.querySelector('tbody');
+  var rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort(function(a, b){
+    var va = getSortValue(a, col);
+    var vb = getSortValue(b, col);
+    if (typeof va === 'number' && typeof vb === 'number') {
+      return dir === 'asc' ? va - vb : vb - va;
+    }
+    va = String(va).toLowerCase();
+    vb = String(vb).toLowerCase();
+    if (va < vb) return dir === 'asc' ? -1 : 1;
+    if (va > vb) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  rows.forEach(function(r){ tbody.appendChild(r); });
+}
+
+function getSortValue(row, col) {
+  var map = {
+    waybill: 'data-waybill', warehouse: 'data-warehouse',
+    amount: 'data-amount', createTime: 'data-create-time',
+    feeSubject: 3, currency: 5, operator: 6, status: 7
+  };
+  var idx = map[col];
+  if (typeof idx === 'string' && idx.indexOf('data-') === 0) {
+    var val = row.getAttribute(idx);
+    var num = parseFloat(val);
+    return isNaN(num) ? (val || '') : num;
+  }
+  var cell = row.children[idx];
+  if (!cell) return '';
+  var num = parseFloat(cell.textContent.replace(/[¥,]/g, ''));
+  if (!isNaN(num) && col === 'amount') return num;
+  return cell.textContent.trim();
+}
+
+// ========== Query / Reset ==========
+function doQuery() {
+  var btn = document.getElementById('btnQuery');
+  btn.disabled = true;
+  var originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span class="loading-spin"></span>查询中...';
+  setTimeout(function(){
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+    var waybill = document.getElementById('fWaybill').value.trim();
+    var warehouse = document.getElementById('fCustomer').value.trim();
+    var feeType = document.getElementById('fFeeType').value;
+    var rows = document.querySelectorAll('#warehouseTbody tr');
+    var count = 0;
+    rows.forEach(function(tr){
+      var match = true;
+      if (waybill) {
+        var wb = tr.getAttribute('data-waybill') || '';
+        if (wb.toLowerCase().indexOf(waybill.toLowerCase()) === -1) match = false;
+      }
+      if (warehouse && match) {
+        var wh = tr.getAttribute('data-warehouse') || '';
+        if (wh.toLowerCase().indexOf(warehouse.toLowerCase()) === -1) match = false;
+      }
+      if (feeType && match) {
+        var feeCell = tr.querySelector('td:nth-child(4) .tag');
+        var feeText = feeCell ? feeCell.textContent : '';
+        var feeTypeMap = {storage:'仓储费',operation:'操作费',pallet:'托盘费',loading:'装卸费',other:'其他'};
+        if (feeText !== feeTypeMap[feeType]) match = false;
+      }
+      tr.style.display = match ? '' : 'none';
+      if (match) count++;
+    });
+    toast('查询完成，共找到 ' + count + ' 条海外仓费用记录', 'success');
+  }, 800);
+}
+
+function resetFilter() {
+  document.getElementById('fWaybill').value = '';
+  document.getElementById('fCustomer').value = '';
+  document.getElementById('fFeeType').value = '';
+  document.getElementById('fDateStart').value = '';
+  document.getElementById('fDateEnd').value = '';
+  var tabs = document.querySelectorAll('#statusTabs .tab-item');
+  tabs.forEach(function(t){ t.classList.remove('active'); });
+  document.querySelector('#statusTabs .tab-item[data-status="all"]').classList.add('active');
+  document.querySelectorAll('#warehouseTbody tr').forEach(function(tr){ tr.style.display = ''; });
+  toast('筛选条件已重置', 'info');
+}
+
+function refreshTable() {
+  var rows = document.querySelectorAll('#warehouseTbody tr');
+  rows.forEach(function(tr){ tr.classList.add('row-fade-in'); });
+  toast('数据已刷新', 'success');
+  setTimeout(function(){ rows.forEach(function(tr){ tr.classList.remove('row-fade-in'); }); }, 400);
+}
+
+// ========== 导出 ==========
+function exportData() {
+  toast('正在导出海外仓费用数据...', 'info');
+  setTimeout(function(){ toast('导出成功，文件已生成', 'success'); }, 800);
+}
+
+// ========== 查看/编辑/上报 ==========
+function viewDetail(btn) {
+  var tr = btn.closest('tr');
+  var no = tr.querySelector('.mono').textContent;
+  toast('查看海外仓费用记录：' + no, 'info');
+}
+
+function editDetail(btn) {
+  var tr = btn.closest('tr');
+  var no = tr.querySelector('.mono').textContent;
+  toast('编辑海外仓费用记录：' + no, 'info');
+}
+
+function reportItem(btn) {
+  var tr = btn.closest('tr');
+  var no = tr.querySelector('.mono').textContent;
+  confirmDialog('上报确认', '确定要上报海外仓费用记录 <b>' + no + '</b> 吗？上报后将进入审批流程。', function(){
+    var statusCell = tr.querySelector('td:nth-child(8)');
+    if (statusCell) {
+      statusCell.innerHTML = '<span class="tag tag-orange tag-dot">已上报</span>';
+    }
+    tr.setAttribute('data-status', 'reported');
+    toast('海外仓费用记录 ' + no + ' 已上报', 'success');
+  }, '上报', 'primary');
+}
+
+// ========== 批量操作 ==========
+function batchAction(type) {
+  var card = document.querySelector('#warehouseTable').closest('.card');
+  var checked = card.querySelectorAll('tbody .row-check:checked');
+  var nos = [];
+  checked.forEach(function(c){ nos.push(c.closest('tr').querySelector('.mono').textContent); });
+  if (nos.length === 0) { toast('请先选择记录', 'warning'); return; }
+
+  if (type === 'export') {
+    toast('正在导出 ' + nos.length + ' 条海外仓费用记录...', 'info');
+    setTimeout(function(){ toast('导出成功', 'success'); }, 800);
+  } else if (type === 'report') {
+    confirmDialog('批量上报', '确定要批量上报选中的 <b>' + nos.length + '</b> 条海外仓费用记录吗？', function(){
+      checked.forEach(function(c){
+        var tr = c.closest('tr');
+        var statusCell = tr.querySelector('td:nth-child(8)');
+        if (statusCell) {
+          statusCell.innerHTML = '<span class="tag tag-orange tag-dot">已上报</span>';
+        }
+        tr.setAttribute('data-status', 'reported');
+      });
+      toast('已批量上报 ' + nos.length + ' 条海外仓费用记录', 'success');
+      updateBatchBtns();
+    }, '上报', 'primary');
+  } else if (type === 'delete') {
+    confirmDialog('批量删除', '确定要删除选中的 <b>' + nos.length + '</b> 条海外仓费用记录吗？此操作不可恢复。', function(){
+      checked.forEach(function(c){
+        var tr = c.closest('tr');
+        tr.classList.add('row-removing');
+        setTimeout(function(){ tr.remove(); }, 400);
+      });
+      setTimeout(function(){ updateBatchBtns(); }, 450);
+      toast('已删除 ' + nos.length + ' 条海外仓费用记录', 'success');
+    }, '删除', 'danger');
+  }
+}
+
+// ========== 分页 ==========
+function changePage(btn) {
+  if (btn.disabled) return;
+  var pages = document.querySelectorAll('.pagination .page-btn');
+  pages.forEach(function(p){ p.classList.remove('active'); });
+  if (!isNaN(parseInt(btn.textContent))) {
+    btn.classList.add('active');
+    toast('已切换到第 ' + btn.textContent + ' 页', 'info');
+  } else if (btn.textContent === '›') {
+    var active = document.querySelector('.pagination .page-btn.active');
+    var next = active.nextElementSibling;
+    while (next && (isNaN(parseInt(next.textContent)) || next.disabled)) next = next.nextElementSibling;
+    if (next) { next.classList.add('active'); toast('已切换到第 ' + next.textContent + ' 页', 'info'); }
+  } else if (btn.textContent === '‹') {
+    var active = document.querySelector('.pagination .page-btn.active');
+    var prev = active.previousElementSibling;
+    while (prev && (isNaN(parseInt(prev.textContent)) || prev.disabled)) prev = prev.previousElementSibling;
+    if (prev) { prev.classList.add('active'); toast('已切换到第 ' + prev.textContent + ' 页', 'info'); }
+  }
+}
+
+function goToPage(pageNum) {
+  var num = parseInt(pageNum);
+  if (isNaN(num) || num < 1) { toast('请输入有效页码', 'warning'); return; }
+  var pages = document.querySelectorAll('.pagination .page-btn');
+  var maxPage = 1;
+  pages.forEach(function(p){
+    var n = parseInt(p.textContent);
+    if (!isNaN(n) && n > maxPage) maxPage = n;
+  });
+  if (num > maxPage) { toast('页码超出范围，最大为 ' + maxPage + ' 页', 'warning'); return; }
+  pages.forEach(function(p){ p.classList.remove('active'); });
+  var target = document.querySelector('.pagination .page-btn');
+  pages.forEach(function(p){
+    if (parseInt(p.textContent) === num) target = p;
+  });
+  if (target) target.classList.add('active');
+  toast('已跳转到第 ' + num + ' 页', 'info');
+}
+</script>
+
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+      .row-removing { animation: rowRemove .4s forwards; }
+      @keyframes rowRemove { to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; } }
+      .row-fade-in { animation: rowFadeIn .3s ease; }
+      @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .date-range { display: flex; align-items: center; gap: 6px; }
+      .date-range .form-control { flex: 1; min-width: 0; }
+      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
+      .text-right { text-align:right; }
+
+      /* 金额单元格 */
+      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
+
+      /* 表头 sticky 层级增强 */
+      .data-table thead th { position: sticky; top: 0; z-index: 2; }
+      .data-table thead th.col-check { z-index: 3; }
+
+      /* 模板选择下拉在 footer 中样式 */
+      .modal-footer .form-control { height: 34px; min-width: 120px; }
+    </style>
+<script>
+// Fallback: if lucide doesn't load, show emoji/text placeholders
+window.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){
+    document.querySelectorAll('[data-lucide]').forEach(function(el){
+      if(el.tagName==='I' || el.children.length===0){
+        var icon = el.getAttribute('data-lucide');
+        var map = {home:'🏠',layout:'📊',users:'👥',settings:'⚙️',search:'🔍',plus:'＋',
+          bell:'🔔',user:'👤',logOut:'🚪',chevronDown:'▾',chevronRight:'▸',x:'×',
+          filter:'🔽',download:'⬇',upload:'⬆',edit:'✏️',trash:'🗑',eye:'👁',
+          package:'📦',truck:'🚛',ship:'🚢',plane:'✈️',fileText:'📄',check:'✓',
+          alert:'⚠',clock:'🕐',mapPin:'📍',dollar:'💰',trendingUp:'📈',barChart2:'📊',
+          arrowRight:'→',menu:'☰',refresh:'🔄'};
+        if(!el.innerHTML.trim()) el.textContent = map[icon] || '•';
+      }
+    });
+    if(window.lucide && lucide.createIcons) { try{ lucide.createIcons(); }catch(e){} }
+  },100);
+});
+</script>
+
+    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+<script src="../assets/js/dept-sync.js"></script>
+<script>
+// ========== 海外仓数据与 DeptSync 集成 ==========
+(function(){
+  function escapeHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function getRecordId(arg) {
+    if (typeof arg === 'string') return arg;
+    var tr = arg && arg.closest ? arg.closest('tr') : null;
+    if (!tr) return null;
+    var id = tr.getAttribute('data-id');
+    if (id) return id;
+    var waybill = (tr.getAttribute('data-waybill') || '').trim();
+    var records = DeptSync.getRecords('warehouse');
+    for (var i = 0; i < records.length; i++) {
+      if (records[i].waybill === waybill) return records[i].id;
+    }
+    return null;
+  }
+
+  function seedWarehouseData() {
+    var feeTypeMap = {};
+    DeptSync.FEE_TYPES.warehouse.forEach(function(ft){ feeTypeMap[ft.label] = ft.value; });
+    var statusMap = { '待确认': 'pending', '已确认': 'confirmed', '已上报': 'reported' };
+    var rows = Array.from(document.querySelectorAll('#warehouseTbody tr'));
+    rows.reverse().forEach(function(tr){
+      var cells = tr.querySelectorAll('td');
+      if (cells.length < 10) return;
+      var feeText = cells[4].textContent.trim();
+      var statusText = cells[8].textContent.trim();
+      var amountText = cells[5].textContent.trim().replace(/[¥,\s]/g, '');
+      var arApType = tr.getAttribute('data-ar-ap') || 'receivable';
+      var amount = parseFloat(amountText) || 0;
+      var feeType = feeTypeMap[feeText] || 'other';
+      DeptSync.addRecord('warehouse', {
+        waybill: cells[1].textContent.trim(),
+        customer: cells[2].textContent.trim(),
+        arApType: arApType,
+        feeType: feeType,
+        feeTypeName: feeText,
+        amount: amount,
+        currency: cells[6].textContent.trim(),
+        operator: cells[7].textContent.trim(),
+        status: statusMap[statusText] || 'pending',
+        priceItems: [{ type: feeType, typeName: feeText, amount: amount }],
+        remark: '',
+        createTime: cells[9].textContent.trim()
+      });
+    });
+  }
+
+  function renderWarehouseTable() {
+    var records = DeptSync.getRecords('warehouse');
+    var tbody = document.getElementById('warehouseTbody');
+    var feeTypeClassMap = { storage: 'tag-cyan', operation: 'tag-blue', pallet: 'tag-orange', loading: 'tag-purple', other: 'tag-gray' };
+    if (records.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10"><div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">暂无海外仓费用记录</div></div></td></tr>';
+    } else {
+      tbody.innerHTML = records.map(function(r){
+        var statusClass = DeptSync.STATUS_CLASSES[r.status] || 'tag-gray tag-dot';
+        var statusLabel = DeptSync.STATUS_LABELS[r.status] || r.status;
+        var feeClass = feeTypeClassMap[r.feeType] || 'tag-gray';
+        var feeName = r.feeTypeName || DeptSync.getFeeTypeName('warehouse', r.feeType);
+        var arApType = r.arApType || 'receivable';
+        var arApLabel = arApType === 'payable' ? '应付' : '应收';
+        var arApClass = arApType === 'payable' ? 'payable' : 'receivable';
+        return '<tr data-status="' + r.status + '" data-waybill="' + escapeHtml(r.waybill) + '" data-warehouse="' + escapeHtml(r.customer) + '" data-amount="' + r.amount + '" data-create-time="' + escapeHtml(r.createTime) + '" data-id="' + r.id + '" data-ar-ap="' + arApType + '">' +
+          '<td><input type="checkbox" class="row-check"></td>' +
+          '<td><span class="mono link" onclick="toast(\'查看运单 ' + escapeHtml(r.waybill) + '\',\'info\')">' + escapeHtml(r.waybill) + '</span></td>' +
+          '<td>' + escapeHtml(r.customer) + '</td>' +
+          '<td><span class="ar-ap-tag ' + arApClass + '">' + arApLabel + '</span></td>' +
+          '<td><span class="tag ' + feeClass + '">' + escapeHtml(feeName) + '</span></td>' +
+          '<td><span class="money-cell">' + DeptSync.fmtMoney(r.amount) + '</span></td>' +
+          '<td>' + escapeHtml(r.currency) + '</td>' +
+          '<td>' + escapeHtml(r.operator) + '</td>' +
+          '<td><span class="tag ' + statusClass + '">' + escapeHtml(statusLabel) + '</span></td>' +
+          '<td><span class="text-muted font-mono text-sm">' + escapeHtml(r.createTime) + '</span></td>' +
+          '<td class="col-action">' +
+            '<div class="action-links">' +
+              '<button class="btn-link" onclick="viewDetail(\'' + r.id + '\')">查看</button>' +
+              '<span class="divider-v"></span>' +
+              '<button class="btn-link" onclick="editDetail(\'' + r.id + '\')">编辑</button>' +
+              '<span class="divider-v"></span>' +
+              '<button class="btn-link" onclick="reportItem(\'' + r.id + '\')">上报</button>' +
+              '<span class="divider-v"></span>' +
+              '<button class="btn-link danger" onclick="deleteItem(\'' + r.id + '\')">删除</button>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+    applyActiveStatusFilter();
+    updateBatchBtns();
+    updateStatusCounts();
+  }
+
+  function applyActiveStatusFilter() {
+    var activeTab = document.querySelector('#statusTabs .tab-item.active');
+    if (!activeTab) return;
+    var status = activeTab.getAttribute('data-status');
+    var rows = document.querySelectorAll('#warehouseTbody tr');
+    rows.forEach(function(tr){
+      if (status === 'all' || tr.getAttribute('data-status') === status) {
+        tr.style.display = '';
+      } else {
+        tr.style.display = 'none';
+      }
+    });
+  }
+
+  function updateStatusCounts() {
+    var records = DeptSync.getRecords('warehouse');
+    var counts = { all: records.length, pending: 0, confirmed: 0, reported: 0 };
+    records.forEach(function(r){ if (counts[r.status] !== undefined) counts[r.status]++; });
+    document.querySelectorAll('#statusTabs .tab-item').forEach(function(tab){
+      var st = tab.getAttribute('data-status');
+      var badge = tab.querySelector('.tab-count');
+      if (badge && counts[st] !== undefined) badge.textContent = counts[st];
+    });
+  }
+
+  function initSearch() {
+    var input = document.querySelector('[data-search="#warehouseTable"]');
+    if (!input) return;
+    input.addEventListener('input', function(){
+      var val = this.value.trim().toLowerCase();
+      var rows = document.querySelectorAll('#warehouseTbody tr');
+      rows.forEach(function(tr){
+        if (!val) { tr.style.display = ''; return; }
+        var text = tr.textContent.toLowerCase();
+        tr.style.display = text.indexOf(val) === -1 ? 'none' : '';
+      });
+    });
+  }
+
+  function getWarehouseFeeTypeOptions() {
+    if (!window.DeptSync || !DeptSync.FEE_TYPES || !DeptSync.FEE_TYPES.warehouse) return '';
+    return DeptSync.FEE_TYPES.warehouse.map(function(ft){ return '<option value="' + ft.value + '">' + ft.label + '</option>'; }).join('');
+  }
+
+  window.addWarehousePriceItem = function(type, amount) {
+    var list = document.getElementById('wPriceItemsList');
+    var empty = list.querySelector('.price-items-empty');
+    if (empty) empty.remove();
+    var row = document.createElement('div');
+    row.className = 'price-item-row';
+    row.innerHTML = ''
+      + '<select class="form-control price-type-select">' + getWarehouseFeeTypeOptions() + '</select>'
+      + '<input type="number" class="form-control price-amount-input" placeholder="金额" step="0.01">'
+      + '<button type="button" class="btn-remove" onclick="removeWarehousePriceItem(this)" title="删除">×</button>';
+    var select = row.querySelector('.price-type-select');
+    var input = row.querySelector('.price-amount-input');
+    if (type) select.value = type;
+    if (typeof amount === 'number') input.value = amount;
+    input.addEventListener('input', updateWarehousePriceTotal);
+    list.appendChild(row);
+    updateWarehousePriceTotal();
+  };
+
+  window.removeWarehousePriceItem = function(btn) {
+    btn.closest('.price-item-row').remove();
+    var list = document.getElementById('wPriceItemsList');
+    if (list.children.length === 0) {
+      list.innerHTML = '<div class="price-items-empty">暂无价格明细，点击下方按钮添加</div>';
+    }
+    updateWarehousePriceTotal();
+  };
+
+  function updateWarehousePriceTotal() {
+    var total = getWarehousePriceItems().reduce(function(sum, item){ return sum + (Number(item.amount) || 0); }, 0);
+    document.getElementById('wPriceTotal').textContent = total.toFixed(2);
+  }
+
+  function getWarehousePriceItems() {
+    var items = [];
+    var feeTypes = (window.DeptSync && DeptSync.FEE_TYPES && DeptSync.FEE_TYPES.warehouse) ? DeptSync.FEE_TYPES.warehouse : [];
+    document.querySelectorAll('#wPriceItemsList .price-item-row').forEach(function(row){
+      var type = row.querySelector('.price-type-select').value;
+      var amount = parseFloat(row.querySelector('.price-amount-input').value);
+      var typeName = feeTypes.find(function(ft){ return ft.value === type; });
+      items.push({ type: type, typeName: typeName ? typeName.label : type, amount: isNaN(amount) ? 0 : amount });
+    });
+    return items;
+  }
+
+  function setWarehousePriceItems(items) {
+    var list = document.getElementById('wPriceItemsList');
+    list.innerHTML = '';
+    if (!items || items.length === 0) {
+      list.innerHTML = '<div class="price-items-empty">暂无价格明细，点击下方按钮添加</div>';
+    } else {
+      items.forEach(function(item){ addWarehousePriceItem(item.type, item.amount); });
+    }
+    updateWarehousePriceTotal();
+  }
+
+  window.openWarehouseModal = function(id, mode) {
+    mode = mode || (id ? 'edit' : 'add');
+    var title = document.getElementById('warehouseModalTitle');
+    var saveBtn = document.getElementById('warehouseSaveBtn');
+    ['wId', 'wWaybill', 'wCustomer', 'wCurrency', 'wOperator', 'wRemark'].forEach(function(fid){
+      document.getElementById(fid).value = '';
+    });
+    document.getElementById('wArApType').value = 'receivable';
+    setWarehousePriceItems([]);
+    var readonly = mode === 'view';
+    ['wWaybill', 'wCustomer', 'wArApType', 'wCurrency', 'wOperator', 'wRemark'].forEach(function(fid){
+      document.getElementById(fid).disabled = readonly;
+    });
+    saveBtn.style.display = readonly ? 'none' : '';
+    if (id) {
+      var rec = DeptSync.getRecordById('warehouse', id);
+      if (!rec) { toast('记录不存在', 'error'); return; }
+      document.getElementById('wId').value = rec.id;
+      document.getElementById('wWaybill').value = rec.waybill || '';
+      document.getElementById('wCustomer').value = rec.customer || '';
+      document.getElementById('wArApType').value = rec.arApType || 'receivable';
+      document.getElementById('wCurrency').value = rec.currency || 'CNY';
+      document.getElementById('wOperator').value = rec.operator || '';
+      document.getElementById('wRemark').value = rec.remark || '';
+      setWarehousePriceItems(rec.priceItems);
+      title.textContent = mode === 'view' ? '查看海外仓费用' : '编辑海外仓费用';
+      saveBtn.textContent = '保存';
+    } else {
+      title.textContent = '新增海外仓费用';
+      saveBtn.textContent = '保存';
+      document.getElementById('wCurrency').value = 'CNY';
+    }
+    openModal('warehouseModal');
+  };
+
+  window.saveWarehouseRecord = function() {
+    var id = document.getElementById('wId').value;
+    var arApType = document.getElementById('wArApType').value;
+    var waybill = document.getElementById('wWaybill').value.trim();
+    var customer = document.getElementById('wCustomer').value.trim();
+    var currency = document.getElementById('wCurrency').value.trim();
+    var operator = document.getElementById('wOperator').value.trim();
+    var remark = document.getElementById('wRemark').value.trim();
+    var priceItems = getWarehousePriceItems();
+    var amount = priceItems.reduce(function(sum, item){ return sum + (Number(item.amount) || 0); }, 0);
+    if (!waybill || !customer || !currency || !operator) {
+      toast('请填写所有必填项', 'error'); return;
+    }
+    if (priceItems.length === 0) {
+      toast('请至少添加一条价格明细', 'error'); return;
+    }
+    var primaryFee = priceItems[0];
+    var rec = {
+      waybill: waybill,
+      customer: customer,
+      arApType: arApType,
+      feeType: primaryFee.type,
+      feeTypeName: primaryFee.typeName,
+      amount: amount,
+      currency: currency,
+      operator: operator,
+      priceItems: priceItems,
+      remark: remark
+    };
+    if (id) {
+      DeptSync.updateRecord('warehouse', id, rec);
+      toast('海外仓费用记录已更新', 'success');
+    } else {
+      DeptSync.addRecord('warehouse', rec);
+      toast('海外仓费用记录已新增', 'success');
+    }
+    closeModal('warehouseModal');
+    renderWarehouseTable();
+  };
+
+  window.viewDetail = function(arg) {
+    var id = getRecordId(arg);
+    if (!id) { toast('无法定位记录', 'error'); return; }
+    openWarehouseModal(id, 'view');
+  };
+
+  window.editDetail = function(arg) {
+    var id = getRecordId(arg);
+    if (!id) { toast('无法定位记录', 'error'); return; }
+    openWarehouseModal(id, 'edit');
+  };
+
+  window.reportItem = function(arg) {
+    var id = getRecordId(arg);
+    if (!id) { toast('无法定位记录', 'error'); return; }
+    var rec = DeptSync.getRecordById('warehouse', id);
+    confirmDialog('上报确认', '确定要上报记录 <b>' + (rec ? rec.waybill : '') + '</b> 吗？上报后将同步至应收/应付。', function(){
+      DeptSync.setStatus('warehouse', id, 'reported');
+      toast('已同步至应收/应付', 'success');
+      renderWarehouseTable();
+    }, '上报', 'primary');
+  };
+
+  window.deleteItem = function(arg) {
+    var id = getRecordId(arg);
+    if (!id) { toast('无法定位记录', 'error'); return; }
+    var rec = DeptSync.getRecordById('warehouse', id);
+    confirmDialog('删除确认', '确定要删除记录 <b>' + (rec ? rec.waybill : '') + '</b> 吗？此操作不可恢复。', function(){
+      DeptSync.deleteRecord('warehouse', id);
+      toast('删除成功', 'success');
+      renderWarehouseTable();
+    }, '删除', 'danger');
+  };
+
+  window.batchAction = function(type) {
+    var checked = document.querySelectorAll('#warehouseTable tbody .row-check:checked');
+    var ids = [];
+    checked.forEach(function(c){
+      var id = c.closest('tr').getAttribute('data-id');
+      if (id) ids.push(id);
+    });
+    if (ids.length === 0) { toast('请先选择记录', 'warning'); return; }
+    if (type === 'export') {
+      toast('正在导出 ' + ids.length + ' 条海外仓费用记录...', 'info');
+      setTimeout(function(){ toast('导出成功', 'success'); }, 800);
+    } else if (type === 'report') {
+      confirmDialog('批量上报', '确定要批量上报选中的 <b>' + ids.length + '</b> 条记录吗？上报后将同步至应收/应付。', function(){
+        ids.forEach(function(id){ DeptSync.setStatus('warehouse', id, 'reported'); });
+        toast('已批量上报 ' + ids.length + ' 条记录', 'success');
+        renderWarehouseTable();
+      }, '上报', 'primary');
+    } else if (type === 'delete') {
+      confirmDialog('批量删除', '确定要删除选中的 <b>' + ids.length + '</b> 条记录吗？此操作不可恢复。', function(){
+        ids.forEach(function(id){ DeptSync.deleteRecord('warehouse', id); });
+        toast('已删除 ' + ids.length + ' 条记录', 'success');
+        renderWarehouseTable();
+      }, '删除', 'danger');
+    }
+  };
+
+  window.refreshTable = function() {
+    renderWarehouseTable();
+    toast('数据已刷新', 'success');
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    if (typeof DeptSync === 'undefined') {
+      console.error('DeptSync 未加载'); return;
+    }
+    if (DeptSync.getRecords('warehouse').length === 0) {
+      seedWarehouseData();
+    }
+    renderWarehouseTable();
+    updateStatusCounts();
+    initSearch();
+    DeptSync.onSync(function(){ renderWarehouseTable(); updateStatusCounts(); });
+  });
+})();
+</script>
+
+</body>
+</html>
