@@ -1154,6 +1154,7 @@ th.sortable:hover { color: var(--tms-primary); }
                 <th class="sortable" data-sort="financeRep">财务代表</th>
                 <th class="sortable" data-sort="currency">币种</th>
                 <th class="sortable" data-sort="arAmount">应收金额</th>
+                <th style="min-width:110px;">预计应收</th>
                 <th class="sortable" data-sort="paidAmount">已收金额</th>
                 <th class="sortable" data-sort="unpaidAmount">未收金额</th>
                 <th class="sortable" data-sort="invoiceDate">开票日期</th>
@@ -3065,5 +3066,44 @@ window.addEventListener('DOMContentLoaded', function(){
 </script>
 
     <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+
+<script>
+/* ========== 预计应收：海外仓导入供应商账单流水后同步 ========== */
+(function(){
+  'use strict';
+  var EST_KEY = 'tms_est_ar_v1';
+  function fmtM(n){ return '¥' + Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function getEstData(){
+    try { return JSON.parse(localStorage.getItem(EST_KEY)) || []; } catch(e){ return []; }
+  }
+
+  function injectEstArCells(){
+    var list = getEstData();
+    var byCustomer = {};
+    list.forEach(function(x){
+      var c = x.customer || '未知客户';
+      byCustomer[c] = (byCustomer[c] || 0) + (Number(x.amount) || 0);
+    });
+    document.querySelectorAll('#receivableTbody tr').forEach(function(tr){
+      var cell = tr.querySelector('.est-ar-cell');
+      if(!cell){
+        if(tr.cells.length < 13) return;
+        cell = tr.insertCell(12);
+        cell.className = 'est-ar-cell';
+      }
+      var cust = (tr.getAttribute('data-customer') || '').trim();
+      var amt = byCustomer[cust];
+      cell.innerHTML = amt ? '<span class="tag tag-purple" style="font-weight:600;">' + fmtM(amt) + '</span>' : '<span style="color:var(--tms-text-3);">—</span>';
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectEstArCells);
+  else injectEstArCells();
+  var mo = new MutationObserver(function(){ injectEstArCells(); });
+  var tbody = document.getElementById('receivableTbody');
+  if(tbody) mo.observe(tbody, { childList:true });
+  window.addEventListener('storage', function(e){ if(e.key === EST_KEY) injectEstArCells(); });
+})();
+</script>
 </body>
 </html>
