@@ -1007,13 +1007,12 @@ th.sortable:hover { color: var(--tms-primary); }
           <p class="page-subtitle">海外仓费用数据与仓储操作记录管理</p>
         </div>
         <div class="page-actions">
+          <button class="btn" onclick="openImportCostModal()">
+            <span>⬆</span>导入成本文件
+          </button>
           <button class="btn" onclick="exportData()">
             <span>⬇</span>导出数据
           </button>
-          <button class="btn" onclick="clickCostImport()">
-            <span>📥</span>导入成本价格表
-          </button>
-          <input type="file" id="costPriceFileInput" accept=".csv,.xlsx,.xls" style="display:none;" onchange="onCostFileSelected(this)">
           <button class="btn btn-primary" onclick="openWarehouseModal()">
             <span>＋</span>新增海外仓费用
           </button>
@@ -2198,124 +2197,160 @@ window.addEventListener('DOMContentLoaded', function(){
 })();
 </script>
 
-<!-- Modal: 成本价格表（预计应收） -->
-<div class="modal-mask" id="costPriceModal">
+<!-- Modal: 导入成本文件 -->
+<div class="modal-mask" id="importCostModal">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span class="modal-title">💹 成本价格表（预计应收）</span>
-        <span class="tag tag-blue" id="costPriceFileName">—</span>
-      </div>
-      <button class="modal-close" data-close="costPriceModal">×</button>
+      <span class="modal-title">⬆ 导入成本文件</span>
+      <button class="modal-close" data-close="importCostModal">×</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:13px;color:var(--tms-text-2);margin-bottom:12px;">根据导入文件自动生成：成本价格 + 加价率 → 预计应收。确认后可同步为应收预估数据。</p>
-      <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;max-height:380px;overflow-y:auto;">
-        <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>客户</th><th>运单号</th><th>费用项目</th><th class="text-right">成本价格</th><th class="text-right">加价率</th><th class="text-right">预计应收</th></tr></thead>
-          <tbody id="costPriceTbody"></tbody>
-        </table>
+      <div class="form-group">
+        <label class="form-label">选择成本文件（支持 CSV / TXT / XLSX）</label>
+        <input type="file" id="costFileInput" class="form-control" accept=".csv,.txt,.xlsx,.xls" onchange="onCostFileChange(this)">
+        <div class="form-help" style="font-size:12px;color:var(--tms-text-3);margin-top:4px;">CSV 表头建议：运单号, 客户名称, 费用项目, 计费重, 成本金额</div>
       </div>
-      <div class="summary-card" style="margin-top:12px;">
-        <div class="summary-row"><span class="summary-label">成本合计</span><span class="summary-value" id="costSumCost">¥0.00</span></div>
-        <div class="summary-row"><span class="summary-label">预计应收合计</span><span class="summary-value" id="costSumAr" style="color:var(--tms-primary);">¥0.00</span></div>
-        <div class="summary-row total"><span>预计毛利</span><span class="summary-value" id="costSumProfit" style="color:var(--tms-success);">¥0.00</span></div>
+      <div class="form-group">
+        <label class="form-label">预计应收加价率（%）</label>
+        <input type="number" id="costMarkup" class="form-control" value="20" style="width:140px;" oninput="renderCostPreview()">
+      </div>
+      <div id="costPreviewWrap" style="display:none;">
+        <div class="desc-section-title">📄 解析结果（<span id="costRowCount">0</span> 条）</div>
+        <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;max-height:280px;overflow-y:auto;">
+          <table class="data-table" style="font-size:13px;">
+            <thead><tr><th>运单号</th><th>客户名称</th><th>费用项目</th><th class="text-right">计费重</th><th class="text-right">成本金额</th><th class="text-right">预计应收</th></tr></thead>
+            <tbody id="costPreviewTbody"></tbody>
+          </table>
+        </div>
+        <div class="summary-card" style="margin-top:10px;">
+          <div class="summary-row total" style="display:flex;justify-content:space-between;font-weight:700;"><span>成本合计 → 预计应收合计</span><span id="costTotalLine" style="color:var(--tms-primary);">¥0 → ¥0</span></div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-close="costPriceModal">取消</button>
-      <button class="btn btn-primary" onclick="confirmCostPrice()">✓ 确认并同步预计应收</button>
+      <button class="btn" data-close="importCostModal">关闭</button>
+      <button class="btn btn-primary" onclick="exportCostPriceSheet()">⬇ 导出成本价格表（预计应收）</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ========== 导入成本价格表（预计应收） ========== */
+/* ========== 导入成本文件 / 导出成本价格表（预计应收） ========== */
 (function(){
   'use strict';
-  function fmtM(n){ return '¥' + Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  var costRows = [];
+  function fmt2(n){ return (Math.round(n*100)/100).toFixed(2); }
 
-  window.clickCostImport = function(){
-    document.getElementById('costPriceFileInput').click();
+  window.openImportCostModal = function(){
+    costRows = [];
+    var fi = document.getElementById('costFileInput');
+    if(fi) fi.value = '';
+    document.getElementById('costPreviewWrap').style.display = 'none';
+    openModal('importCostModal');
   };
 
-  // 演示用默认成本数据（当导入 xlsx 或无法解析时使用）
-  var DEMO_ROWS = [
-    { customer:'华通机械制造有限公司', waybill:'WY202608A001', item:'入库操作费', cost:1200, markup:15 },
-    { customer:'华通机械制造有限公司', waybill:'WY202608A001', item:'仓储费（30天）', cost:2600, markup:20 },
-    { customer:'华通机械制造有限公司', waybill:'WY202608A001', item:'出库派送费', cost:3800, markup:18 },
-    { customer:'鑫海钢结构工程', waybill:'WY202608A002', item:'入库操作费', cost:900, markup:15 },
-    { customer:'鑫海钢结构工程', waybill:'WY202608A002', item:'仓储费（30天）', cost:1800, markup:20 },
-    { customer:'博瑞风电设备', waybill:'WY202608A003', item:'入库操作费', cost:1500, markup:15 },
-    { customer:'博瑞风电设备', waybill:'WY202608A003', item:'增值服务费（贴标）', cost:650, markup:25 }
-  ];
-
-  function parseCsv(text){
-    var rows = [];
-    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
-    lines.forEach(function(line, li){
-      var cols = line.split(/[,，\t;]/).map(function(c){ return c.trim(); });
-      if(li === 0 && /客户|费用|成本/.test(line)) return; // 表头
-      if(cols.length >= 4){
-        rows.push({
-          customer: cols[0] || '未知客户',
-          waybill: cols[1] || '-',
-          item: cols[2] || '费用',
-          cost: parseFloat(cols[3]) || 0,
-          markup: parseFloat(cols[4]) || 15
-        });
-      }
-    });
-    return rows;
-  }
-
-  window.onCostFileSelected = function(input){
-    var file = input.files && input.files[0];
-    if(!file) return;
-    toast('正在解析文件：' + file.name, 'info');
-    var isCsv = /\.csv$/i.test(file.name);
-    var finish = function(rows){
-      setTimeout(function(){
-        if(!rows || rows.length === 0){ toast('未从文件中解析到有效数据，已使用示例成本数据', 'warning'); rows = DEMO_ROWS; }
-        renderCostPrice(file.name, rows);
-        openModal('costPriceModal');
-        toast('成本价格表生成成功，共 ' + rows.length + ' 条', 'success');
-      }, 700);
-    };
-    if(isCsv){
+  window.onCostFileChange = function(input){
+    var f = input.files && input.files[0];
+    if(!f) return;
+    var ext = (f.name.split('.').pop() || '').toLowerCase();
+    if(ext === 'csv' || ext === 'txt'){
       var reader = new FileReader();
-      reader.onload = function(e){ finish(parseCsv(String(e.target.result))); };
-      reader.onerror = function(){ finish(DEMO_ROWS); };
-      reader.readAsText(file);
+      reader.onload = function(e){ parseCostText(String(e.target.result || '')); };
+      reader.readAsText(f, 'utf-8');
     } else {
-      finish(DEMO_ROWS);
+      toast('已读取 ' + f.name + '（Excel 按演示数据解析）', 'info');
+      loadDemoCostRows();
     }
-    input.value = '';
   };
 
-  function renderCostPrice(fileName, rows){
-    window._costRows = rows;
-    document.getElementById('costPriceFileName').textContent = fileName;
-    var sumCost = 0, sumAr = 0;
-    document.getElementById('costPriceTbody').innerHTML = rows.map(function(r){
-      var ar = Math.round(r.cost * (1 + r.markup / 100) * 100) / 100;
-      sumCost += r.cost; sumAr += ar;
-      return '<tr><td>' + r.customer + '</td><td class="mono">' + r.waybill + '</td><td>' + r.item + '</td>' +
-        '<td class="text-right" style="font-weight:600;">' + fmtM(r.cost) + '</td>' +
-        '<td class="text-right">' + r.markup + '%</td>' +
-        '<td class="text-right" style="font-weight:700;color:var(--tms-primary);">' + fmtM(ar) + '</td></tr>';
-    }).join('');
-    document.getElementById('costSumCost').textContent = fmtM(sumCost);
-    document.getElementById('costSumAr').textContent = fmtM(sumAr);
-    document.getElementById('costSumProfit').textContent = fmtM(sumAr - sumCost);
+  function loadDemoCostRows(){
+    costRows = [
+      { waybill:'WY202608A001', customer:'华通机械制造有限公司', name:'入库操作费', weight:8500, amount:1200 },
+      { waybill:'WY202608A002', customer:'鑫海钢结构工程', name:'仓储费', weight:6200, amount:980 },
+      { waybill:'WY202608A003', customer:'博瑞风电设备', name:'装卸费', weight:12000, amount:1650 },
+      { waybill:'WY202608A004', customer:'鼎盛化工装备', name:'贴标费', weight:4800, amount:420 }
+    ];
+    renderCostPreview();
   }
 
-  window.confirmCostPrice = function(){
-    var rows = window._costRows || [];
-    if(rows.length === 0){ closeModal('costPriceModal'); return; }
-    var sumAr = rows.reduce(function(s,r){ return s + Math.round(r.cost * (1 + r.markup / 100) * 100) / 100; }, 0);
-    closeModal('costPriceModal');
-    toast('已同步预计应收 ' + fmtM(sumAr) + '（' + rows.length + ' 条成本明细）', 'success');
+  function parseCostText(text){
+    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    if(lines.length === 0){ toast('文件为空，已载入演示数据', 'warning'); loadDemoCostRows(); return; }
+    var rows = lines.map(function(l){
+      var d = l.indexOf('\t') > -1 ? '\t' : (l.indexOf(',') > -1 ? ',' : ';');
+      return l.split(d).map(function(c){ return c.trim().replace(/^"|"$/g,''); });
+    });
+    var start = 0;
+    var map = { waybill:0, customer:1, name:2, weight:3, amount:4 };
+    if(/运单|客户|费用|金额|重量/.test(rows[0].join(','))){
+      start = 1;
+      map = { waybill:-1, customer:-1, name:-1, weight:-1, amount:-1 };
+      rows[0].forEach(function(h, i){
+        if(/运单|单号/.test(h)) map.waybill = i;
+        else if(/客户/.test(h)) map.customer = i;
+        else if(/费用|项目|科目/.test(h)) map.name = i;
+        else if(/重量|计费重/.test(h)) map.weight = i;
+        else if(/金额|成本|价格/.test(h)) map.amount = i;
+      });
+    }
+    costRows = [];
+    for(var i = start; i < rows.length; i++){
+      var r = rows[i];
+      var amt = parseFloat(String(r[map.amount] || '').replace(/[¥,，]/g,''));
+      if(isNaN(amt)) continue;
+      costRows.push({
+        waybill: (map.waybill > -1 ? r[map.waybill] : '') || ('ROW' + i),
+        customer: (map.customer > -1 ? r[map.customer] : '') || '-',
+        name: (map.name > -1 ? r[map.name] : '') || '其他',
+        weight: parseFloat(String(map.weight > -1 ? r[map.weight] : '').replace(/[^\d.]/g,'')) || 0,
+        amount: amt
+      });
+    }
+    if(costRows.length === 0){ toast('未解析到有效数据，已载入演示数据', 'warning'); loadDemoCostRows(); return; }
+    toast('成功解析 ' + costRows.length + ' 条成本数据', 'success');
+    renderCostPreview();
+  }
+
+  function markupRate(){
+    var v = parseFloat(document.getElementById('costMarkup').value);
+    return isNaN(v) ? 20 : v;
+  }
+
+  window.renderCostPreview = function(){
+    if(costRows.length === 0) return;
+    var rate = 1 + markupRate() / 100;
+    var tbody = document.getElementById('costPreviewTbody');
+    var costSum = 0, arSum = 0;
+    tbody.innerHTML = costRows.map(function(r){
+      var ar = r.amount * rate;
+      costSum += r.amount; arSum += ar;
+      return '<tr><td class="mono">' + r.waybill + '</td><td>' + r.customer + '</td><td>' + r.name + '</td><td class="text-right">' + r.weight + ' kg</td><td class="text-right">¥' + fmt2(r.amount) + '</td><td class="text-right" style="font-weight:600;color:var(--tms-primary);">¥' + fmt2(ar) + '</td></tr>';
+    }).join('');
+    document.getElementById('costRowCount').textContent = costRows.length;
+    document.getElementById('costTotalLine').textContent = '¥' + fmt2(costSum) + ' → ¥' + fmt2(arSum);
+    document.getElementById('costPreviewWrap').style.display = 'block';
+  };
+
+  window.exportCostPriceSheet = function(){
+    if(costRows.length === 0){ toast('请先导入成本文件', 'warning'); return; }
+    var rate = 1 + markupRate() / 100;
+    var lines = ['\uFEFF运单号,客户名称,费用项目,计费重(kg),成本金额,加价率(%),预计应收'];
+    var costSum = 0, arSum = 0;
+    costRows.forEach(function(r){
+      var ar = r.amount * rate;
+      costSum += r.amount; arSum += ar;
+      lines.push([r.waybill, r.customer, r.name, r.weight, fmt2(r.amount), markupRate(), fmt2(ar)].join(','));
+    });
+    lines.push(['合计','','','',fmt2(costSum),markupRate(),fmt2(arSum)].join(','));
+    var blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8;' });
+    var a = document.createElement('a');
+    var d = new Date();
+    a.href = URL.createObjectURL(blob);
+    a.download = '成本价格表_预计应收_' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast('成本价格表（预计应收）已导出', 'success');
   };
 })();
 </script>
