@@ -1770,6 +1770,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <span style="display:flex;gap:8px;">
           <button class="btn btn-sm" id="btnFeeAuditToggle" onclick="toggleFeeAudit()">🔓 反审计</button>
           <button class="btn btn-sm" onclick="openApportionModal()">⚖ 批量平摊费用</button>
+          <button class="btn btn-sm" onclick="cancelApportion()">↩ 批量撤销平摊</button>
           <button class="btn btn-sm btn-primary" onclick="addOrderFee()">＋ 增加费用</button>
         </span>
       </div>
@@ -3427,6 +3428,19 @@ window.addEventListener('DOMContentLoaded', function(){
     closeModal('feeApportionModal');
     window.renderApOrderFees(currentApNo);
     toast('已按' + BASIS_LABEL[basis] + '平摊 ' + (window._apportionIdx || []).length + ' 项费用', 'success');
+  };
+
+  window.cancelApportion = function(){
+    var fees = window.getApOrderFees(currentApNo);
+    var idxs = getCheckedIdx();
+    if(idxs.length === 0){ toast('请先勾选需要撤销平摊的费用', 'warning'); return; }
+    var count = 0;
+    idxs.forEach(function(i){
+      if(fees[i] && fees[i].apportion){ delete fees[i].apportion; count++; }
+    });
+    window.renderApOrderFees(currentApNo);
+    if(count > 0) toast('已撤销 ' + count + ' 项费用的平摊', 'success');
+    else toast('所选费用均未平摊，无需撤销', 'info');
   };
 
   window.viewApportion = function(i){
