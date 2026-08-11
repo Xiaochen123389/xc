@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - TMS供应链管理系统</title>
+    <title>正在进入演示...</title>
     <style id="theme-vars">
 :root {
   /* === 品牌主色（现代化蓝色）=== */
@@ -809,222 +809,25 @@ th.sortable:hover { color: var(--tms-primary); }
     </style>
 </head>
 <body>
-<div class="login-layout">
-  <!-- 左侧品牌展示区 -->
-  <div class="login-hero">
-    <div class="login-brand">
-      <div class="login-brand-icon">T</div>
-      <div>
-        <div class="login-brand-name">TMS 供应链</div>
-        <div class="login-brand-sub">TRANSPORT MANAGEMENT SYSTEM</div>
-      </div>
-    </div>
-
-    <div class="login-hero-content">
-      <h1 class="login-hero-title">
-        智能TMS · <span>供应链管理系统</span>
-      </h1>
-      <p class="login-hero-desc">
-        全链路数字化运输管理平台，覆盖运单、提单、路由、结算全流程，助力企业物流效率提升，降本增效。
-      </p>
-      <div class="login-features">
-        <div class="login-feature">
-          <div class="login-feature-icon">📦</div>
-          <div>
-            <div class="login-feature-title">运单管理</div>
-            <div class="login-feature-desc">全生命周期跟踪，实时状态更新</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🚢</div>
-          <div>
-            <div class="login-feature-title">提单配货</div>
-            <div class="login-feature-desc">智能配载优化，一键生成提单</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🛣️</div>
-          <div>
-            <div class="login-feature-title">服务路由</div>
-            <div class="login-feature-desc">多式联运规划，最优路径推荐</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">📍</div>
-          <div>
-            <div class="login-feature-title">地址簿</div>
-            <div class="login-feature-desc">统一地址管理，智能校验纠错</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="login-footer">
-      © 2026 TMS Supply Chain Management System. All rights reserved.
+  <div class="demo-entry-page">
+    <div class="box">
+      <div class="spinner"></div>
+      <div>正在进入 TMS 演示环境...</div>
     </div>
   </div>
-
-  <!-- 右侧登录表单 -->
-  <div class="login-box-wrap">
-    <div class="login-card">
-      <h2 class="login-title">欢迎回来</h2>
-      <p class="login-sub">登录您的工作台</p>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">👤</span>
-        <input type="text" id="username" class="form-control" placeholder="请输入用户名" autocomplete="username">
-      </div>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">🔒</span>
-        <input type="password" id="password" class="form-control" placeholder="请输入密码" autocomplete="current-password">
-        <span class="login-eye toggle-pwd" data-target="password" title="显示/隐藏密码">👁</span>
-      </div>
-
-      <div class="login-captcha" style="display:none;">
-        <input type="text" id="captcha" class="form-control" placeholder="验证码（演示模式已跳过）" maxlength="4" autocomplete="off">
-        <div class="captcha-img" id="captchaImg" title="演示模式无需验证码" style="opacity:.5;">DEMO</div>
-      </div>
-
-      <div style="margin-bottom:18px;padding:10px 14px;background:var(--tms-primary-light);border-radius:var(--tms-radius-md);font-size:12.5px;color:var(--tms-primary-active);line-height:1.6;">
-        演示账号：<b>wb</b> &nbsp;/&nbsp; 密码：<b>Wb123456</b>（任意非空账号密码均可登录体验）
-      </div>
-
-      <div class="login-error" id="loginError"></div>
-
-      <div class="login-meta">
-        <label class="checkbox-wrapper">
-          <input type="checkbox" id="rememberMe">
-          <span>记住我</span>
-        </label>
-        <a href="javascript:;" class="btn-link" onclick="toast('请联系管理员重置密码','warning')">忘记密码？</a>
-      </div>
-
-      <button class="btn btn-primary login-btn" id="loginBtn">登 录</button>
-
-      <div style="text-align:center; margin-top:20px; font-size:12px; color:var(--tms-text-3);">
-        使用员工账号登录 · 首次登录请修改初始密码
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="../assets/app.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var captchaCode = '';
-  var captchaImg = document.getElementById('captchaImg');
-  var usernameInput = document.getElementById('username');
-  var passwordInput = document.getElementById('password');
-  var captchaInput = document.getElementById('captcha');
-  var rememberCheck = document.getElementById('rememberMe');
-  var loginBtn = document.getElementById('loginBtn');
-  var loginError = document.getElementById('loginError');
-
-  // 生成验证码
-  function refreshCaptcha() {
-    captchaCode = genCaptcha();
-    renderCaptcha(captchaImg, captchaCode);
-  }
-  refreshCaptcha();
-  captchaImg.addEventListener('click', refreshCaptcha);
-
-  // 读取记住的用户名
-  var savedUser = localStorage.getItem('tms_remember_user');
-  if (savedUser) {
-    usernameInput.value = savedUser;
-    rememberCheck.checked = true;
-  }
-
-  // 输入校验
-  function showError(msg) {
-    loginError.textContent = msg;
-  }
-  function clearError() {
-    loginError.textContent = '';
-  }
-  function validateField(input, validator, msg) {
-    input.addEventListener('blur', function() {
-      if (!validator(input.value.trim())) {
-        input.classList.add('error');
-      } else {
-        input.classList.remove('error');
-      }
-    });
-    input.addEventListener('input', function() {
-      if (input.classList.contains('error') && validator(input.value.trim())) {
-        input.classList.remove('error');
-        clearError();
-      }
-    });
-  }
-  validateField(usernameInput, function(v) { return v.length > 0; }, '');
-  validateField(passwordInput, function(v) { return v.length >= 6; }, '');
-  validateField(captchaInput, function(v) { return v.length === 4; }, '');
-
-  // 登录逻辑（演示模式：任意非空用户名+密码≥6位即可登录）
-  function doLogin() {
-    var u = usernameInput.value.trim();
-    var p = passwordInput.value;
-
-    clearError();
-    if (!u) { showError('请输入用户名'); usernameInput.classList.add('error'); usernameInput.focus(); return; }
-    if (!p || p.length < 6) { showError('密码长度至少6位'); passwordInput.classList.add('error'); passwordInput.focus(); return; }
-
-    // 登录成功
-    loginBtn.classList.add('loading');
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<span class="loading-spin" style="border-top-color:#fff;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;"></span>登录中...';
-
-    if (rememberCheck.checked) {
-      localStorage.setItem('tms_remember_user', u);
-    } else {
-      localStorage.removeItem('tms_remember_user');
-    }
-    // 写入登录态
-    localStorage.setItem('tms_auth_token', 'mock_' + Date.now());
-    localStorage.setItem('tms_user_name', u);
+  <script>
+    localStorage.setItem('tms_auth_token', 'demo_' + Date.now());
+    localStorage.setItem('tms_user_name', '演示用户');
     localStorage.setItem('tms_user_role', '主管');
+    window.location.replace('dashboard.html');
+  </script>
 
-    setTimeout(function() {
-      toast('登录成功，正在进入工作台...', 'success');
-      setTimeout(function() {
-        window.location.replace('dashboard.html');
-      }, 600);
-    }, 800);
-  }
-
-  // 回车提交
-  [usernameInput, passwordInput, captchaInput].forEach(function(inp) {
-    inp.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') doLogin();
-    });
-  });
-
-  loginBtn.addEventListener('click', doLogin);
-});
-</script>
-<script>
-// Fallback: if lucide doesn't load, show emoji/text placeholders
-window.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){
-    document.querySelectorAll('[data-lucide]').forEach(function(el){
-      if(el.tagName==='I' || el.children.length===0){
-        var icon = el.getAttribute('data-lucide');
-        var map = {home:'🏠',layout:'📊',users:'👥',settings:'⚙️',search:'🔍',plus:'＋',
-          bell:'🔔',user:'👤',logOut:'🚪',chevronDown:'▾',chevronRight:'▸',x:'×',
-          filter:'🔽',download:'⬇',upload:'⬆',edit:'✏️',trash:'🗑',eye:'👁',
-          package:'📦',truck:'🚛',ship:'🚢',plane:'✈️',fileText:'📄',check:'✓',
-          alert:'⚠',clock:'🕐',mapPin:'📍',dollar:'💰',trendingUp:'📈',barChart2:'📊',
-          arrowRight:'→',menu:'☰',refresh:'🔄'};
-        if(!el.innerHTML.trim()) el.textContent = map[icon] || '•';
-      }
-    });
-    if(window.lucide && lucide.createIcons) { try{ lucide.createIcons(); }catch(e){} }
-  },100);
-});
-</script>
-
-    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <style>
+    body { margin:0; background:#f5f7fa; font-family:system-ui,-apple-system,sans-serif; color:#4b5563; }
+    .demo-entry-page { min-height:100vh; display:flex; align-items:center; justify-content:center; }
+    .box { text-align:center; }
+    .spinner { width:36px; height:36px; border:3px solid rgba(22,119,255,.2); border-top-color:#1677ff; border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 16px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - TMS供应链管理系统</title>
+    <title>账单核销 - TMS供应链管理系统</title>
     <style id="theme-vars">
 :root {
   /* === 品牌主色（现代化蓝色）=== */
@@ -809,201 +809,650 @@ th.sortable:hover { color: var(--tms-primary); }
     </style>
 </head>
 <body>
-<div class="login-layout">
-  <!-- 左侧品牌展示区 -->
-  <div class="login-hero">
-    <div class="login-brand">
-      <div class="login-brand-icon">T</div>
-      <div>
-        <div class="login-brand-name">TMS 供应链</div>
-        <div class="login-brand-sub">TRANSPORT MANAGEMENT SYSTEM</div>
-      </div>
-    </div>
 
-    <div class="login-hero-content">
-      <h1 class="login-hero-title">
-        智能TMS · <span>供应链管理系统</span>
-      </h1>
-      <p class="login-hero-desc">
-        全链路数字化运输管理平台，覆盖运单、提单、路由、结算全流程，助力企业物流效率提升，降本增效。
-      </p>
-      <div class="login-features">
-        <div class="login-feature">
-          <div class="login-feature-icon">📦</div>
-          <div>
-            <div class="login-feature-title">运单管理</div>
-            <div class="login-feature-desc">全生命周期跟踪，实时状态更新</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🚢</div>
-          <div>
-            <div class="login-feature-title">提单配货</div>
-            <div class="login-feature-desc">智能配载优化，一键生成提单</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🛣️</div>
-          <div>
-            <div class="login-feature-title">服务路由</div>
-            <div class="login-feature-desc">多式联运规划，最优路径推荐</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">📍</div>
-          <div>
-            <div class="login-feature-title">地址簿</div>
-            <div class="login-feature-desc">统一地址管理，智能校验纠错</div>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- Toast 容器 -->
+<div class="toast-container" id="toastContainer"></div>
 
-    <div class="login-footer">
-      © 2026 TMS Supply Chain Management System. All rights reserved.
-    </div>
-  </div>
-
-  <!-- 右侧登录表单 -->
-  <div class="login-box-wrap">
-    <div class="login-card">
-      <h2 class="login-title">欢迎回来</h2>
-      <p class="login-sub">登录您的工作台</p>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">👤</span>
-        <input type="text" id="username" class="form-control" placeholder="请输入用户名" autocomplete="username">
-      </div>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">🔒</span>
-        <input type="password" id="password" class="form-control" placeholder="请输入密码" autocomplete="current-password">
-        <span class="login-eye toggle-pwd" data-target="password" title="显示/隐藏密码">👁</span>
-      </div>
-
-      <div class="login-captcha" style="display:none;">
-        <input type="text" id="captcha" class="form-control" placeholder="验证码（演示模式已跳过）" maxlength="4" autocomplete="off">
-        <div class="captcha-img" id="captchaImg" title="演示模式无需验证码" style="opacity:.5;">DEMO</div>
-      </div>
-
-      <div style="margin-bottom:18px;padding:10px 14px;background:var(--tms-primary-light);border-radius:var(--tms-radius-md);font-size:12.5px;color:var(--tms-primary-active);line-height:1.6;">
-        演示账号：<b>wb</b> &nbsp;/&nbsp; 密码：<b>Wb123456</b>（任意非空账号密码均可登录体验）
-      </div>
-
-      <div class="login-error" id="loginError"></div>
-
-      <div class="login-meta">
-        <label class="checkbox-wrapper">
-          <input type="checkbox" id="rememberMe">
-          <span>记住我</span>
-        </label>
-        <a href="javascript:;" class="btn-link" onclick="toast('请联系管理员重置密码','warning')">忘记密码？</a>
-      </div>
-
-      <button class="btn btn-primary login-btn" id="loginBtn">登 录</button>
-
-      <div style="text-align:center; margin-top:20px; font-size:12px; color:var(--tms-text-3);">
-        使用员工账号登录 · 首次登录请修改初始密码
-      </div>
+<!-- Confirm Dialog -->
+<div class="confirm-mask" id="confirmMask">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">确认操作</div>
+    <div class="confirm-msg" id="confirmMsg">确定执行此操作吗？</div>
+    <div class="confirm-actions">
+      <button class="btn" id="confirmCancel">取消</button>
+      <button class="btn btn-primary" id="confirmOk">确定</button>
     </div>
   </div>
 </div>
 
-<script src="../assets/app.js"></script>
+<!-- 侧边栏 -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">T</div>
+    <div class="sidebar-logo-text">
+      TMS 供应链
+      <small>SMART LOGISTICS</small>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group-title">概览</div>
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon">🏠</span>
+      <span>工作台</span>
+    </a>
+
+    <div class="nav-group-title">业务管理</div>
+    <div class="nav-item has-sub" onclick="void(0)">
+      <span class="nav-icon">📦</span>
+      <span>运单管理</span>
+      <span class="nav-caret">▶</span>
+    </div>
+    <div class="submenu">
+      <a href="waybill-list.html" class="submenu-item">运单列表</a>
+      <a href="waybill-create.html" class="submenu-item">创建运单</a>
+    </div>
+
+    <div class="nav-item has-sub" onclick="void(0)">
+      <span class="nav-icon">🚢</span>
+      <span>提单管理</span>
+      <span class="nav-badge">12</span>
+      <span class="nav-caret">▶</span>
+    </div>
+    <div class="submenu">
+      <a href="bill-list.html" class="submenu-item">提单列表</a>
+      <a href="bill-create.html" class="submenu-item">创建提单</a>
+    </div>
+
+    <div class="nav-item has-sub" onclick="void(0)">
+      <span class="nav-icon">📏</span>
+      <span>超限管理</span>
+      <span class="nav-badge">3</span>
+      <span class="nav-caret">▶</span>
+    </div>
+    <div class="submenu">
+      <a href="oversize.html" class="submenu-item">超限货物</a>
+      <a href="#" class="submenu-item" onclick="toast('超限审批开发中','info')">超限审批</a>
+    </div>
+
+    <div class="nav-group-title">财务管理</div>
+    <div class="nav-item has-sub expanded" onclick="void(0)">
+      <span class="nav-icon">💰</span>
+      <span>应收管理</span>
+      <span class="nav-badge">5</span>
+      <span class="nav-caret">▶</span>
+    </div>
+    <div class="submenu">
+      <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
+      <a href="customer-flow.html" class="submenu-item">客户流水</a>
+      <a href="bill-writeoff.html" class="submenu-item active">账单核销</a>
+      <a href="receivable-report.html" class="submenu-item">应收报表</a>
+    </div>
+
+    <div class="nav-item has-sub" onclick="void(0)">
+      <span class="nav-icon">💸</span>
+      <span>应付管理</span>
+      <span class="nav-caret">▶</span>
+    </div>
+    <div class="submenu">
+      <a href="payable-enhanced.html" class="submenu-item">应付账单</a>
+    </div>
+
+    <div class="nav-group-title">数据视图</div>
+    <a href="receivable-enhanced.html" class="nav-item">
+      <span class="nav-icon">📊</span>
+      <span>应收数据</span>
+    </a>
+    <a href="payable-enhanced.html" class="nav-item">
+      <span class="nav-icon">📉</span>
+      <span>应付数据</span>
+    </a>
+    <a href="document-data.html" class="nav-item">
+      <span class="nav-icon">📄</span>
+      <span>单证数据</span>
+    </a>
+    <a href="cs-data.html" class="nav-item">
+      <span class="nav-icon">🎧</span>
+      <span>客服数据</span>
+    </a>
+
+    <div class="nav-group-title">基础数据</div>
+    <div class="nav-item has-sub" onclick="void(0)">
+      <span class="nav-icon">💹</span>
+      <span>运价管理</span>
+      <span class="nav-caret">▶</span>
+    </div>
+    <div class="submenu">
+      <a href="rates.html?tab=sell" class="submenu-item">销售运价</a>
+      <a href="rates.html?tab=buy" class="submenu-item">采购运价</a>
+    </div>
+    <a href="service.html" class="nav-item">
+      <span class="nav-icon">🛣️</span>
+      <span>服务管理</span>
+    </a>
+    <a href="address.html" class="nav-item">
+      <span class="nav-icon">📍</span>
+      <span>地址簿</span>
+    </a>
+
+    <div class="nav-group-title">系统</div>
+    <div class="nav-item" onclick="toast('系统设置功能开发中','info')">
+      <span class="nav-icon">⚙️</span>
+      <span>系统设置</span>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">王</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name">王主管</div>
+        <div class="sidebar-user-role">系统管理员</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<header class="app-header">
+  <div class="header-breadcrumb">
+    <a href="dashboard.html">首页</a>
+    <span class="sep">/</span>
+    <a href="receivable-enhanced.html">财务管理</a>
+    <span class="sep">/</span>
+    <span class="current">账单核销</span>
+  </div>
+  <div class="header-right">
+    <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
+    <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">
+      🔔
+      <span class="header-badge">3</span>
+    </div>
+    <div class="theme-toggle" title="主题切换" onclick="toast('主题切换功能开发中','info')">🌙</div>
+    <div class="header-divider"></div>
+    <div class="dropdown-wrap">
+      <div class="header-user" data-dropdown="userMenu">
+        <div class="header-user-avatar">王</div>
+        <span class="header-user-name">王主管</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+  <!-- 页面标题区 -->
+  <div class="page-title-bar">
+    <div>
+      <h1 class="page-title">📝 账单核销</h1>
+      <p class="page-subtitle">应收账单收款核销登记与记录查询</p>
+    </div>
+    <div class="page-actions">
+      <a href="receivable-enhanced.html" class="btn">
+        <span>←</span>返回应收管理
+      </a>
+      <button class="btn" onclick="exportWriteOffRecords()">
+        <span>⬇</span>导出核销记录
+      </button>
+    </div>
+  </div>
+
+  <!-- 核销布局：左表单 + 右记录 -->
+  <div class="writeoff-layout">
+
+    <!-- 左侧：核销登记表单 -->
+    <div class="card writeoff-form">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-title-bar"></span>
+          核销登记
+        </div>
+        <span class="card-extra">填写核销信息后提交</span>
+      </div>
+      <div class="card-body">
+
+        <!-- 账单信息横幅 -->
+        <div class="bill-info-banner" id="billInfoBanner">
+          <div class="bill-icon">💳</div>
+          <div class="bill-info-text">
+            <div class="bill-info-title" id="bannerTitle">请选择待核销账单</div>
+            <div class="bill-info-sub" id="bannerSub">选择账单后将自动带出客户与金额信息</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="required">*</span>账单号</label>
+          <select class="form-control" id="billNo" onchange="onBillChange()">
+            <option value="">请选择应收账单</option>
+            <option value="AR-2025-0001">AR-2025-0001（深圳市海纳物流有限公司）</option>
+            <option value="AR-2025-0002">AR-2025-0002（广州跨境通供应链）</option>
+            <option value="AR-2025-0003">AR-2025-0003（上海德邦国际货运）</option>
+            <option value="AR-2025-0004">AR-2025-0004（北京京通联运）</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">客户名称</label>
+          <input class="form-control" id="billCustomer" readonly placeholder="选择账单后自动带出">
+        </div>
+
+        <div class="form-row">
+          <div class="form-col form-group">
+            <label class="form-label">币种</label>
+            <input class="form-control" id="billCurrency" readonly placeholder="—">
+          </div>
+          <div class="form-col form-group">
+            <label class="form-label">账单金额</label>
+            <input class="form-control amount-total" id="billAmount" readonly placeholder="—">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-col form-group">
+            <label class="form-label">已核销金额</label>
+            <input class="form-control amount-positive" id="billSettled" readonly placeholder="—">
+          </div>
+          <div class="form-col form-group">
+            <label class="form-label">待核销金额</label>
+            <input class="form-control amount-negative" id="billPending" readonly placeholder="—">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="required">*</span>核销金额</label>
+          <input class="form-control" id="writeOffAmount" type="number" min="0" step="0.01" placeholder="请输入本次核销金额">
+          <div class="form-help">本次核销金额不能超过待核销金额</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-col form-group">
+            <label class="form-label"><span class="required">*</span>核销方式</label>
+            <select class="form-control" id="writeOffMethod">
+              <option value="银行转账">银行转账</option>
+              <option value="现金">现金</option>
+              <option value="承兑汇票">承兑汇票</option>
+              <option value="支付宝">支付宝</option>
+              <option value="微信">微信</option>
+            </select>
+          </div>
+          <div class="form-col form-group">
+            <label class="form-label"><span class="required">*</span>核销日期</label>
+            <input class="form-control" id="writeOffDate" type="date">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">备注</label>
+          <textarea class="form-control" id="writeOffRemark" rows="3" placeholder="可填写核销说明、流水号或凭证编号"></textarea>
+        </div>
+
+        <div class="flex gap-2 mt-4">
+          <button class="btn btn-primary w-full" onclick="doWriteOff()">
+            <span>✓</span>确认核销
+          </button>
+          <button class="btn" onclick="resetWriteOffForm()">
+            <span>↻</span>重置
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：核销记录列表 -->
+    <div class="card">
+      <div class="table-toolbar">
+        <div class="toolbar-left">
+          <div class="card-title" style="font-size:15px;">
+            <span class="card-title-bar"></span>
+            核销记录
+          </div>
+          <span class="tag tag-blue" id="recordCount">共 7 条</span>
+        </div>
+        <div class="toolbar-right">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input class="form-control" id="recordSearch" placeholder="搜索流水号/账单号/客户" oninput="filterRecords()">
+          </div>
+          <button class="btn btn-sm" onclick="toast('导出核销记录功能开发中','info')">
+            <span>⬇</span>导出
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table" id="writeOffTable">
+          <thead>
+            <tr>
+              <th>核销流水号</th>
+              <th>账单号</th>
+              <th>客户</th>
+              <th class="text-right">核销金额</th>
+              <th>核销方式</th>
+              <th>核销人</th>
+              <th>核销时间</th>
+            </tr>
+          </thead>
+          <tbody id="writeOffTbody">
+            <tr>
+              <td class="mono">WO-2025-0806</td>
+              <td class="link" onclick="toast('查看账单 AR-2025-0001 详情','info')">AR-2025-0001</td>
+              <td>深圳市海纳物流有限公司</td>
+              <td class="text-right money-cell positive">¥30,000.00</td>
+              <td><span class="tag tag-blue">银行转账</span></td>
+              <td>王主管</td>
+              <td class="text-sm text-muted">2025-08-06 10:23</td>
+            </tr>
+            <tr>
+              <td class="mono">WO-2025-0805</td>
+              <td class="link" onclick="toast('查看账单 AR-2025-0003 详情','info')">AR-2025-0003</td>
+              <td>上海德邦国际货运</td>
+              <td class="text-right money-cell positive">¥50,000.00</td>
+              <td><span class="tag tag-blue">银行转账</span></td>
+              <td>李财务</td>
+              <td class="text-sm text-muted">2025-08-05 16:45</td>
+            </tr>
+            <tr>
+              <td class="mono">WO-2025-0804</td>
+              <td class="link" onclick="toast('查看账单 AR-2025-0001 详情','info')">AR-2025-0001</td>
+              <td>深圳市海纳物流有限公司</td>
+              <td class="text-right money-cell positive">¥50,000.00</td>
+              <td><span class="tag tag-purple">承兑汇票</span></td>
+              <td>王主管</td>
+              <td class="text-sm text-muted">2025-08-04 09:12</td>
+            </tr>
+            <tr>
+              <td class="mono">WO-2025-0802</td>
+              <td class="link" onclick="toast('查看账单 AR-2025-0003 详情','info')">AR-2025-0003</td>
+              <td>上海德邦国际货运</td>
+              <td class="text-right money-cell positive">¥100,000.00</td>
+              <td><span class="tag tag-blue">银行转账</span></td>
+              <td>张会计</td>
+              <td class="text-sm text-muted">2025-08-02 14:30</td>
+            </tr>
+            <tr>
+              <td class="mono">WO-2025-0730</td>
+              <td class="link" onclick="toast('查看账单 AR-2025-0004 详情','info')">AR-2025-0004</td>
+              <td>北京京通联运</td>
+              <td class="text-right money-cell positive">€18,600.00</td>
+              <td><span class="tag tag-cyan">微信</span></td>
+              <td>李财务</td>
+              <td class="text-sm text-muted">2025-07-30 11:05</td>
+            </tr>
+            <tr>
+              <td class="mono">WO-2025-0728</td>
+              <td class="link" onclick="toast('查看账单 AR-2025-0002 详情','info')">AR-2025-0002</td>
+              <td>广州跨境通供应链</td>
+              <td class="text-right money-cell positive">$20,000.00</td>
+              <td><span class="tag tag-green">支付宝</span></td>
+              <td>王主管</td>
+              <td class="text-sm text-muted">2025-07-28 15:18</td>
+            </tr>
+            <tr>
+              <td class="mono">WO-2025-0725</td>
+              <td class="link" onclick="toast('查看账单 AR-2025-0001 详情','info')">AR-2025-0001</td>
+              <td>深圳市海纳物流有限公司</td>
+              <td class="text-right money-cell positive">¥30,000.00</td>
+              <td><span class="tag tag-orange">现金</span></td>
+              <td>张会计</td>
+              <td class="text-sm text-muted">2025-07-25 10:40</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 分页 -->
+      <div class="pagination" id="recordPagination">
+        <div class="pagination-info">第 1 - 7 条，共 7 条</div>
+        <div class="pagination-pages">
+          <button class="page-btn" disabled onclick="goToPage(this, 'prev')">‹ 上一页</button>
+          <button class="page-btn active" onclick="goToPage(this, 1)">1</button>
+          <button class="page-btn" onclick="goToPage(this, 2)">2</button>
+          <button class="page-btn" onclick="goToPage(this, 'next')">下一页 ›</button>
+          <div class="page-jumper">
+            跳至
+            <input type="number" min="1" max="2" value="1" id="pageJumperInput" onkeydown="if(event.key==='Enter')jumpToPage()">
+            页
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var captchaCode = '';
-  var captchaImg = document.getElementById('captchaImg');
-  var usernameInput = document.getElementById('username');
-  var passwordInput = document.getElementById('password');
-  var captchaInput = document.getElementById('captcha');
-  var rememberCheck = document.getElementById('rememberMe');
-  var loginBtn = document.getElementById('loginBtn');
-  var loginError = document.getElementById('loginError');
+// ========== Toast ==========
+function toast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
+  var iconMap = { info:'i', success:'✓', error:'✕', warning:'!' };
+  t.innerHTML = '<span class="toast-icon ' + type + '">' + (iconMap[type]||'i') + '</span><span>' + msg + '</span>';
+  container.appendChild(t);
+  setTimeout(function(){ t.style.opacity = '0'; t.style.transform = 'translateY(-12px)'; t.style.transition = 'all .3s'; }, 2500);
+  setTimeout(function(){ t.remove(); }, 2800);
+}
 
-  // 生成验证码
-  function refreshCaptcha() {
-    captchaCode = genCaptcha();
-    renderCaptcha(captchaImg, captchaCode);
+// ========== Confirm Dialog ==========
+var _confirmCb = null;
+function confirmDialog(title, msg, cb, okText, okType) {
+  document.getElementById('confirmTitle').textContent = title || '确认操作';
+  document.getElementById('confirmMsg').innerHTML = msg || '确定执行此操作吗？';
+  var okBtn = document.getElementById('confirmOk');
+  okBtn.textContent = okText || '确定';
+  okBtn.className = 'btn ' + (okType === 'danger' ? 'btn-danger' : okType === 'primary' ? 'btn-primary' : 'btn-primary');
+  _confirmCb = cb;
+  document.getElementById('confirmMask').classList.add('show');
+}
+document.getElementById('confirmCancel').onclick = function() {
+  document.getElementById('confirmMask').classList.remove('show');
+  _confirmCb = null;
+};
+document.getElementById('confirmOk').onclick = function() {
+  document.getElementById('confirmMask').classList.remove('show');
+  if (_confirmCb) { var cb = _confirmCb; _confirmCb = null; cb(); }
+};
+document.getElementById('confirmMask').addEventListener('click', function(e) {
+  if (e.target === this) { this.classList.remove('show'); _confirmCb = null; }
+});
+
+// ========== 账单数据 ==========
+var billData = {
+  'AR-2025-0001': { customer: '深圳市海纳物流有限公司', currency: 'CNY', symbol: '¥', amount: 128500, settled: 80000, pending: 48500 },
+  'AR-2025-0002': { customer: '广州跨境通供应链', currency: 'USD', symbol: '$', amount: 56200, settled: 0, pending: 56200 },
+  'AR-2025-0003': { customer: '上海德邦国际货运', currency: 'CNY', symbol: '¥', amount: 256800, settled: 150000, pending: 106800 },
+  'AR-2025-0004': { customer: '北京京通联运', currency: 'EUR', symbol: '€', amount: 18600, settled: 18600, pending: 0 }
+};
+
+function fmtMoney(symbol, val) {
+  return symbol + Number(val).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function onBillChange() {
+  var billNo = document.getElementById('billNo').value;
+  var data = billData[billNo];
+  var bannerTitle = document.getElementById('bannerTitle');
+  var bannerSub = document.getElementById('bannerSub');
+  if (!data) {
+    document.getElementById('billCustomer').value = '';
+    document.getElementById('billCurrency').value = '';
+    document.getElementById('billAmount').value = '';
+    document.getElementById('billSettled').value = '';
+    document.getElementById('billPending').value = '';
+    document.getElementById('writeOffAmount').value = '';
+    bannerTitle.textContent = '请选择待核销账单';
+    bannerSub.textContent = '选择账单后将自动带出客户与金额信息';
+    return;
   }
-  refreshCaptcha();
-  captchaImg.addEventListener('click', refreshCaptcha);
+  document.getElementById('billCustomer').value = data.customer;
+  document.getElementById('billCurrency').value = data.currency + '（' + data.symbol + '）';
+  document.getElementById('billAmount').value = fmtMoney(data.symbol, data.amount);
+  document.getElementById('billSettled').value = fmtMoney(data.symbol, data.settled);
+  document.getElementById('billPending').value = fmtMoney(data.symbol, data.pending);
+  document.getElementById('writeOffAmount').value = data.pending > 0 ? data.pending.toFixed(2) : '';
+  bannerTitle.textContent = data.customer;
+  bannerSub.textContent = '账单 ' + billNo + ' · 待核销 ' + fmtMoney(data.symbol, data.pending);
+  if (data.pending <= 0) {
+    toast('该账单已全部核销完成', 'warning');
+  }
+}
 
-  // 读取记住的用户名
-  var savedUser = localStorage.getItem('tms_remember_user');
-  if (savedUser) {
-    usernameInput.value = savedUser;
-    rememberCheck.checked = true;
+// ========== 核销提交 ==========
+function doWriteOff() {
+  var billNo = document.getElementById('billNo').value;
+  if (!billNo) { toast('请选择待核销账单', 'warning'); return; }
+  var amountStr = document.getElementById('writeOffAmount').value.trim();
+  if (!amountStr || isNaN(parseFloat(amountStr))) { toast('请输入有效的核销金额', 'warning'); return; }
+  var amount = parseFloat(amountStr);
+  if (amount <= 0) { toast('核销金额必须大于 0', 'warning'); return; }
+  var method = document.getElementById('writeOffMethod').value;
+  var date = document.getElementById('writeOffDate').value;
+  if (!date) { toast('请选择核销日期', 'warning'); return; }
+  var remark = document.getElementById('writeOffRemark').value.trim();
+  var data = billData[billNo];
+  if (amount > data.pending) {
+    toast('核销金额 ' + fmtMoney(data.symbol, amount) + ' 超过待核销金额 ' + fmtMoney(data.symbol, data.pending), 'error');
+    return;
   }
 
-  // 输入校验
-  function showError(msg) {
-    loginError.textContent = msg;
-  }
-  function clearError() {
-    loginError.textContent = '';
-  }
-  function validateField(input, validator, msg) {
-    input.addEventListener('blur', function() {
-      if (!validator(input.value.trim())) {
-        input.classList.add('error');
-      } else {
-        input.classList.remove('error');
-      }
-    });
-    input.addEventListener('input', function() {
-      if (input.classList.contains('error') && validator(input.value.trim())) {
-        input.classList.remove('error');
-        clearError();
-      }
-    });
-  }
-  validateField(usernameInput, function(v) { return v.length > 0; }, '');
-  validateField(passwordInput, function(v) { return v.length >= 6; }, '');
-  validateField(captchaInput, function(v) { return v.length === 4; }, '');
+  // 确认对话框
+  confirmDialog('确认核销', '确认对账单 <b>' + billNo + '</b>（' + data.customer + '）核销 ' + fmtMoney(data.symbol, amount) + ' ？核销方式：' + method + '。', function() {
+    // 更新账单数据
+    data.settled += amount;
+    data.pending -= amount;
+    onBillChange();
 
-  // 登录逻辑（演示模式：任意非空用户名+密码≥6位即可登录）
-  function doLogin() {
-    var u = usernameInput.value.trim();
-    var p = passwordInput.value;
+    // 新增记录到表格顶部
+    var seq = 'WO-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-4);
+    var time = date + ' ' + new Date().toTimeString().slice(0, 5);
+    var methodTagClass = { '银行转账':'tag-blue', '现金':'tag-orange', '承兑汇票':'tag-purple', '支付宝':'tag-green', '微信':'tag-cyan' }[method] || 'tag-gray';
+    var tr = document.createElement('tr');
+    tr.className = 'row-fade-in';
+    tr.innerHTML =
+      '<td class="mono">' + seq + '</td>' +
+      '<td class="link" onclick="toast(\'查看账单 ' + billNo + ' 详情\',\'info\')">' + billNo + '</td>' +
+      '<td>' + data.customer + '</td>' +
+      '<td class="text-right money-cell positive">' + fmtMoney(data.symbol, amount) + '</td>' +
+      '<td><span class="tag ' + methodTagClass + '">' + method + '</span></td>' +
+      '<td>王主管</td>' +
+      '<td class="text-sm text-muted">' + time + '</td>';
+    var tbody = document.getElementById('writeOffTbody');
+    tbody.insertBefore(tr, tbody.firstChild);
 
-    clearError();
-    if (!u) { showError('请输入用户名'); usernameInput.classList.add('error'); usernameInput.focus(); return; }
-    if (!p || p.length < 6) { showError('密码长度至少6位'); passwordInput.classList.add('error'); passwordInput.focus(); return; }
+    // 更新计数
+    updateRecordCount();
 
-    // 登录成功
-    loginBtn.classList.add('loading');
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<span class="loading-spin" style="border-top-color:#fff;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;"></span>登录中...';
+    // 重置表单部分字段
+    document.getElementById('writeOffAmount').value = '';
+    document.getElementById('writeOffRemark').value = '';
 
-    if (rememberCheck.checked) {
-      localStorage.setItem('tms_remember_user', u);
-    } else {
-      localStorage.removeItem('tms_remember_user');
-    }
-    // 写入登录态
-    localStorage.setItem('tms_auth_token', 'mock_' + Date.now());
-    localStorage.setItem('tms_user_name', u);
-    localStorage.setItem('tms_user_role', '主管');
+    toast('核销登记成功：' + fmtMoney(data.symbol, amount) + '（' + method + '）', 'success');
+  }, '确认核销', 'primary');
+}
 
-    setTimeout(function() {
-      toast('登录成功，正在进入工作台...', 'success');
-      setTimeout(function() {
-        window.location.replace('dashboard.html');
-      }, 600);
-    }, 800);
-  }
+// ========== 重置表单 ==========
+function resetWriteOffForm() {
+  document.getElementById('billNo').value = '';
+  onBillChange();
+  document.getElementById('writeOffMethod').value = '银行转账';
+  document.getElementById('writeOffDate').value = '';
+  document.getElementById('writeOffRemark').value = '';
+  toast('表单已重置', 'info');
+}
 
-  // 回车提交
-  [usernameInput, passwordInput, captchaInput].forEach(function(inp) {
-    inp.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') doLogin();
-    });
+// ========== 导出核销记录 ==========
+function exportWriteOffRecords() {
+  toast('核销记录导出成功（模拟）', 'success');
+}
+
+// ========== 记录搜索过滤 ==========
+function filterRecords() {
+  var kw = document.getElementById('recordSearch').value.trim().toLowerCase();
+  var rows = document.querySelectorAll('#writeOffTbody tr');
+  var count = 0;
+  rows.forEach(function(tr) {
+    var text = tr.textContent.toLowerCase();
+    var match = !kw || text.indexOf(kw) !== -1;
+    tr.style.display = match ? '' : 'none';
+    if (match) count++;
   });
+  var info = document.querySelector('#recordPagination .pagination-info');
+  if (info) info.textContent = '第 1 - ' + count + ' 条，共 ' + count + ' 条';
+}
 
-  loginBtn.addEventListener('click', doLogin);
+// ========== 更新记录计数 ==========
+function updateRecordCount() {
+  var total = document.querySelectorAll('#writeOffTbody tr').length;
+  var countEl = document.getElementById('recordCount');
+  if (countEl) countEl.textContent = '共 ' + total + ' 条';
+  var info = document.querySelector('#recordPagination .pagination-info');
+  if (info) info.textContent = '第 1 - ' + total + ' 条，共 ' + total + ' 条';
+}
+
+// ========== 分页 ==========
+var currentPage = 1;
+var totalPages = 2;
+function goToPage(btn, target) {
+  var newPage = currentPage;
+  if (target === 'prev') {
+    if (currentPage <= 1) return;
+    newPage = currentPage - 1;
+  } else if (target === 'next') {
+    if (currentPage >= totalPages) return;
+    newPage = currentPage + 1;
+  } else {
+    newPage = parseInt(target, 10);
+  }
+  if (newPage === currentPage) return;
+  currentPage = newPage;
+  // 更新按钮高亮
+  var pages = document.querySelectorAll('#recordPagination .page-btn');
+  pages.forEach(function(b) { b.classList.remove('active'); });
+  // 找到对应数字按钮高亮
+  pages.forEach(function(b) {
+    var t = b.getAttribute('onclick');
+    if (t && t.indexOf("', " + currentPage + ")") !== -1) b.classList.add('active');
+  });
+  // 简单处理：重新标记数字页
+  document.querySelectorAll('#recordPagination .page-btn').forEach(function(b) {
+    if (b.textContent.trim() === String(currentPage)) b.classList.add('active');
+    else if (b.textContent.indexOf('上一页') === -1 && b.textContent.indexOf('下一页') === -1) b.classList.remove('active');
+  });
+  // 启用/禁用上下页
+  var prevBtn = document.querySelectorAll('#recordPagination .page-btn')[0];
+  var nextBtn = document.querySelectorAll('#recordPagination .page-btn')[document.querySelectorAll('#recordPagination .page-btn').length - 1];
+  if (prevBtn) prevBtn.disabled = currentPage <= 1;
+  if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+  var jumper = document.getElementById('pageJumperInput');
+  if (jumper) jumper.value = currentPage;
+  toast('已切换到第 ' + currentPage + ' 页', 'info');
+}
+
+function jumpToPage() {
+  var val = parseInt(document.getElementById('pageJumperInput').value, 10);
+  if (isNaN(val) || val < 1 || val > totalPages) { toast('请输入 1 - ' + totalPages + ' 之间的页码', 'warning'); return; }
+  var btn = document.querySelector('#recordPagination .page-btn.active') || document.querySelectorAll('#recordPagination .page-btn')[1];
+  goToPage(btn, val);
+}
+
+// ========== Modal close（通用） ==========
+document.addEventListener('click', function(e) {
+  var closeId = e.target.getAttribute('data-close');
+  if (closeId) {
+    var el = document.getElementById(closeId);
+    if (el) el.classList.remove('show');
+  }
+});
+
+// ========== Init ==========
+document.addEventListener('DOMContentLoaded', function() {
+  // 默认选中第一条账单，便于演示
+  document.getElementById('billNo').value = 'AR-2025-0001';
+  onBillChange();
+  // 默认填充今日日期
+  var today = new Date().toISOString().slice(0, 10);
+  document.getElementById('writeOffDate').value = today;
 });
 </script>
+
 <script>
 // Fallback: if lucide doesn't load, show emoji/text placeholders
 window.addEventListener('DOMContentLoaded', function(){
@@ -1026,5 +1475,35 @@ window.addEventListener('DOMContentLoaded', function(){
 </script>
 
     <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <style>
+      /* ========== 账单核销页专属样式 ========== */
+      .writeoff-layout { display: grid; grid-template-columns: 2fr 3fr; gap: 16px; align-items: start; }
+      .writeoff-form .form-group { margin-bottom: 16px; }
+      .writeoff-form .form-group:last-child { margin-bottom: 0; }
+      .amount-positive { color: var(--tms-success); font-weight: 600; }
+      .amount-negative { color: var(--tms-error); font-weight: 600; }
+      .amount-total { color: var(--tms-text); font-weight: 600; font-feature-settings: 'tnum'; }
+      .form-control[readonly].amount-positive { color: var(--tms-success); font-weight: 600; }
+      .form-control[readonly].amount-negative { color: var(--tms-error); font-weight: 600; }
+      .bill-info-banner {
+        display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+        background: linear-gradient(135deg, #f0f7ff, #e6f4ff); border: 1px solid var(--tms-primary-light);
+        border-radius: var(--tms-radius-md); margin-bottom: 16px;
+      }
+      .bill-info-banner .bill-icon {
+        width: 40px; height: 40px; border-radius: 10px; background: var(--tms-primary);
+        color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+      }
+      .bill-info-text { flex: 1; }
+      .bill-info-title { font-size: 14px; font-weight: 600; color: var(--tms-text); }
+      .bill-info-sub { font-size: 12px; color: var(--tms-text-3); margin-top: 2px; }
+      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
+      .money-cell.positive { color: var(--tms-success); }
+      .row-fade-in { animation: rowFadeIn .3s ease; }
+      @keyframes rowFadeIn { from { opacity: 0; background: var(--tms-success-light); } to { opacity: 1; background: transparent; } }
+      @media (max-width: 1100px) {
+        .writeoff-layout { grid-template-columns: 1fr; }
+      }
+    </style>
 </body>
 </html>

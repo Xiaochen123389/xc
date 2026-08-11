@@ -5,17 +5,19 @@
       "title": "登录页",
       "type": "page",
       "version": 1,
-      "createdAt": 1785336000000,
+      "createdAt": 1785379200000,
       "canvasData": {
         "x": 0,
         "y": 0,
+        "w": 1440,
+        "h": 900,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-f3dcc084",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -25,20 +27,22 @@
     },
     {
       "id": "page-dashboard",
-      "title": "总控平台",
+      "title": "工作台",
       "type": "page",
-      "version": 2,
-      "createdAt": 1785316647904,
+      "version": 1,
+      "createdAt": 1785379200000,
       "canvasData": {
         "x": 620,
         "y": 0,
+        "w": 1440,
+        "h": 2100,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-ece73297",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -48,20 +52,22 @@
     },
     {
       "id": "page-waybill-list",
-      "title": "运单管理",
+      "title": "运单列表",
       "type": "page",
-      "version": 2,
-      "createdAt": 1785316647904,
+      "version": 1,
+      "createdAt": 1785379200000,
       "canvasData": {
         "x": 1240,
         "y": 0,
+        "w": 1440,
+        "h": 1600,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-846ed3dd",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -73,18 +79,20 @@
       "id": "page-waybill-create",
       "title": "创建运单",
       "type": "page",
-      "version": 2,
-      "createdAt": 1785316647904,
+      "version": 1,
+      "createdAt": 1785379200000,
       "canvasData": {
         "x": 1860,
         "y": 0,
+        "w": 1440,
+        "h": 2200,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-cf212dbd",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -94,20 +102,22 @@
     },
     {
       "id": "page-bill-list",
-      "title": "提单管理",
+      "title": "提单列表",
       "type": "page",
-      "version": 2,
-      "createdAt": 1785316647904,
+      "version": 1,
+      "createdAt": 1785379200000,
       "canvasData": {
         "x": 2480,
         "y": 0,
+        "w": 1440,
+        "h": 1600,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-549978d5",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -117,20 +127,22 @@
     },
     {
       "id": "page-bill-create",
-      "title": "提单配货",
+      "title": "创建提单/配货",
       "type": "page",
-      "version": 2,
-      "createdAt": 1785316647904,
+      "version": 1,
+      "createdAt": 1785379200000,
       "canvasData": {
         "x": 3100,
         "y": 0,
+        "w": 1440,
+        "h": 2000,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-2e6ac26b",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -139,44 +151,23 @@
       }
     },
     {
-      "id": "page-customer",
-      "title": "客户管理",
-      "type": "page",
-      "version": 2,
-      "createdAt": 1785316647904,
-      "canvasData": {
-        "x": 3720,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-9b843cf2",
-          "measuredAt": 1786151647837
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/customer.html",
-        "interactions": []
-      }
-    },
-    {
       "id": "page-service",
       "title": "服务管理",
       "type": "page",
-      "version": 2,
-      "createdAt": 1785316647904,
+      "version": 1,
+      "createdAt": 1785379200000,
       "canvasData": {
-        "x": 4340,
+        "x": 3720,
         "y": 0,
+        "w": 1440,
+        "h": 1800,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-22fbbf51",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -185,223 +176,23 @@
       }
     },
     {
-      "id": "page-receivable",
-      "title": "应收管理",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 4960,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-95e0a891",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/receivable.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-receivable-enhanced",
-      "title": "应收管理-增强版",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 5580,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-885dd4f2",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/receivable-enhanced.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-rates",
-      "title": "运价管理",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 6200,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-616e8fdb",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/rates.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-bill-writeoff",
-      "title": "账单核销",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 6820,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-ca69eb28",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/bill-writeoff.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-cs-data",
-      "title": "客服数据",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 7440,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-7e512d88",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/cs-data.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-customer-flow",
-      "title": "客户流水",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 8060,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-4cae5f93",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/customer-flow.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-demo-entry",
-      "title": "演示入口",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 8680,
-        "y": 0,
-        "group": 0
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/demo-entry.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-document-data",
-      "title": "单证数据",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 9300,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-27ff23e3",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/document-data.html",
-        "interactions": []
-      }
-    },
-    {
-      "id": "page-receivable-report",
-      "title": "应收报表",
-      "type": "page",
-      "version": 1,
-      "createdAt": 1785999705736,
-      "canvasData": {
-        "x": 9920,
-        "y": 0,
-        "group": 0,
-        "layoutSnapshot": {
-          "version": 1,
-          "contentHeight": 900,
-          "viewportWidth": 1440,
-          "sourceHash": "fnv1a-c8b26b16",
-          "measuredAt": 1786415146512
-        }
-      },
-      "devMetadata": {
-        "htmlSrc": "pages/receivable-report.html",
-        "interactions": []
-      }
-    },
-    {
       "id": "page-address",
       "title": "地址簿",
       "type": "page",
       "version": 1,
-      "createdAt": 1786153446340,
+      "createdAt": 1785379200000,
       "canvasData": {
-        "x": 10540,
+        "x": 4340,
         "y": 0,
         "w": 1440,
         "h": 1400,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-f1e48c9e",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -414,19 +205,19 @@
       "title": "超限货物管理",
       "type": "page",
       "version": 1,
-      "createdAt": 1786153446340,
+      "createdAt": 1785384218000,
       "canvasData": {
-        "x": 11160,
+        "x": 4960,
         "y": 0,
         "w": 1440,
         "h": 1700,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-fab8d30f",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -435,13 +226,38 @@
       }
     },
     {
-      "id": "page-payable",
-      "title": "应付管理",
+      "id": "page-receivable",
+      "title": "应收管理",
       "type": "page",
       "version": 1,
-      "createdAt": 1786153446340,
+      "createdAt": 1785388199000,
       "canvasData": {
-        "x": 11780,
+        "x": 5580,
+        "y": 0,
+        "w": 1440,
+        "h": 1700,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-95e0a891",
+          "measuredAt": 1786342787761
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/receivable.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-receivable-enhanced",
+      "title": "应收管理-增强版",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785995400000,
+      "canvasData": {
+        "x": 6200,
         "y": 0,
         "w": 1440,
         "h": 1700,
@@ -450,8 +266,33 @@
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
+          "sourceHash": "fnv1a-99c0446b",
+          "measuredAt": 1786416197068
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/receivable-enhanced.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-payable",
+      "title": "应付管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785388199000,
+      "canvasData": {
+        "x": 6820,
+        "y": 0,
+        "w": 1440,
+        "h": 1700,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
           "sourceHash": "fnv1a-4d3715d2",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
@@ -464,9 +305,9 @@
       "title": "应付管理-增强版",
       "type": "page",
       "version": 1,
-      "createdAt": 1786153446340,
+      "createdAt": 1786003600000,
       "canvasData": {
-        "x": 12400,
+        "x": 7440,
         "y": 0,
         "w": 1440,
         "h": 1700,
@@ -476,7 +317,7 @@
           "contentHeight": 900,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-78295dd4",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786416197068
         }
       },
       "devMetadata": {
@@ -485,13 +326,181 @@
       }
     },
     {
+      "id": "page-rates",
+      "title": "运价管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785393534000,
+      "canvasData": {
+        "x": 8060,
+        "y": 0,
+        "w": 1440,
+        "h": 1900,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-616e8fdb",
+          "measuredAt": 1786342787761
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/rates.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-bill-writeoff",
+      "title": "账单核销",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000001,
+      "canvasData": {
+        "x": 8680,
+        "y": 0,
+        "w": 1440,
+        "h": 1500,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-ca69eb28",
+          "measuredAt": 1786342787761
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/bill-writeoff.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-cs-data",
+      "title": "客服数据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000002,
+      "canvasData": {
+        "x": 9300,
+        "y": 0,
+        "w": 1440,
+        "h": 1600,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-7e512d88",
+          "measuredAt": 1786342787761
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/cs-data.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-customer-flow",
+      "title": "客户流水",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000003,
+      "canvasData": {
+        "x": 9920,
+        "y": 0,
+        "w": 1440,
+        "h": 1400,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-4cae5f93",
+          "measuredAt": 1786342787761
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/customer-flow.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-demo-entry",
+      "title": "演示入口",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000004,
+      "canvasData": {
+        "x": 10540,
+        "y": 0,
+        "w": 1440,
+        "h": 900,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/demo-entry.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-document-data",
+      "title": "单证数据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000005,
+      "canvasData": {
+        "x": 11160,
+        "y": 0,
+        "w": 1440,
+        "h": 1400,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-27ff23e3",
+          "measuredAt": 1786342787761
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/document-data.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-receivable-report",
+      "title": "应收报表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1785996000006,
+      "canvasData": {
+        "x": 11780,
+        "y": 0,
+        "w": 1440,
+        "h": 1400,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-c8b26b16",
+          "measuredAt": 1786342787761
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/receivable-report.html",
+        "interactions": []
+      }
+    },
+    {
       "id": "page-warehouse-data",
       "title": "海外仓数据",
       "type": "page",
       "version": 1,
-      "createdAt": 1786153446340,
+      "createdAt": 1786066249603,
       "canvasData": {
-        "x": 13020,
+        "x": 12400,
         "y": 0,
         "w": 1440,
         "h": 1600,
@@ -501,7 +510,7 @@
           "contentHeight": 900,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-59268ca8",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786416197068
         }
       },
       "devMetadata": {
@@ -514,23 +523,48 @@
       "title": "供应商管理",
       "type": "page",
       "version": 1,
-      "createdAt": 1786153446340,
+      "createdAt": 1786069800000,
       "canvasData": {
-        "x": 13640,
+        "x": 13020,
         "y": 0,
         "w": 1440,
         "h": 1900,
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 900,
+          "contentHeight": 100,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-34b5e1bf",
-          "measuredAt": 1786415146512
+          "measuredAt": 1786342787761
         }
       },
       "devMetadata": {
         "htmlSrc": "pages/supplier-management.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-customer",
+      "title": "客户管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1786152308326,
+      "canvasData": {
+        "x": 13640,
+        "y": 0,
+        "w": 1440,
+        "h": 1600,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-9b843cf2",
+          "measuredAt": 1786325033760
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/customer.html",
         "interactions": []
       }
     }
@@ -538,8 +572,8 @@
   "config": {
     "autoLayout": true,
     "deviceType": "desktop",
-    "projectName": "沃利供应链TMS",
-    "visualEditorEnabled": false,
-    "showEdge": false
+    "viewportMode": "app-shell",
+    "showEdge": false,
+    "visualEditorEnabled": false
   }
 }

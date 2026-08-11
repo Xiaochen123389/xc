@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - TMS供应链管理系统</title>
+    <title>地址簿 - TMS供应链管理系统</title>
     <style id="theme-vars">
 :root {
   /* === 品牌主色（现代化蓝色）=== */
@@ -809,201 +809,817 @@ th.sortable:hover { color: var(--tms-primary); }
     </style>
 </head>
 <body>
-<div class="login-layout">
-  <!-- 左侧品牌展示区 -->
-  <div class="login-hero">
-    <div class="login-brand">
-      <div class="login-brand-icon">T</div>
-      <div>
-        <div class="login-brand-name">TMS 供应链</div>
-        <div class="login-brand-sub">TRANSPORT MANAGEMENT SYSTEM</div>
+
+<!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">T</div>
+      <div class="sidebar-logo-text">
+        TMS 供应链
+        <small>SMART LOGISTICS</small>
       </div>
     </div>
 
-    <div class="login-hero-content">
-      <h1 class="login-hero-title">
-        智能TMS · <span>供应链管理系统</span>
-      </h1>
-      <p class="login-hero-desc">
-        全链路数字化运输管理平台，覆盖运单、提单、路由、结算全流程，助力企业物流效率提升，降本增效。
-      </p>
-      <div class="login-features">
-        <div class="login-feature">
-          <div class="login-feature-icon">📦</div>
-          <div>
-            <div class="login-feature-title">运单管理</div>
-            <div class="login-feature-desc">全生命周期跟踪，实时状态更新</div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">概览</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span>工作台</span>
+      </a>
+
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item has-sub expanded" onclick="void(0)">
+        <span class="nav-icon">📦</span>
+        <span>运单管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="waybill-list.html" class="submenu-item">运单列表</a>
+        <a href="waybill-create.html" class="submenu-item">创建运单</a>
+      </div>
+
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">🚢</span>
+        <span>提单管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="bill-list.html" class="submenu-item">提单列表</a>
+        <a href="bill-create.html" class="submenu-item">创建提单</a>
+      </div>
+
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">📏</span>
+        <span>超限管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="oversize.html" class="submenu-item">超限货物</a>
+        <a href="#" class="submenu-item" onclick="toast('超限审批开发中','info')">超限审批</a>
+      </div>
+
+      <div class="nav-group-title">财务管理</div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">💰</span>
+        <span>应收管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
+        <a href="payable-enhanced.html" class="submenu-item">应付账单</a>
+      </div>
+
+      <div class="nav-group-title">基础数据</div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">💹</span>
+        <span>运价管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="rates.html?tab=sell" class="submenu-item">销售运价</a>
+        <a href="rates.html?tab=buy" class="submenu-item">采购运价</a>
+      </div>
+      <a href="service.html" class="nav-item">
+        <span class="nav-icon">🛣️</span>
+        <span>服务管理</span>
+      </a>
+      <a href="address.html" class="nav-item active">
+        <span class="nav-icon">📍</span>
+        <span>地址簿</span>
+      </a>
+
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item" onclick="toast('系统设置功能开发中','info')">
+        <span class="nav-icon">⚙️</span>
+        <span>系统设置</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">王</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">王主管</div>
+          <div class="sidebar-user-role">系统管理员</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+<!-- 顶部导航 -->
+<header class="app-header">
+      <div class="header-breadcrumb">
+        <a href="dashboard.html">首页</a>
+        <span class="sep">/</span>
+        <a href="#">基础数据</a>
+        <span class="sep">/</span>
+        <span class="current">地址簿</span>
+      </div>
+      <div class="header-right">
+        <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
+        <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">
+          🔔
+          <span class="header-badge">3</span>
+        </div>
+        <div class="theme-toggle" title="主题切换" onclick="toast('主题切换功能开发中','info')">🌙</div>
+        <div class="header-divider"></div>
+        <div class="dropdown-wrap">
+          <div class="header-user" data-dropdown="userMenu">
+            <div class="header-user-avatar">王</div>
+            <span class="header-user-name">王主管</span>
+          </div>
+          <div class="dropdown-menu" id="userMenu">
+            <div class="dropdown-item" onclick="toast('个人中心开发中','info')">
+              <span class="dd-icon">👤</span>个人中心
+            </div>
+            <div class="dropdown-item" onclick="toast('设置开发中','info')">
+              <span class="dd-icon">⚙️</span>设置
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="logout()">
+              <span class="dd-icon">🚪</span>退出登录
+            </div>
           </div>
         </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🚢</div>
-          <div>
-            <div class="login-feature-title">提单配货</div>
-            <div class="login-feature-desc">智能配载优化，一键生成提单</div>
+      </div>
+    </header>
+
+<main class="app-main">
+      <!-- 页面标题区 -->
+      <div class="page-title-bar">
+        <div>
+          <h1 class="page-title">地址簿管理</h1>
+          <p class="page-subtitle">管理发货地址、收件地址和常用联系人</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn" onclick="toast('请使用新增地址功能逐条添加，或联系管理员批量导入','info')">
+            <span>📤</span>导入地址
+          </button>
+          <button class="btn btn-primary" data-modal="addressForm" onclick="resetAddrForm()">
+            <span>＋</span>新增地址
+          </button>
+        </div>
+      </div>
+
+      <!-- 操作栏 -->
+      <div class="card" style="margin-bottom:16px;border-radius:var(--tms-radius-md);">
+        <div class="table-toolbar" style="border-radius:var(--tms-radius-md);border-bottom:none;">
+          <div class="toolbar-left" style="gap:0;">
+            <div class="tabs" data-tabs="addrTab" style="padding:0;margin:0;border-bottom:none;">
+              <div class="tab-item active" data-tab="all" onclick="filterAddrTab('all',this)">全部地址</div>
+              <div class="tab-item" data-tab="ship" onclick="filterAddrTab('ship',this)">发货地址</div>
+              <div class="tab-item" data-tab="recv" onclick="filterAddrTab('recv',this)">收件地址</div>
+              <div class="tab-item" data-tab="favorite" onclick="filterAddrTab('favorite',this)">常用地址</div>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <div class="segmented" id="addrDefaultSeg">
+              <div class="segmented-item" data-seg="default" onclick="filterDefault('default',this)">默认地址</div>
+              <div class="segmented-item active" data-seg="all" onclick="filterDefault('all',this)">全部</div>
+            </div>
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="form-control" id="addrSearch" placeholder="搜索地址/联系人/电话">
+            </div>
           </div>
         </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🛣️</div>
-          <div>
-            <div class="login-feature-title">服务路由</div>
-            <div class="login-feature-desc">多式联运规划，最优路径推荐</div>
+      </div>
+
+      <!-- 两栏布局 -->
+      <div class="layout-2col">
+        <!-- 左侧地址卡片列表 -->
+        <div>
+          <div class="addr-grid" id="addrGrid">
+            <!-- Card 1: 默认发货地址 -->
+            <div class="address-card selected" data-type="ship" data-default="true" data-name="公司总部-义乌仓库" data-contact="张先生" data-phone="13888888888" data-company="义乌环球供应链有限公司" data-email="zhang@global-scm.com" data-country="中国" data-province="浙江省" data-city="义乌市" data-district="江东街道" data-address="江东街道通宝路168号环球物流园A1仓库" data-zip="322000" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag default-tag">★ 默认地址</span>
+                <span class="addr-tag ship-tag">发货</span>
+              </div>
+              <div class="address-name">公司总部-义乌仓库</div>
+              <div class="address-phone">张先生 138****8888</div>
+              <div class="address-detail">浙江省义乌市江东街道通宝路168号环球物流园A1仓库 322000</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
+
+            <!-- Card 2: 收件地址 -->
+            <div class="address-card" data-type="recv" data-default="false" data-name="Amazon FBA LAX9" data-contact="John Smith" data-phone="+12135550198" data-company="Amazon.com Services LLC" data-email="fba-lax9@amazon.com" data-country="美国" data-province="California" data-city="Fontana" data-district="San Bernardino" data-address="11250 Oleander Ave, Fontana, CA 92337" data-zip="92337" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag recv-tag">收件</span>
+              </div>
+              <div class="address-name">Amazon FBA LAX9</div>
+              <div class="address-phone">John Smith +1 213-555-0198</div>
+              <div class="address-detail">11250 Oleander Ave, Fontana, CA 92337, USA</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
+
+            <!-- Card 3: 发货地址 -->
+            <div class="address-card" data-type="ship" data-default="false" data-name="深圳分拨中心" data-contact="李主管" data-phone="13999999999" data-company="深圳环球物流分公司" data-email="li@global-scm.com" data-country="中国" data-province="广东省" data-city="深圳市" data-district="宝安区" data-address="宝安区福永街道怀德南路翠岗物流园B区3栋" data-zip="518103" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag ship-tag">发货</span>
+              </div>
+              <div class="address-name">深圳分拨中心</div>
+              <div class="address-phone">李主管 139****9999</div>
+              <div class="address-detail">广东省深圳市宝安区福永街道怀德南路翠岗物流园B区3栋 518103</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
+
+            <!-- Card 4: 默认收件地址 -->
+            <div class="address-card" data-type="recv" data-default="true" data-name="德国FBA仓-WRO5" data-contact="Michael Weber" data-phone="+49301234567" data-company="Amazon Deutschland GmbH" data-email="fba-wro5@amazon.de" data-country="德国" data-province="Brandenburg" data-city="Berlin" data-district="" data-address="Am Stadtrand 25, 13581 Berlin" data-zip="13581" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag default-tag">★ 默认地址</span>
+                <span class="addr-tag recv-tag">收件</span>
+              </div>
+              <div class="address-name">德国FBA仓-WRO5</div>
+              <div class="address-phone">Michael Weber +49 30-1234567</div>
+              <div class="address-detail">Am Stadtrand 25, 13581 Berlin, Germany</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
+
+            <!-- Card 5: 发货地址 -->
+            <div class="address-card" data-type="ship" data-default="false" data-name="上海浦东操作仓" data-contact="王经理" data-phone="13666666666" data-company="上海环球货运代理有限公司" data-email="wang@global-scm.com" data-country="中国" data-province="上海市" data-city="上海市" data-district="浦东新区" data-address="浦东新区浦东机场镇航城路888号航空物流中心C-12" data-zip="201202" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag ship-tag">发货</span>
+              </div>
+              <div class="address-name">上海浦东操作仓</div>
+              <div class="address-phone">王经理 136****6666</div>
+              <div class="address-detail">上海市浦东新区浦东机场镇航城路888号航空物流中心C-12 201202</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
+
+            <!-- Card 6: 收件地址 -->
+            <div class="address-card" data-type="recv" data-default="false" data-name="日本客户-东京营业所" data-contact="田中一郎" data-phone="+81312345678" data-company="株式会社東京商事" data-email="tanaka@tokyoshoji.co.jp" data-country="日本" data-province="東京都" data-city="千代田区" data-district="" data-address="千代田区丸の内1-9-1 東京駅前ビル12F" data-zip="100-0005" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag recv-tag">收件</span>
+              </div>
+              <div class="address-name">日本客户-东京营业所</div>
+              <div class="address-phone">田中一郎 +81 3-1234-5678</div>
+              <div class="address-detail">〒100-0005 東京都千代田区丸の内1-9-1 東京駅前ビル12F</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
+
+            <!-- Card 7: 发货地址 -->
+            <div class="address-card" data-type="ship" data-default="false" data-name="广州白云集货仓" data-contact="陈主管" data-phone="13777777777" data-company="广州环球集运有限公司" data-email="chen@global-scm.com" data-country="中国" data-province="广东省" data-city="广州市" data-district="白云区" data-address="白云区太和镇谢家庄村顺景大道18号集运仓" data-zip="510445" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag ship-tag">发货</span>
+              </div>
+              <div class="address-name">广州白云集货仓</div>
+              <div class="address-phone">陈主管 137****7777</div>
+              <div class="address-detail">广东省广州市白云区太和镇谢家庄村顺景大道18号集运仓 510445</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
+
+            <!-- Card 8: 收件地址 -->
+            <div class="address-card" data-type="recv" data-default="false" data-name="英国FBA仓-MAN1" data-contact="David Wilson" data-phone="+44161234567" data-company="Amazon UK Services Ltd." data-email="fba-man1@amazon.co.uk" data-country="英国" data-province="Greater Manchester" data-city="Manchester" data-district="" data-address="Trucks Path, Manchester M17 1AE, United Kingdom" data-zip="M17 1AE" onclick="selectAddr(this)">
+              <div class="addr-tags">
+                <span class="addr-tag recv-tag">收件</span>
+              </div>
+              <div class="address-name">英国FBA仓-MAN1</div>
+              <div class="address-phone">David Wilson +44 161-234-567</div>
+              <div class="address-detail">Trucks Path, Manchester M17 1AE, United Kingdom</div>
+              <div class="addr-actions" onclick="event.stopPropagation()">
+                <button class="btn-link" data-modal="addressForm" onclick="editAddr(this.closest('.address-card'))">✏️ 编辑</button>
+                <span class="divider-v"></span>
+                <button class="btn-link" onclick="setDefaultAddr(this.closest('.address-card'))">★ 设为默认</button>
+                <span class="divider-v"></span>
+                <button class="btn-link danger" onclick="deleteAddr(this.closest('.address-card'))">🗑 删除</button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">📍</div>
-          <div>
-            <div class="login-feature-title">地址簿</div>
-            <div class="login-feature-desc">统一地址管理，智能校验纠错</div>
+
+        <!-- 右侧详情面板 -->
+        <div>
+          <div class="card sticky-col" id="addrDetailPanel">
+            <div class="card-body" id="addrDetailBody">
+              <!-- 初始选中的地址详情 -->
+              <div id="addrDetail">
+                <div class="detail-header">
+                  <div class="detail-title" id="dName">公司总部-义乌仓库</div>
+                  <span class="addr-tag default-tag" id="dDefaultTag">★ 默认地址</span>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-section-title">联系人信息</div>
+                  <div class="detail-row"><span class="detail-label">联系人</span><span class="detail-value" id="dContact">张先生</span></div>
+                  <div class="detail-row"><span class="detail-label">联系电话</span><span class="detail-value" id="dPhone">138****8888</span></div>
+                  <div class="detail-row"><span class="detail-label">公司名称</span><span class="detail-value" id="dCompany">义乌环球供应链有限公司</span></div>
+                  <div class="detail-row"><span class="detail-label">邮箱</span><span class="detail-value" id="dEmail">zhang@global-scm.com</span></div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-section-title">详细地址</div>
+                  <div class="detail-row"><span class="detail-label">国家</span><span class="detail-value" id="dCountry">中国</span></div>
+                  <div class="detail-row"><span class="detail-label">省/州</span><span class="detail-value" id="dProvince">浙江省</span></div>
+                  <div class="detail-row"><span class="detail-label">城市</span><span class="detail-value" id="dCity">义乌市</span></div>
+                  <div class="detail-row"><span class="detail-label">区/县</span><span class="detail-value" id="dDistrict">江东街道</span></div>
+                  <div class="detail-row"><span class="detail-label">详细地址</span><span class="detail-value" id="dAddress">江东街道通宝路168号环球物流园A1仓库</span></div>
+                  <div class="detail-row"><span class="detail-label">邮编</span><span class="detail-value" id="dZip">322000</span></div>
+                </div>
+                <div class="detail-actions">
+                  <button class="btn" data-modal="addressForm" id="dEditBtn" onclick="editAddr(getSelectedCard())">✏️ 编辑</button>
+                  <button class="btn" onclick="setDefaultAddr(getSelectedCard())">★ 设为默认</button>
+                  <button class="btn btn-danger" onclick="deleteAddr(getSelectedCard())">🗑 删除</button>
+                </div>
+              </div>
+              <!-- 空状态 -->
+              <div class="detail-empty" id="addrEmpty" style="display:none;">
+                <div class="detail-empty-icon">📍</div>
+                <div style="font-size:15px;color:var(--tms-text-2);font-weight:500;margin-bottom:6px;">选择左侧地址查看详情</div>
+                <div style="font-size:13px;">点击任意地址卡片，右侧将显示完整信息</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</main>
+
+<!-- Modal: 新增/编辑地址 -->
+<div class="modal-mask" id="addressForm">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="addrFormTitle">新增地址</span>
+      <button class="modal-close" data-close="addressForm">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- 地址类型 segmented -->
+      <div style="margin-bottom:18px;">
+        <label class="form-label">地址类型</label>
+        <div class="segmented" style="background:var(--tms-bg);padding:3px;width:100%;">
+          <div class="segmented-item active" data-af-type="ship" onclick="switchAddrType('ship',this)" style="flex:1;text-align:center;">🏭 发货地址</div>
+          <div class="segmented-item" data-af-type="recv" onclick="switchAddrType('recv',this)" style="flex:1;text-align:center;">📦 收件地址</div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:18px;">
+        <label class="form-label"><span class="required">*</span>地址名称</label>
+        <input type="text" class="form-control" id="afName" placeholder="如：义乌总部仓库">
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>联系人</label>
+          <input type="text" class="form-control" id="afContact" placeholder="联系人姓名">
+        </div>
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>联系电话</label>
+          <input type="text" class="form-control" id="afPhone" placeholder="联系电话">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">公司名称</label>
+          <input type="text" class="form-control" id="afCompany" placeholder="公司名称">
+        </div>
+        <div class="form-col">
+          <label class="form-label">邮箱</label>
+          <input type="text" class="form-control" id="afEmail" placeholder="邮箱地址">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>国家</label>
+          <select class="form-control" id="afCountry">
+            <option value="中国">🇨🇳 中国</option>
+            <option value="美国">🇺🇸 美国</option>
+            <option value="德国">🇩🇪 德国</option>
+            <option value="英国">🇬🇧 英国</option>
+            <option value="日本">🇯🇵 日本</option>
+            <option value="法国">🇫🇷 法国</option>
+            <option value="意大利">🇮🇹 意大利</option>
+            <option value="加拿大">🇨🇦 加拿大</option>
+            <option value="澳大利亚">🇦🇺 澳大利亚</option>
+            <option value="韩国">🇰🇷 韩国</option>
+          </select>
+        </div>
+        <div class="form-col">
+          <label class="form-label">省/州</label>
+          <input type="text" class="form-control" id="afProvince" placeholder="省/州">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>城市</label>
+          <input type="text" class="form-control" id="afCity" placeholder="城市">
+        </div>
+        <div class="form-col">
+          <label class="form-label">区/县</label>
+          <input type="text" class="form-control" id="afDistrict" placeholder="区/县">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:18px;">
+        <label class="form-label"><span class="required">*</span>详细地址</label>
+        <textarea class="form-control" id="afAddress" rows="2" placeholder="街道、门牌号等详细地址信息"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">邮编</label>
+          <input type="text" class="form-control" id="afZip" placeholder="邮政编码">
+        </div>
+        <div class="form-col" style="display:flex;align-items:flex-end;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <label class="switch">
+              <input type="checkbox" id="afDefault">
+              <span class="switch-track"></span>
+              <span class="switch-thumb"></span>
+            </label>
+            <span style="font-size:14px;color:var(--tms-text-1);">设为默认地址</span>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="login-footer">
-      © 2026 TMS Supply Chain Management System. All rights reserved.
-    </div>
-  </div>
-
-  <!-- 右侧登录表单 -->
-  <div class="login-box-wrap">
-    <div class="login-card">
-      <h2 class="login-title">欢迎回来</h2>
-      <p class="login-sub">登录您的工作台</p>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">👤</span>
-        <input type="text" id="username" class="form-control" placeholder="请输入用户名" autocomplete="username">
-      </div>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">🔒</span>
-        <input type="password" id="password" class="form-control" placeholder="请输入密码" autocomplete="current-password">
-        <span class="login-eye toggle-pwd" data-target="password" title="显示/隐藏密码">👁</span>
-      </div>
-
-      <div class="login-captcha" style="display:none;">
-        <input type="text" id="captcha" class="form-control" placeholder="验证码（演示模式已跳过）" maxlength="4" autocomplete="off">
-        <div class="captcha-img" id="captchaImg" title="演示模式无需验证码" style="opacity:.5;">DEMO</div>
-      </div>
-
-      <div style="margin-bottom:18px;padding:10px 14px;background:var(--tms-primary-light);border-radius:var(--tms-radius-md);font-size:12.5px;color:var(--tms-primary-active);line-height:1.6;">
-        演示账号：<b>wb</b> &nbsp;/&nbsp; 密码：<b>Wb123456</b>（任意非空账号密码均可登录体验）
-      </div>
-
-      <div class="login-error" id="loginError"></div>
-
-      <div class="login-meta">
-        <label class="checkbox-wrapper">
-          <input type="checkbox" id="rememberMe">
-          <span>记住我</span>
-        </label>
-        <a href="javascript:;" class="btn-link" onclick="toast('请联系管理员重置密码','warning')">忘记密码？</a>
-      </div>
-
-      <button class="btn btn-primary login-btn" id="loginBtn">登 录</button>
-
-      <div style="text-align:center; margin-top:20px; font-size:12px; color:var(--tms-text-3);">
-        使用员工账号登录 · 首次登录请修改初始密码
-      </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="addressForm">取消</button>
+      <button class="btn btn-primary" id="afSaveBtn" onclick="saveAddr()">保存</button>
     </div>
   </div>
 </div>
 
 <script src="../assets/app.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var captchaCode = '';
-  var captchaImg = document.getElementById('captchaImg');
-  var usernameInput = document.getElementById('username');
-  var passwordInput = document.getElementById('password');
-  var captchaInput = document.getElementById('captcha');
-  var rememberCheck = document.getElementById('rememberMe');
-  var loginBtn = document.getElementById('loginBtn');
-  var loginError = document.getElementById('loginError');
+// ========== 选中地址 ==========
+var selectedCard = document.querySelector('.address-card.selected');
 
-  // 生成验证码
-  function refreshCaptcha() {
-    captchaCode = genCaptcha();
-    renderCaptcha(captchaImg, captchaCode);
+function selectAddr(card) {
+  document.querySelectorAll('.address-card').forEach(function(c){ c.classList.remove('selected'); });
+  card.classList.add('selected');
+  selectedCard = card;
+  renderDetail(card);
+}
+
+function getSelectedCard() {
+  return selectedCard;
+}
+
+function renderDetail(card) {
+  if (!card) {
+    document.getElementById('addrDetail').style.display = 'none';
+    document.getElementById('addrEmpty').style.display = 'block';
+    return;
   }
-  refreshCaptcha();
-  captchaImg.addEventListener('click', refreshCaptcha);
+  document.getElementById('addrDetail').style.display = 'block';
+  document.getElementById('addrEmpty').style.display = 'none';
 
-  // 读取记住的用户名
-  var savedUser = localStorage.getItem('tms_remember_user');
-  if (savedUser) {
-    usernameInput.value = savedUser;
-    rememberCheck.checked = true;
+  document.getElementById('dName').textContent = card.dataset.name || '';
+  document.getElementById('dContact').textContent = card.dataset.contact || '';
+  document.getElementById('dPhone').textContent = maskPhone(card.dataset.phone || '');
+  document.getElementById('dCompany').textContent = card.dataset.company || '';
+  document.getElementById('dEmail').textContent = card.dataset.email || '';
+  document.getElementById('dCountry').textContent = card.dataset.country || '';
+  document.getElementById('dProvince').textContent = card.dataset.province || '';
+  document.getElementById('dCity').textContent = card.dataset.city || '';
+  document.getElementById('dDistrict').textContent = card.dataset.district || '';
+  document.getElementById('dAddress').textContent = card.dataset.address || '';
+  document.getElementById('dZip').textContent = card.dataset.zip || '';
+
+  var isDefault = card.dataset.default === 'true';
+  var type = card.dataset.type;
+  var tagEl = document.getElementById('dDefaultTag');
+  if (isDefault) {
+    tagEl.style.display = '';
+    tagEl.className = 'addr-tag default-tag';
+    tagEl.textContent = '★ 默认地址';
+  } else {
+    tagEl.style.display = '';
+    tagEl.className = 'addr-tag ' + (type === 'ship' ? 'ship-tag' : 'recv-tag');
+    tagEl.textContent = type === 'ship' ? '发货地址' : '收件地址';
   }
+}
 
-  // 输入校验
-  function showError(msg) {
-    loginError.textContent = msg;
-  }
-  function clearError() {
-    loginError.textContent = '';
-  }
-  function validateField(input, validator, msg) {
-    input.addEventListener('blur', function() {
-      if (!validator(input.value.trim())) {
-        input.classList.add('error');
-      } else {
-        input.classList.remove('error');
-      }
-    });
-    input.addEventListener('input', function() {
-      if (input.classList.contains('error') && validator(input.value.trim())) {
-        input.classList.remove('error');
-        clearError();
-      }
-    });
-  }
-  validateField(usernameInput, function(v) { return v.length > 0; }, '');
-  validateField(passwordInput, function(v) { return v.length >= 6; }, '');
-  validateField(captchaInput, function(v) { return v.length === 4; }, '');
+function maskPhone(p) {
+  if (!p) return '';
+  if (p.length > 7 && /^1\d{10}$/.test(p)) return p.substr(0,3) + '****' + p.substr(7);
+  return p;
+}
 
-  // 登录逻辑（演示模式：任意非空用户名+密码≥6位即可登录）
-  function doLogin() {
-    var u = usernameInput.value.trim();
-    var p = passwordInput.value;
+// ========== Tab 过滤 ==========
+var currentAddrType = 'all';
+var currentAddrDefault = 'all';
 
-    clearError();
-    if (!u) { showError('请输入用户名'); usernameInput.classList.add('error'); usernameInput.focus(); return; }
-    if (!p || p.length < 6) { showError('密码长度至少6位'); passwordInput.classList.add('error'); passwordInput.focus(); return; }
+function filterAddrTab(type, el) {
+  document.querySelectorAll('[data-tabs="addrTab"] .tab-item').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  currentAddrType = type;
+  applyAddrFilter();
+}
 
-    // 登录成功
-    loginBtn.classList.add('loading');
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<span class="loading-spin" style="border-top-color:#fff;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;"></span>登录中...';
+function filterDefault(scope, el) {
+  document.querySelectorAll('#addrDefaultSeg .segmented-item').forEach(function(s){ s.classList.remove('active'); });
+  el.classList.add('active');
+  currentAddrDefault = scope;
+  applyAddrFilter();
+}
 
-    if (rememberCheck.checked) {
-      localStorage.setItem('tms_remember_user', u);
-    } else {
-      localStorage.removeItem('tms_remember_user');
+function applyAddrFilter() {
+  var kw = (document.getElementById('addrSearch').value || '').trim().toLowerCase();
+  var cards = document.querySelectorAll('#addrGrid .address-card');
+  var visibleCount = 0;
+  var lastVisible = null;
+  cards.forEach(function(card) {
+    var type = card.dataset.type;
+    var isDefault = card.dataset.default === 'true';
+    var text = card.textContent.toLowerCase();
+    var typeOk = currentAddrType === 'all' || type === currentAddrType;
+    var defaultOk = currentAddrDefault === 'all' || (currentAddrDefault === 'default' && isDefault);
+    var kwOk = !kw || text.indexOf(kw) > -1;
+    var show = typeOk && defaultOk && kwOk;
+    card.style.display = show ? '' : 'none';
+    if (show) { visibleCount++; lastVisible = card; }
+    // if selected card is hidden, select first visible
+    if (show && card.classList.contains('selected')) {
+      // keep
     }
-    // 写入登录态
-    localStorage.setItem('tms_auth_token', 'mock_' + Date.now());
-    localStorage.setItem('tms_user_name', u);
-    localStorage.setItem('tms_user_role', '主管');
-
-    setTimeout(function() {
-      toast('登录成功，正在进入工作台...', 'success');
-      setTimeout(function() {
-        window.location.replace('dashboard.html');
-      }, 600);
-    }, 800);
-  }
-
-  // 回车提交
-  [usernameInput, passwordInput, captchaInput].forEach(function(inp) {
-    inp.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') doLogin();
-    });
   });
+  // if selected card is hidden
+  if (selectedCard && selectedCard.style.display === 'none') {
+    selectedCard.classList.remove('selected');
+    if (lastVisible) {
+      selectAddr(lastVisible);
+    } else {
+      selectedCard = null;
+      renderDetail(null);
+    }
+  }
+}
 
-  loginBtn.addEventListener('click', doLogin);
+// 搜索
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'addrSearch') applyAddrFilter();
+});
+
+// ========== 新增/编辑 ==========
+var editingCard = null;
+var afType = 'ship';
+
+function switchAddrType(type, el) {
+  document.querySelectorAll('[data-af-type]').forEach(function(s){ s.classList.remove('active'); });
+  el.classList.add('active');
+  afType = type;
+}
+
+function resetAddrForm() {
+  editingCard = null;
+  afType = 'ship';
+  document.getElementById('addrFormTitle').textContent = '新增地址';
+  document.getElementById('afName').value = '';
+  document.getElementById('afContact').value = '';
+  document.getElementById('afPhone').value = '';
+  document.getElementById('afCompany').value = '';
+  document.getElementById('afEmail').value = '';
+  document.getElementById('afCountry').value = '中国';
+  document.getElementById('afProvince').value = '';
+  document.getElementById('afCity').value = '';
+  document.getElementById('afDistrict').value = '';
+  document.getElementById('afAddress').value = '';
+  document.getElementById('afZip').value = '';
+  document.getElementById('afDefault').checked = false;
+  // reset type segmented
+  document.querySelectorAll('[data-af-type]').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelector('[data-af-type="ship"]').classList.add('active');
+}
+
+function editAddr(card) {
+  if (!card) return;
+  editingCard = card;
+  document.getElementById('addrFormTitle').textContent = '编辑地址';
+  document.getElementById('afName').value = card.dataset.name || '';
+  document.getElementById('afContact').value = card.dataset.contact || '';
+  document.getElementById('afPhone').value = card.dataset.phone || '';
+  document.getElementById('afCompany').value = card.dataset.company || '';
+  document.getElementById('afEmail').value = card.dataset.email || '';
+  document.getElementById('afCountry').value = card.dataset.country || '中国';
+  document.getElementById('afProvince').value = card.dataset.province || '';
+  document.getElementById('afCity').value = card.dataset.city || '';
+  document.getElementById('afDistrict').value = card.dataset.district || '';
+  document.getElementById('afAddress').value = card.dataset.address || '';
+  document.getElementById('afZip').value = card.dataset.zip || '';
+  document.getElementById('afDefault').checked = card.dataset.default === 'true';
+  afType = card.dataset.type || 'ship';
+  document.querySelectorAll('[data-af-type]').forEach(function(s){ s.classList.remove('active'); });
+  var segItem = document.querySelector('[data-af-type="' + afType + '"]');
+  if (segItem) segItem.classList.add('active');
+}
+
+function saveAddr() {
+  var name = document.getElementById('afName').value.trim();
+  var contact = document.getElementById('afContact').value.trim();
+  var phone = document.getElementById('afPhone').value.trim();
+  var city = document.getElementById('afCity').value.trim();
+  var address = document.getElementById('afAddress').value.trim();
+  if (!name) { toast('请输入地址名称','warning'); return; }
+  if (!contact) { toast('请输入联系人','warning'); return; }
+  if (!phone) { toast('请输入联系电话','warning'); return; }
+  if (!city) { toast('请输入城市','warning'); return; }
+  if (!address) { toast('请输入详细地址','warning'); return; }
+
+  var btn = document.getElementById('afSaveBtn');
+  setBtnLoading(btn, '保存中...');
+  setTimeout(function(){
+    resetBtn(btn);
+    closeModal('addressForm');
+    if (editingCard) {
+      // update existing card
+      editingCard.dataset.name = name;
+      editingCard.dataset.contact = contact;
+      editingCard.dataset.phone = phone;
+      editingCard.dataset.company = document.getElementById('afCompany').value.trim();
+      editingCard.dataset.email = document.getElementById('afEmail').value.trim();
+      editingCard.dataset.country = document.getElementById('afCountry').value;
+      editingCard.dataset.province = document.getElementById('afProvince').value.trim();
+      editingCard.dataset.city = city;
+      editingCard.dataset.district = document.getElementById('afDistrict').value.trim();
+      editingCard.dataset.address = address;
+      editingCard.dataset.zip = document.getElementById('afZip').value.trim();
+      editingCard.dataset.type = afType;
+      var isDefault = document.getElementById('afDefault').checked;
+      if (isDefault) {
+        // remove default from other cards of same type
+        document.querySelectorAll('.address-card[data-type="' + afType + '"][data-default="true"]').forEach(function(c){
+          if (c !== editingCard) {
+            c.dataset.default = 'false';
+            var dt = c.querySelector('.default-tag');
+            if (dt) dt.remove();
+          }
+        });
+        editingCard.dataset.default = 'true';
+        // add default tag if not present
+        if (!editingCard.querySelector('.default-tag')) {
+          var tags = editingCard.querySelector('.addr-tags');
+          var dt = document.createElement('span');
+          dt.className = 'addr-tag default-tag';
+          dt.textContent = '★ 默认地址';
+          tags.insertBefore(dt, tags.firstChild);
+        }
+      } else {
+        editingCard.dataset.default = 'false';
+        var dt = editingCard.querySelector('.default-tag');
+        if (dt) dt.remove();
+      }
+      // Update card display
+      updateCardDisplay(editingCard);
+      if (editingCard.classList.contains('selected')) renderDetail(editingCard);
+      toast('地址保存成功', 'success');
+    } else {
+      toast('地址保存成功', 'success');
+    }
+    applyAddrFilter();
+  }, 800);
+}
+
+function updateCardDisplay(card) {
+  var type = card.dataset.type;
+  var isDefault = card.dataset.default === 'true';
+  var name = card.dataset.name;
+  var contact = card.dataset.contact;
+  var phone = card.dataset.phone;
+  var addr = card.dataset.address;
+  var city = card.dataset.city;
+  var province = card.dataset.province;
+  var zip = card.dataset.zip;
+
+  card.querySelector('.address-name').textContent = name;
+  card.querySelector('.address-phone').textContent = contact + ' ' + maskPhone(phone);
+  card.querySelector('.address-detail').textContent = (province||'') + city + addr + ' ' + (zip||'');
+
+  // Update tags
+  var tagsDiv = card.querySelector('.addr-tags');
+  tagsDiv.innerHTML = '';
+  if (isDefault) {
+    var dt = document.createElement('span');
+    dt.className = 'addr-tag default-tag';
+    dt.textContent = '★ 默认地址';
+    tagsDiv.appendChild(dt);
+  }
+  var tt = document.createElement('span');
+  tt.className = 'addr-tag ' + (type === 'ship' ? 'ship-tag' : 'recv-tag');
+  tt.textContent = type === 'ship' ? '发货' : '收件';
+  tagsDiv.appendChild(tt);
+}
+
+// ========== 设为默认 ==========
+function setDefaultAddr(card) {
+  if (!card) return;
+  var type = card.dataset.type;
+  var name = card.dataset.name;
+  // remove default from same type
+  document.querySelectorAll('.address-card[data-type="' + type + '"][data-default="true"]').forEach(function(c){
+    if (c !== card) {
+      c.dataset.default = 'false';
+      var dt = c.querySelector('.default-tag');
+      if (dt) dt.remove();
+    }
+  });
+  card.dataset.default = 'true';
+  // add tag
+  if (!card.querySelector('.default-tag')) {
+    var tags = card.querySelector('.addr-tags');
+    var dt = document.createElement('span');
+    dt.className = 'addr-tag default-tag';
+    dt.textContent = '★ 默认地址';
+    tags.insertBefore(dt, tags.firstChild);
+  }
+  if (card.classList.contains('selected')) renderDetail(card);
+  toast('已将「' + name + '」设为默认' + (type === 'ship' ? '发货' : '收件') + '地址', 'success');
+}
+
+// ========== 删除地址 ==========
+function deleteAddr(card) {
+  if (!card) return;
+  var name = card.dataset.name;
+  confirmDialog('删除地址', '确定要删除地址 <b>' + name + '</b> 吗？此操作不可恢复。', function(){
+    card.classList.add('removing');
+    var isSelected = card.classList.contains('selected');
+    setTimeout(function(){
+      card.remove();
+      if (isSelected) {
+        var next = document.querySelector('#addrGrid .address-card:not(.removing)');
+        if (next) selectAddr(next);
+        else { selectedCard = null; renderDetail(null); }
+      }
+      applyAddrFilter();
+    }, 400);
+    toast('地址「' + name + '」已删除', 'success');
+  }, '删除', 'danger');
+}
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', function() {
+  if (selectedCard) renderDetail(selectedCard);
 });
 </script>
+
+    <style>
+  .addr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; align-content: start; }
+  .address-card { padding: 16px; border: 2px solid var(--tms-border-2); border-radius: var(--tms-radius-md); transition: all .2s; cursor: pointer; background: #fff; position: relative; }
+  .address-card:hover { border-color: #91caff; box-shadow: var(--tms-shadow); }
+  .address-card.selected { border-color: var(--tms-primary); background: var(--tms-primary-bg); box-shadow: 0 0 0 3px rgba(22,119,255,.08); }
+  .address-card.removing { animation: cardRemove .4s forwards; }
+  @keyframes cardRemove { to { opacity: 0; transform: scale(.9); height: 0; padding: 0; margin: 0; } }
+  .addr-tags { margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .addr-tag { display: inline-flex; align-items: center; padding: 1px 8px; font-size: 11px; border-radius: 3px; font-weight: 500; line-height: 18px; }
+  .addr-tag.default-tag { background: var(--tms-primary-light); color: var(--tms-primary); }
+  .addr-tag.ship-tag { background: var(--tms-success-light); color: #389e0d; }
+  .addr-tag.recv-tag { background: #f9f0ff; color: #722ed1; }
+  .address-name { font-size: 15px; font-weight: 600; color: var(--tms-text); margin: 4px 0; }
+  .address-phone { font-size: 13px; color: var(--tms-text-2); font-feature-settings: 'tnum'; }
+  .address-detail { font-size: 12.5px; color: var(--tms-text-3); margin-top: 6px; line-height: 1.5; }
+  .addr-actions { display: flex; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--tms-border-2); }
+  .addr-actions .divider-v { width: 1px; height: 12px; background: var(--tms-border); align-self: center; margin: 0 2px; }
+  .detail-empty { padding: 80px 20px; text-align: center; color: var(--tms-text-3); }
+  .detail-empty-icon { font-size: 64px; color: var(--tms-text-4); margin-bottom: 16px; opacity: .5; }
+  .detail-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--tms-border-2); }
+  .detail-title { font-size: 18px; font-weight: 700; color: var(--tms-text); flex: 1; }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section-title { font-size: 13px; font-weight: 600; color: var(--tms-text-2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .detail-section-title::before { content: ''; width: 3px; height: 12px; background: var(--tms-primary); border-radius: 2px; }
+  .detail-row { display: flex; padding: 7px 0; font-size: 13.5px; }
+  .detail-label { color: var(--tms-text-3); min-width: 80px; flex-shrink: 0; }
+  .detail-value { color: var(--tms-text-1); font-weight: 500; flex: 1; word-break: break-all; }
+  .detail-actions { display: flex; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--tms-border-2); }
+</style>
 <script>
 // Fallback: if lucide doesn't load, show emoji/text placeholders
 window.addEventListener('DOMContentLoaded', function(){

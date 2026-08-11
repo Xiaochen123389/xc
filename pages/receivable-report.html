@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - TMS供应链管理系统</title>
+    <title>应收报表 - TMS供应链管理系统</title>
     <style id="theme-vars">
 :root {
   /* === 品牌主色（现代化蓝色）=== */
@@ -809,222 +809,652 @@ th.sortable:hover { color: var(--tms-primary); }
     </style>
 </head>
 <body>
-<div class="login-layout">
-  <!-- 左侧品牌展示区 -->
-  <div class="login-hero">
-    <div class="login-brand">
-      <div class="login-brand-icon">T</div>
-      <div>
-        <div class="login-brand-name">TMS 供应链</div>
-        <div class="login-brand-sub">TRANSPORT MANAGEMENT SYSTEM</div>
-      </div>
-    </div>
 
-    <div class="login-hero-content">
-      <h1 class="login-hero-title">
-        智能TMS · <span>供应链管理系统</span>
-      </h1>
-      <p class="login-hero-desc">
-        全链路数字化运输管理平台，覆盖运单、提单、路由、结算全流程，助力企业物流效率提升，降本增效。
-      </p>
-      <div class="login-features">
-        <div class="login-feature">
-          <div class="login-feature-icon">📦</div>
-          <div>
-            <div class="login-feature-title">运单管理</div>
-            <div class="login-feature-desc">全生命周期跟踪，实时状态更新</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🚢</div>
-          <div>
-            <div class="login-feature-title">提单配货</div>
-            <div class="login-feature-desc">智能配载优化，一键生成提单</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">🛣️</div>
-          <div>
-            <div class="login-feature-title">服务路由</div>
-            <div class="login-feature-desc">多式联运规划，最优路径推荐</div>
-          </div>
-        </div>
-        <div class="login-feature">
-          <div class="login-feature-icon">📍</div>
-          <div>
-            <div class="login-feature-title">地址簿</div>
-            <div class="login-feature-desc">统一地址管理，智能校验纠错</div>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- Toast 容器 -->
+<div class="toast-container" id="toastContainer"></div>
 
-    <div class="login-footer">
-      © 2026 TMS Supply Chain Management System. All rights reserved.
-    </div>
-  </div>
-
-  <!-- 右侧登录表单 -->
-  <div class="login-box-wrap">
-    <div class="login-card">
-      <h2 class="login-title">欢迎回来</h2>
-      <p class="login-sub">登录您的工作台</p>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">👤</span>
-        <input type="text" id="username" class="form-control" placeholder="请输入用户名" autocomplete="username">
-      </div>
-
-      <div class="login-input-group">
-        <span class="login-input-icon">🔒</span>
-        <input type="password" id="password" class="form-control" placeholder="请输入密码" autocomplete="current-password">
-        <span class="login-eye toggle-pwd" data-target="password" title="显示/隐藏密码">👁</span>
-      </div>
-
-      <div class="login-captcha" style="display:none;">
-        <input type="text" id="captcha" class="form-control" placeholder="验证码（演示模式已跳过）" maxlength="4" autocomplete="off">
-        <div class="captcha-img" id="captchaImg" title="演示模式无需验证码" style="opacity:.5;">DEMO</div>
-      </div>
-
-      <div style="margin-bottom:18px;padding:10px 14px;background:var(--tms-primary-light);border-radius:var(--tms-radius-md);font-size:12.5px;color:var(--tms-primary-active);line-height:1.6;">
-        演示账号：<b>wb</b> &nbsp;/&nbsp; 密码：<b>Wb123456</b>（任意非空账号密码均可登录体验）
-      </div>
-
-      <div class="login-error" id="loginError"></div>
-
-      <div class="login-meta">
-        <label class="checkbox-wrapper">
-          <input type="checkbox" id="rememberMe">
-          <span>记住我</span>
-        </label>
-        <a href="javascript:;" class="btn-link" onclick="toast('请联系管理员重置密码','warning')">忘记密码？</a>
-      </div>
-
-      <button class="btn btn-primary login-btn" id="loginBtn">登 录</button>
-
-      <div style="text-align:center; margin-top:20px; font-size:12px; color:var(--tms-text-3);">
-        使用员工账号登录 · 首次登录请修改初始密码
-      </div>
+<!-- Confirm Dialog -->
+<div class="confirm-mask" id="confirmMask">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">确认操作</div>
+    <div class="confirm-msg" id="confirmMsg">确定执行此操作吗？</div>
+    <div class="confirm-actions">
+      <button class="btn" id="confirmCancel">取消</button>
+      <button class="btn btn-primary" id="confirmOk">确定</button>
     </div>
   </div>
 </div>
 
-<script src="../assets/app.js"></script>
+<!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">T</div>
+      <div class="sidebar-logo-text">
+        TMS 供应链
+        <small>SMART LOGISTICS</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">概览</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span>工作台</span>
+      </a>
+
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">📦</span>
+        <span>运单管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="waybill-list.html" class="submenu-item">运单列表</a>
+        <a href="waybill-create.html" class="submenu-item">创建运单</a>
+      </div>
+
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">🚢</span>
+        <span>提单管理</span>
+        <span class="nav-badge">12</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="bill-list.html" class="submenu-item">提单列表</a>
+        <a href="bill-create.html" class="submenu-item">创建提单</a>
+      </div>
+
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">📏</span>
+        <span>超限管理</span>
+        <span class="nav-badge">3</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="oversize.html" class="submenu-item">超限货物</a>
+        <a href="#" class="submenu-item" onclick="toast('超限审批开发中','info')">超限审批</a>
+      </div>
+
+      <div class="nav-group-title">财务管理</div>
+      <div class="nav-item has-sub expanded" onclick="void(0)">
+        <span class="nav-icon">💰</span>
+        <span>应收管理</span>
+        <span class="nav-badge">5</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
+        <a href="customer-flow.html" class="submenu-item">客户流水</a>
+        <a href="bill-writeoff.html" class="submenu-item">账单核销</a>
+        <a href="receivable-report.html" class="submenu-item active">应收报表</a>
+      </div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">📤</span>
+        <span>应付管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="payable-enhanced.html" class="submenu-item">应付账单</a>
+      </div>
+
+      <div class="nav-group-title">数据视图</div>
+      <a href="receivable-enhanced.html" class="nav-item">
+        <span class="nav-icon">📥</span>
+        <span>应收数据</span>
+      </a>
+      <a href="payable-enhanced.html" class="nav-item">
+        <span class="nav-icon">📤</span>
+        <span>应付数据</span>
+      </a>
+      <a href="document-data.html" class="nav-item">
+        <span class="nav-icon">📄</span>
+        <span>单证数据</span>
+      </a>
+      <a href="cs-data.html" class="nav-item">
+        <span class="nav-icon">🎧</span>
+        <span>客服数据</span>
+      </a>
+
+      <div class="nav-group-title">基础数据</div>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">💹</span>
+        <span>运价管理</span>
+        <span class="nav-caret">▶</span>
+      </div>
+      <div class="submenu">
+        <a href="rates.html?tab=sell" class="submenu-item">销售运价</a>
+        <a href="rates.html?tab=buy" class="submenu-item">采购运价</a>
+      </div>
+      <a href="service.html" class="nav-item">
+        <span class="nav-icon">🛣️</span>
+        <span>服务管理</span>
+      </a>
+      <a href="address.html" class="nav-item">
+        <span class="nav-icon">📍</span>
+        <span>地址簿</span>
+      </a>
+
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item" onclick="toast('系统设置功能开发中','info')">
+        <span class="nav-icon">⚙️</span>
+        <span>系统设置</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">王</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">王主管</div>
+          <div class="sidebar-user-role">系统管理员</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+<header class="app-header">
+      <div class="header-breadcrumb">
+        <a href="dashboard.html">首页</a>
+        <span class="sep">/</span>
+        <a href="#">财务管理</a>
+        <span class="sep">/</span>
+        <span class="current">应收报表</span>
+      </div>
+      <div class="header-right">
+        <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
+        <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">
+          🔔
+          <span class="header-badge">3</span>
+        </div>
+        <div class="theme-toggle" title="主题切换" onclick="toast('主题切换功能开发中','info')">🌙</div>
+        <div class="header-divider"></div>
+        <div class="dropdown-wrap">
+          <div class="header-user" data-dropdown="userMenu">
+            <div class="header-user-avatar">王</div>
+            <span class="header-user-name">王主管</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+<main class="app-main">
+      <!-- 页面标题区 -->
+      <div class="page-title-bar">
+        <div>
+          <h1 class="page-title">📊 应收报表</h1>
+          <p class="page-subtitle">应收账款统计分析与报表导出</p>
+        </div>
+        <div class="page-actions">
+          <a href="receivable-enhanced.html" class="btn">
+            <span>←</span>返回应收管理
+          </a>
+          <button class="btn btn-primary" onclick="exportReport()">
+            <span>⬇</span>导出报表
+          </button>
+        </div>
+      </div>
+
+      <!-- 筛选栏 -->
+      <div class="filter-bar">
+        <div class="filter-grid">
+          <div class="filter-item">
+            <label class="filter-label">客户名称</label>
+            <input type="text" class="form-control" id="fCustomer" placeholder="请输入客户名称">
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">时间范围</label>
+            <div class="date-range">
+              <input type="date" class="form-control" id="fDateStart" value="2026-07-01">
+              <span class="date-range-sep">~</span>
+              <input type="date" class="form-control" id="fDateEnd" value="2026-07-31">
+            </div>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">统计维度</label>
+            <select class="form-control" id="fDimension">
+              <option value="customer">按客户</option>
+              <option value="sales">按销售代表</option>
+              <option value="service">按客服代表</option>
+              <option value="finance">按财务代表</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">币种</label>
+            <select class="form-control" id="fCurrency">
+              <option value="">全部币种</option>
+              <option value="CNY">人民币 (CNY)</option>
+              <option value="USD">美元 (USD)</option>
+              <option value="EUR">欧元 (EUR)</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="btn" onclick="resetFilter()">重置</button>
+          <button class="btn btn-primary" onclick="generateReport()">
+            <span>📊</span>生成报表
+          </button>
+        </div>
+      </div>
+
+      <!-- 统计概览卡片 -->
+      <div class="stat-grid">
+        <div class="stat-card stat-orange" onclick="toast('应收总额：含税合计','info')">
+          <div class="stat-info">
+            <div class="stat-label">💰 应收总额</div>
+            <div class="stat-value">¥2,168,050</div>
+            <div class="stat-trend up">↑ ¥218K 较上期</div>
+          </div>
+          <div class="stat-icon-wrap">💰</div>
+        </div>
+        <div class="stat-card stat-success" onclick="toast('已收款总额','info')">
+          <div class="stat-info">
+            <div class="stat-label">✅ 已收款总额</div>
+            <div class="stat-value">¥1,794,570</div>
+            <div class="stat-trend up">↑ 回款稳步增长</div>
+          </div>
+          <div class="stat-icon-wrap">✅</div>
+        </div>
+        <div class="stat-card" onclick="toast('待收款总额','info')">
+          <div class="stat-info">
+            <div class="stat-label">⏳ 待收款总额</div>
+            <div class="stat-value">¥373,480</div>
+            <div class="stat-trend" style="color:var(--tms-primary);">10 笔待结算</div>
+          </div>
+          <div class="stat-icon-wrap">⏳</div>
+        </div>
+        <div class="stat-card stat-cyan" onclick="toast('整体收款率','info')">
+          <div class="stat-info">
+            <div class="stat-label">📈 收款率</div>
+            <div class="stat-value">82.8%</div>
+            <div class="progress" style="margin-top:4px;"><div class="progress-bar" style="width:82.8%;"></div></div>
+          </div>
+          <div class="stat-icon-wrap">📈</div>
+        </div>
+      </div>
+
+      <!-- 报表表格卡片 -->
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="toolbar-left">
+            <span class="card-title"><span class="card-title-bar"></span>应收账款明细报表</span>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn btn-sm" onclick="exportReport()"><span>⬇</span>导出 Excel</button>
+            <button class="btn btn-sm" onclick="toast('打印报表功能开发中','info')"><span>🖨</span>打印</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="reportTable">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="customer" onclick="sortTable(this)">客户</th>
+                <th>币种</th>
+                <th class="sortable text-right" data-sort="revenue" onclick="sortTable(this)" style="text-align:right;">营业额</th>
+                <th class="sortable text-right" data-sort="received" onclick="sortTable(this)" style="text-align:right;">已收款</th>
+                <th class="sortable text-right" data-sort="pending" onclick="sortTable(this)" style="text-align:right;">待收款</th>
+                <th class="sortable" data-sort="rate" onclick="sortTable(this)">收款率</th>
+                <th>销售代表</th>
+                <th>客服代表</th>
+                <th>财务代表</th>
+              </tr>
+            </thead>
+            <tbody id="reportTbody"></tbody>
+            <tfoot id="reportTfoot"></tfoot>
+          </table>
+        </div>
+        <div class="report-note">* 应收报表不包含退货产生的应收数据。</div>
+        <!-- 分页 -->
+        <div class="pagination">
+          <div class="pagination-info" id="pageInfo">共 0 条</div>
+          <div class="pagination-pages">
+            <select class="form-control page-size-select" id="pageSize" onchange="changePageSize()">
+              <option value="5">5 条/页</option>
+              <option value="10" selected>10 条/页</option>
+              <option value="20">20 条/页</option>
+            </select>
+            <button class="page-btn" id="prevPage" onclick="goPage(-1)">‹</button>
+            <span id="pageNumbers"></span>
+            <button class="page-btn" id="nextPage" onclick="goPage(1)">›</button>
+            <div class="page-jumper">跳至<input type="number" id="pageJumper" min="1" value="1">页</div>
+          </div>
+        </div>
+      </div>
+
+</main>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var captchaCode = '';
-  var captchaImg = document.getElementById('captchaImg');
-  var usernameInput = document.getElementById('username');
-  var passwordInput = document.getElementById('password');
-  var captchaInput = document.getElementById('captcha');
-  var rememberCheck = document.getElementById('rememberMe');
-  var loginBtn = document.getElementById('loginBtn');
-  var loginError = document.getElementById('loginError');
+// ========== 模拟报表数据 ==========
+var reportData = [
+  { customer: '深圳市华星跨境物流有限公司', currency: 'CNY', revenue: 328500.00, received: 285600.00, sales: '张明辉', service: '李婷', finance: '王芳' },
+  { customer: '广州市粤海国际货运代理有限公司', currency: 'CNY', revenue: 256800.00, received: 256800.00, sales: '陈志强', service: '刘洋', finance: '赵敏' },
+  { customer: '上海远洋供应链管理有限公司', currency: 'USD', revenue: 158200.00, received: 95000.00, sales: '林伟杰', service: '周婷', finance: '孙莉' },
+  { customer: '义乌市鑫源进出口贸易有限公司', currency: 'CNY', revenue: 189600.00, received: 132800.00, sales: '黄俊杰', service: '吴芳', finance: '钱伟' },
+  { customer: '杭州鼎盛电商物流科技有限公司', currency: 'CNY', revenue: 412300.00, received: 412300.00, sales: '杨帆', service: '郑丽', finance: '王芳' },
+  { customer: '宁波海天国际贸易股份有限公司', currency: 'USD', revenue: 225400.00, received: 180320.00, sales: '周建华', service: '陈静', finance: '赵敏' },
+  { customer: '厦门嘉联电子商务有限公司', currency: 'CNY', revenue: 98750.00, received: 59250.00, sales: '刘强', service: '林娜', finance: '孙莉' },
+  { customer: '苏州德邦跨境电商服务有限公司', currency: 'CNY', revenue: 156200.00, received: 109340.00, sales: '赵明', service: '何静', finance: '钱伟' },
+  { customer: '东莞市快捷通国际物流有限公司', currency: 'CNY', revenue: 78500.00, received: 78500.00, sales: '孙浩', service: '李婷', finance: '王芳' },
+  { customer: '佛山市顺德区联塑进出口贸易有限公司', currency: 'CNY', revenue: 263800.00, received: 184660.00, sales: '吴志远', service: '郑丽', finance: '赵敏' }
+];
 
-  // 生成验证码
-  function refreshCaptcha() {
-    captchaCode = genCaptcha();
-    renderCaptcha(captchaImg, captchaCode);
+// ========== 运行时状态 ==========
+var filteredData = reportData.slice();
+var currentPage = 1;
+var pageSize = 10;
+var sortKey = null;
+var sortDir = null;
+
+// ========== 工具函数 ==========
+function fmtMoney(n, currency) {
+  var sym = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : '¥';
+  return sym + n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtMoneyPlain(n) {
+  return n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function calcRate(row) {
+  if (!row.revenue || row.revenue === 0) return 0;
+  return (row.received / row.revenue) * 100;
+}
+function rateClass(rate) {
+  if (rate >= 100) return 'success';
+  if (rate >= 80) return '';
+  if (rate >= 60) return 'warning';
+  return 'exception';
+}
+function rateColor(rate) {
+  if (rate >= 100) return 'var(--tms-success)';
+  if (rate >= 80) return 'var(--tms-primary)';
+  if (rate >= 60) return 'var(--tms-warning)';
+  return 'var(--tms-error)';
+}
+
+// ========== 渲染表格 ==========
+function renderTable() {
+  var tbody = document.getElementById('reportTbody');
+  var total = filteredData.length;
+  var start = (currentPage - 1) * pageSize;
+  var end = Math.min(start + pageSize, total);
+  var rows = filteredData.slice(start, end);
+
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty"><div class="empty-icon">📭</div><div class="empty-text">暂无报表数据，请调整筛选条件后重新生成报表</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = rows.map(function(r, i) {
+      var rate = calcRate(r);
+      var cls = rateClass(rate);
+      var pending = r.revenue - r.received;
+      return '<tr>' +
+        '<td><span class="link" onclick="toast(\'查看客户详情：' + r.customer + '\',\'info\')">' + r.customer + '</span></td>' +
+        '<td><span class="tag tag-blue">' + r.currency + '</span></td>' +
+        '<td class="text-right money-cell">' + fmtMoney(r.revenue, r.currency) + '</td>' +
+        '<td class="text-right" style="color:var(--tms-success);font-weight:600;">' + fmtMoney(r.received, r.currency) + '</td>' +
+        '<td class="text-right" style="color:' + (pending > 0 ? 'var(--tms-error)' : 'var(--tms-text-3)') + ';font-weight:600;">' + fmtMoney(pending, r.currency) + '</td>' +
+        '<td><div class="rate-cell"><div class="progress ' + cls + '"><div class="progress-bar" style="width:' + rate.toFixed(1) + '%;"></div></div><span class="rate-text" style="color:' + rateColor(rate) + ';">' + rate.toFixed(1) + '%</span></div></td>' +
+        '<td>' + r.sales + '</td>' +
+        '<td>' + r.service + '</td>' +
+        '<td>' + r.finance + '</td>' +
+        '</tr>';
+    }).join('');
   }
-  refreshCaptcha();
-  captchaImg.addEventListener('click', refreshCaptcha);
+  renderSummary();
+  renderPagination();
+}
 
-  // 读取记住的用户名
-  var savedUser = localStorage.getItem('tms_remember_user');
-  if (savedUser) {
-    usernameInput.value = savedUser;
-    rememberCheck.checked = true;
+// ========== 渲染汇总行 ==========
+function renderSummary() {
+  var tfoot = document.getElementById('reportTfoot');
+  var totalRev = 0, totalRec = 0;
+  filteredData.forEach(function(r) {
+    totalRev += r.revenue;
+    totalRec += r.received;
+  });
+  var totalPending = totalRev - totalRec;
+  var overallRate = totalRev > 0 ? (totalRec / totalRev) * 100 : 0;
+  var cls = rateClass(overallRate);
+  tfoot.innerHTML = '<tr>' +
+    '<td>合计（' + filteredData.length + ' 客户）</td>' +
+    '<td>—</td>' +
+    '<td class="text-right money-cell">¥' + fmtMoneyPlain(totalRev) + '</td>' +
+    '<td class="text-right" style="color:var(--tms-success);">¥' + fmtMoneyPlain(totalRec) + '</td>' +
+    '<td class="text-right" style="color:var(--tms-error);">¥' + fmtMoneyPlain(totalPending) + '</td>' +
+    '<td><div class="rate-cell"><div class="progress ' + cls + '"><div class="progress-bar" style="width:' + overallRate.toFixed(1) + '%;"></div></div><span class="rate-text" style="color:' + rateColor(overallRate) + ';">' + overallRate.toFixed(1) + '%</span></div></td>' +
+    '<td>—</td><td>—</td><td>—</td>' +
+    '</tr>';
+}
+
+// ========== 分页 ==========
+function renderPagination() {
+  var total = filteredData.length;
+  var totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  var start = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  var end = Math.min(currentPage * pageSize, total);
+  document.getElementById('pageInfo').textContent = '共 ' + total + ' 条，当前显示 ' + start + '-' + end + ' 条';
+
+  document.getElementById('prevPage').disabled = currentPage <= 1;
+  document.getElementById('nextPage').disabled = currentPage >= totalPages;
+
+  // 页码按钮
+  var pn = document.getElementById('pageNumbers');
+  var html = '';
+  var maxBtns = 5;
+  var s = Math.max(1, currentPage - 2);
+  var e = Math.min(totalPages, s + maxBtns - 1);
+  s = Math.max(1, e - maxBtns + 1);
+  if (s > 1) html += '<button class="page-btn" onclick="jumpPage(1)">1</button><span style="color:var(--tms-text-3);">…</span>';
+  for (var i = s; i <= e; i++) {
+    html += '<button class="page-btn' + (i === currentPage ? ' active' : '') + '" onclick="jumpPage(' + i + ')">' + i + '</button>';
   }
+  if (e < totalPages) html += '<span style="color:var(--tms-text-3);">…</span><button class="page-btn" onclick="jumpPage(' + totalPages + ')">' + totalPages + '</button>';
+  pn.innerHTML = html;
 
-  // 输入校验
-  function showError(msg) {
-    loginError.textContent = msg;
+  var jumper = document.getElementById('pageJumper');
+  if (jumper) { jumper.value = currentPage; jumper.max = totalPages; }
+}
+
+function jumpPage(p) { currentPage = p; renderTable(); }
+function goPage(delta) {
+  var totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  var target = currentPage + delta;
+  if (target < 1 || target > totalPages) return;
+  currentPage = target;
+  renderTable();
+}
+function changePageSize() {
+  pageSize = parseInt(document.getElementById('pageSize').value, 10);
+  currentPage = 1;
+  renderTable();
+  toast('已切换为每页 ' + pageSize + ' 条', 'info');
+}
+
+// ========== 排序 ==========
+function sortTable(th) {
+  var key = th.getAttribute('data-sort');
+  if (sortKey === key) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey = key;
+    sortDir = 'asc';
   }
-  function clearError() {
-    loginError.textContent = '';
-  }
-  function validateField(input, validator, msg) {
-    input.addEventListener('blur', function() {
-      if (!validator(input.value.trim())) {
-        input.classList.add('error');
-      } else {
-        input.classList.remove('error');
-      }
-    });
-    input.addEventListener('input', function() {
-      if (input.classList.contains('error') && validator(input.value.trim())) {
-        input.classList.remove('error');
-        clearError();
-      }
-    });
-  }
-  validateField(usernameInput, function(v) { return v.length > 0; }, '');
-  validateField(passwordInput, function(v) { return v.length >= 6; }, '');
-  validateField(captchaInput, function(v) { return v.length === 4; }, '');
+  // 更新表头样式
+  document.querySelectorAll('#reportTable thead th.sortable').forEach(function(t) {
+    t.classList.remove('sort-asc', 'sort-desc');
+  });
+  th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
 
-  // 登录逻辑（演示模式：任意非空用户名+密码≥6位即可登录）
-  function doLogin() {
-    var u = usernameInput.value.trim();
-    var p = passwordInput.value;
-
-    clearError();
-    if (!u) { showError('请输入用户名'); usernameInput.classList.add('error'); usernameInput.focus(); return; }
-    if (!p || p.length < 6) { showError('密码长度至少6位'); passwordInput.classList.add('error'); passwordInput.focus(); return; }
-
-    // 登录成功
-    loginBtn.classList.add('loading');
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<span class="loading-spin" style="border-top-color:#fff;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;"></span>登录中...';
-
-    if (rememberCheck.checked) {
-      localStorage.setItem('tms_remember_user', u);
-    } else {
-      localStorage.removeItem('tms_remember_user');
+  filteredData.sort(function(a, b) {
+    var va, vb;
+    if (key === 'rate') { va = calcRate(a); vb = calcRate(b); }
+    else if (key === 'customer') { va = a.customer; vb = b.customer; }
+    else { va = a[key]; vb = b[key]; }
+    if (typeof va === 'string') {
+      return sortDir === 'asc' ? va.localeCompare(vb, 'zh-CN') : vb.localeCompare(va, 'zh-CN');
     }
-    // 写入登录态
-    localStorage.setItem('tms_auth_token', 'mock_' + Date.now());
-    localStorage.setItem('tms_user_name', u);
-    localStorage.setItem('tms_user_role', '主管');
+    return sortDir === 'asc' ? va - vb : vb - va;
+  });
+  currentPage = 1;
+  renderTable();
+  var labels = { customer: '客户', revenue: '营业额', received: '已收款', pending: '待收款', rate: '收款率' };
+  toast('已按「' + (labels[key] || key) + '」' + (sortDir === 'asc' ? '升序' : '降序') + '排序', 'info');
+}
 
-    setTimeout(function() {
-      toast('登录成功，正在进入工作台...', 'success');
-      setTimeout(function() {
-        window.location.replace('dashboard.html');
-      }, 600);
-    }, 800);
-  }
+// ========== 筛选/查询 ==========
+function generateReport() {
+  var cust = document.getElementById('fCustomer').value.trim().toLowerCase();
+  var cur = document.getElementById('fCurrency').value;
+  var dim = document.getElementById('fDimension').value;
 
-  // 回车提交
-  [usernameInput, passwordInput, captchaInput].forEach(function(inp) {
-    inp.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') doLogin();
-    });
+  filteredData = reportData.filter(function(r) {
+    if (cust && r.customer.toLowerCase().indexOf(cust) === -1) return false;
+    if (cur && r.currency !== cur) return false;
+    return true;
   });
 
-  loginBtn.addEventListener('click', doLogin);
+  var dimLabels = { customer: '按客户', sales: '按销售代表', service: '按客服代表', finance: '按财务代表' };
+  currentPage = 1;
+  renderTable();
+  updateStatCards();
+  toast('报表已生成（' + dimLabels[dim] + '），共 ' + filteredData.length + ' 条数据', 'success');
+}
+
+function resetFilter() {
+  document.getElementById('fCustomer').value = '';
+  document.getElementById('fDateStart').value = '2026-07-01';
+  document.getElementById('fDateEnd').value = '2026-07-31';
+  document.getElementById('fDimension').value = 'customer';
+  document.getElementById('fCurrency').value = '';
+  filteredData = reportData.slice();
+  sortKey = null; sortDir = null;
+  document.querySelectorAll('#reportTable thead th.sortable').forEach(function(t) {
+    t.classList.remove('sort-asc', 'sort-desc');
+  });
+  currentPage = 1;
+  renderTable();
+  updateStatCards();
+  toast('筛选条件已重置', 'info');
+}
+
+// ========== 更新统计卡片 ==========
+function updateStatCards() {
+  var totalRev = 0, totalRec = 0;
+  filteredData.forEach(function(r) {
+    totalRev += r.revenue;
+    totalRec += r.received;
+  });
+  var totalPending = totalRev - totalRec;
+  var overallRate = totalRev > 0 ? (totalRec / totalRev) * 100 : 0;
+  var cards = document.querySelectorAll('.stat-card .stat-value');
+  if (cards[0]) cards[0].textContent = '¥' + fmtMoneyPlain(totalRev);
+  if (cards[1]) cards[1].textContent = '¥' + fmtMoneyPlain(totalRec);
+  if (cards[2]) cards[2].textContent = '¥' + fmtMoneyPlain(totalPending);
+  if (cards[3]) cards[3].textContent = overallRate.toFixed(1) + '%';
+  var bars = document.querySelectorAll('.stat-card .progress-bar');
+  if (bars[0]) bars[0].style.width = overallRate.toFixed(1) + '%';
+}
+
+// ========== 导出 ==========
+function exportReport() {
+  if (filteredData.length === 0) { toast('当前无数据可导出', 'warning'); return; }
+  var dim = document.getElementById('fDimension').value;
+  var dimLabels = { customer: '按客户', sales: '按销售代表', service: '按客服代表', finance: '按财务代表' };
+  toast('正在导出应收报表（' + dimLabels[dim] + '，共 ' + filteredData.length + ' 条）...', 'info');
+  setTimeout(function() {
+    toast('应收报表导出成功，文件已下载', 'success');
+  }, 1200);
+}
+
+// ========== Toast ==========
+function toast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
+  var iconMap = { info:'i', success:'✓', error:'✕', warning:'!' };
+  t.innerHTML = '<span class="toast-icon ' + type + '">' + (iconMap[type]||'i') + '</span><span>' + msg + '</span>';
+  container.appendChild(t);
+  setTimeout(function(){ t.style.opacity = '0'; t.style.transform = 'translateY(-12px)'; t.style.transition = 'all .3s'; }, 2500);
+  setTimeout(function(){ t.remove(); }, 2800);
+}
+
+// ========== Confirm Dialog ==========
+var _confirmCb = null;
+function confirmDialog(title, msg, cb, okText, okType) {
+  document.getElementById('confirmTitle').textContent = title || '确认操作';
+  document.getElementById('confirmMsg').innerHTML = msg || '确定执行此操作吗？';
+  var okBtn = document.getElementById('confirmOk');
+  okBtn.textContent = okText || '确定';
+  okBtn.className = 'btn ' + (okType === 'danger' ? 'btn-danger' : 'btn-primary');
+  _confirmCb = cb;
+  document.getElementById('confirmMask').classList.add('show');
+}
+document.getElementById('confirmCancel').onclick = function() {
+  document.getElementById('confirmMask').classList.remove('show');
+  _confirmCb = null;
+};
+document.getElementById('confirmOk').onclick = function() {
+  document.getElementById('confirmMask').classList.remove('show');
+  if (_confirmCb) { var cb = _confirmCb; _confirmCb = null; cb(); }
+};
+document.getElementById('confirmMask').addEventListener('click', function(e) {
+  if (e.target === this) { this.classList.remove('show'); _confirmCb = null; }
 });
-</script>
-<script>
-// Fallback: if lucide doesn't load, show emoji/text placeholders
-window.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){
-    document.querySelectorAll('[data-lucide]').forEach(function(el){
-      if(el.tagName==='I' || el.children.length===0){
-        var icon = el.getAttribute('data-lucide');
-        var map = {home:'🏠',layout:'📊',users:'👥',settings:'⚙️',search:'🔍',plus:'＋',
-          bell:'🔔',user:'👤',logOut:'🚪',chevronDown:'▾',chevronRight:'▸',x:'×',
-          filter:'🔽',download:'⬇',upload:'⬆',edit:'✏️',trash:'🗑',eye:'👁',
-          package:'📦',truck:'🚛',ship:'🚢',plane:'✈️',fileText:'📄',check:'✓',
-          alert:'⚠',clock:'🕐',mapPin:'📍',dollar:'💰',trendingUp:'📈',barChart2:'📊',
-          arrowRight:'→',menu:'☰',refresh:'🔄'};
-        if(!el.innerHTML.trim()) el.textContent = map[icon] || '•';
+
+// ========== Modal helpers ==========
+function openModal(id) { var el = document.getElementById(id); if (el) el.classList.add('show'); }
+function closeModal(id) { var el = document.getElementById(id); if (el) el.classList.remove('show'); }
+
+document.addEventListener('click', function(e) {
+  var closeId = e.target.getAttribute('data-close');
+  if (closeId) { var el = document.getElementById(closeId); if (el) el.classList.remove('show'); }
+});
+
+// ========== 页码跳转输入 ==========
+document.addEventListener('DOMContentLoaded', function() {
+  renderTable();
+  var jumper = document.getElementById('pageJumper');
+  if (jumper) {
+    jumper.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var p = parseInt(jumper.value, 10);
+        if (!isNaN(p)) jumpPage(p);
       }
     });
-    if(window.lucide && lucide.createIcons) { try{ lucide.createIcons(); }catch(e){} }
-  },100);
+  }
 });
 </script>
 
     <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+      .date-range { display: flex; align-items: center; gap: 6px; }
+      .date-range .form-control { flex: 1; min-width: 0; }
+      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
+      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
+      .report-note { font-size: 12.5px; color: var(--tms-text-3); margin-top: 12px; padding: 10px 14px; background: var(--tms-warning-light); border-radius: var(--tms-radius-md); border-left: 3px solid var(--tms-warning); }
+      .rate-cell { display: flex; align-items: center; gap: 10px; min-width: 140px; }
+      .rate-cell .progress { flex: 1; min-width: 80px; }
+      .rate-cell .rate-text { font-size: 12.5px; font-weight: 600; font-feature-settings: 'tnum'; min-width: 46px; text-align: right; }
+      .data-table tfoot td { background: #fafbfc; font-weight: 700; color: var(--tms-text); border-top: 2px solid var(--tms-border); border-bottom: none; }
+      .data-table tfoot td .money-cell { color: var(--tms-primary); }
+      .page-size-select { height: 32px; }
+      .stat-card.stat-orange::before { background: #fa8c16; }
+      .stat-card.stat-orange .stat-icon-wrap { background: #fff7e6; color: #fa8c16; }
+    </style>
 </body>
 </html>
