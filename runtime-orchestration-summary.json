@@ -87,18 +87,18 @@
     "derivationType": "in-place-edit",
     "affectedPages": [
       {
-        "nodeId": "page-waybill-create",
-        "htmlSrc": "pages/waybill-create.html",
-        "title": "创建运单",
-        "changeType": "restore-1to1-field-rebuild"
+        "nodeId": "page-receivable-enhanced",
+        "htmlSrc": "pages/receivable-enhanced.html",
+        "title": "应收管理-增强版",
+        "changeType": "add-all-orders-discount-view"
       }
     ],
     "expectedDispatches": [
       {
-        "nodeId": "page-waybill-create",
+        "nodeId": "page-receivable-enhanced",
         "packetType": "ExistingEditPagePacket",
-        "status": "pending",
-        "changedFiles": ["pages/waybill-create.html"],
+        "status": "completed",
+        "changedFiles": ["pages/receivable-enhanced.html"],
         "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
       }
     ],

@@ -1162,6 +1162,7 @@ th.sortable:hover { color: var(--tms-primary); }
             <button class="btn btn-sm btn-primary" onclick="openStatsModal()">📊 查看统计</button>
             <button class="btn btn-sm btn-primary" id="btnRechargeWriteOff" data-dom-id="btnRechargeWriteOff" onclick="openRechargeModal()">💰 充值核销</button>
             <button class="btn btn-sm" id="btnRechargeRecords" data-dom-id="btnRechargeRecords" onclick="openRechargeRecordsModal()">📒 充值记录</button>
+            <button class="btn btn-sm btn-primary" id="btnAllDiscount" data-dom-id="btnAllDiscount" onclick="openAllDiscountModal()">🎁 查看全部优惠</button>
             <button class="btn btn-sm btn-danger" id="btnBatchDelete" disabled onclick="batchAction('delete')">批量删除</button>
           </div>
           <div class="toolbar-right">
@@ -3419,6 +3420,113 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
+<!-- Modal: 全部订单优惠数据 -->
+<div class="modal-mask" id="allDiscountModal" data-dom-id="allDiscountModal">
+  <div class="modal modal-xl">
+    <div class="modal-header">
+      <span class="modal-title">🎁 全部订单优惠数据</span>
+      <button class="modal-close" data-close="allDiscountModal">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- 统计总览 -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+        <div class="discount-overview-card" style="background:var(--tms-success-light);border:1px solid var(--tms-border-2);border-radius:var(--tms-radius-md);padding:20px;text-align:center;">
+          <div style="font-size:13px;color:var(--tms-text-2);margin-bottom:8px;">优惠总金额</div>
+          <div id="allDiscountTotal" style="font-size:24px;font-weight:700;color:var(--tms-success);">¥0.00</div>
+        </div>
+        <div class="discount-overview-card" style="background:var(--tms-bg);border:1px solid var(--tms-border-2);border-radius:var(--tms-radius-md);padding:20px;text-align:center;">
+          <div style="font-size:13px;color:var(--tms-text-2);margin-bottom:8px;">涉及订单数</div>
+          <div id="allDiscountOrderCount" style="font-size:24px;font-weight:700;color:var(--tms-text-1);">0 单</div>
+        </div>
+        <div class="discount-overview-card" style="background:var(--tms-bg);border:1px solid var(--tms-border-2);border-radius:var(--tms-radius-md);padding:20px;text-align:center;">
+          <div style="font-size:13px;color:var(--tms-text-2);margin-bottom:8px;">优惠总笔数</div>
+          <div id="allDiscountItemCount" style="font-size:24px;font-weight:700;color:var(--tms-text-1);">0 笔</div>
+        </div>
+        <div class="discount-overview-card" style="background:var(--tms-bg);border:1px solid var(--tms-border-2);border-radius:var(--tms-radius-md);padding:20px;text-align:center;">
+          <div style="font-size:13px;color:var(--tms-text-2);margin-bottom:8px;">占应收总额比例</div>
+          <div id="allDiscountRatio" style="font-size:24px;font-weight:700;color:var(--tms-primary);">0.00%</div>
+        </div>
+      </div>
+
+      <!-- 筛选栏 -->
+      <div class="filter-bar" style="margin-bottom:16px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;">
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label class="filter-label">客户 / 账单号</label>
+            <input type="text" class="form-control" id="allDiscountSearch" placeholder="搜索客户名称 / 账单号" oninput="renderAllDiscounts()" style="width:220px;">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label class="filter-label">优惠类型</label>
+            <select class="form-control" id="allDiscountTypeFilter" onchange="renderAllDiscounts()" style="width:160px;">
+              <option value="">全部类型</option>
+              <option value="老客户返点">老客户返点</option>
+              <option value="时效延误补偿">时效延误补偿</option>
+              <option value="运费优惠">运费优惠</option>
+              <option value="批量对冲优惠">批量对冲优惠</option>
+              <option value="其他优惠">其他优惠</option>
+            </select>
+          </div>
+          <button class="btn" onclick="resetAllDiscountFilter()">重置</button>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-left:auto;">
+            <label class="filter-label">统计维度</label>
+            <select class="form-control" id="allDiscountGroupBy" onchange="renderAllDiscounts()" style="width:130px;">
+              <option value="byBill">按账单</option>
+              <option value="byCustomer">按客户</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 按账单明细 -->
+      <div id="allDiscountBillSection">
+        <div class="desc-section-title" style="margin-top:0;margin-bottom:12px;">按账单明细</div>
+        <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;margin-bottom:16px;">
+          <table class="data-table" style="font-size:13px;">
+            <thead>
+              <tr>
+                <th>账单号</th><th>客户名称</th>
+                <th style="text-align:right;">应收金额</th>
+                <th style="text-align:right;">已收金额</th>
+                <th style="text-align:right;">优惠金额</th>
+                <th>优惠笔数</th>
+                <th>优惠占比</th>
+                <th>优惠明细</th>
+              </tr>
+            </thead>
+            <tbody id="allDiscountTbody">
+              <tr><td colspan="8" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无优惠数据</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 按客户汇总 -->
+      <div id="allDiscountCustomerSection" style="display:none;">
+        <div class="desc-section-title" style="margin-top:0;margin-bottom:12px;">按客户汇总</div>
+        <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
+          <table class="data-table" style="font-size:13px;">
+            <thead>
+              <tr>
+                <th>客户名称</th><th>账单数</th>
+                <th style="text-align:right;">应收总额</th>
+                <th style="text-align:right;">优惠总额</th>
+                <th>优惠笔数</th>
+                <th>优惠占比</th>
+              </tr>
+            </thead>
+            <tbody id="allDiscountCustomerTbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无优惠数据</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="allDiscountModal">关闭</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal: 充值核销 -->
 <div class="modal-mask" id="rechargeWriteOffModal" data-dom-id="rechargeWriteOffModal">
   <div class="modal modal-lg">
@@ -3806,6 +3914,137 @@ th.sortable:hover { color: var(--tms-primary); }
   window.openOverallDiscountModal = function(){
     renderOverallDiscount();
     openModal('overallDiscountModal');
+  };
+
+  // ---------- 全部订单优惠数据 ----------
+  function escAll(s){
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function collectAllDiscountRows(){
+    var rows = [];
+    Array.prototype.slice.call(document.querySelectorAll('#receivableTbody tr')).forEach(function(tr){
+      var arNo = tr.getAttribute('data-ar-no');
+      if(!arNo) return;
+      var ar = window.getAr ? window.getAr(arNo) : null;
+      if(!ar || !(ar.discounts || []).length) return;
+      rows.push({
+        arNo: arNo,
+        customer: tr.getAttribute('data-customer') || ar.customer || '未知客户',
+        arAmount: parseFloat(tr.getAttribute('data-ar-amount')) || 0,
+        paidAmount: parseFloat(tr.getAttribute('data-paid-amount')) || 0,
+        discounts: (ar.discounts || []).map(function(d){
+          return { amount: Number(d.amount) || 0, reason: d.reason || '' };
+        })
+      });
+    });
+    return rows;
+  }
+  function rowDiscountTotal(r){
+    return r.discounts.reduce(function(s, d){ return s + d.amount; }, 0);
+  }
+  function renderAllDiscounts(){
+    var rows = collectAllDiscountRows();
+    var searchEl = document.getElementById('allDiscountSearch');
+    var typeEl = document.getElementById('allDiscountTypeFilter');
+    var groupEl = document.getElementById('allDiscountGroupBy');
+    if(!searchEl || !typeEl || !groupEl) return;
+    var keyword = (searchEl.value || '').trim().toLowerCase();
+    var typeFilter = typeEl.value;
+    var groupBy = groupEl.value;
+    // 筛选：客户/账单号模糊匹配 + 优惠类型
+    var filtered = rows.filter(function(r){
+      if(keyword){
+        var c = String(r.customer).toLowerCase();
+        var n = String(r.arNo).toLowerCase();
+        if(c.indexOf(keyword) === -1 && n.indexOf(keyword) === -1) return false;
+      }
+      if(typeFilter){
+        var has = r.discounts.some(function(d){ return classifyDiscount(d.reason) === typeFilter; });
+        if(!has) return false;
+      }
+      return true;
+    });
+    // 排序：按优惠金额降序
+    filtered.sort(function(a, b){ return rowDiscountTotal(b) - rowDiscountTotal(a); });
+    // 总览（跟随筛选结果重算）
+    var totalAmount = 0, itemCount = 0, arTotal = 0;
+    filtered.forEach(function(r){
+      totalAmount += rowDiscountTotal(r);
+      itemCount += r.discounts.length;
+      arTotal += r.arAmount;
+    });
+    document.getElementById('allDiscountTotal').textContent = fmtM(totalAmount);
+    document.getElementById('allDiscountOrderCount').textContent = filtered.length + ' 单';
+    document.getElementById('allDiscountItemCount').textContent = itemCount + ' 笔';
+    document.getElementById('allDiscountRatio').textContent = (arTotal > 0 ? (totalAmount / arTotal * 100) : 0).toFixed(2) + '%';
+    var billSection = document.getElementById('allDiscountBillSection');
+    var customerSection = document.getElementById('allDiscountCustomerSection');
+    if(groupBy === 'byCustomer'){
+      // 按客户汇总
+      billSection.style.display = 'none';
+      customerSection.style.display = '';
+      var custMap = {};
+      filtered.forEach(function(r){
+        if(!custMap[r.customer]) custMap[r.customer] = { customer: r.customer, billCount: 0, arTotal: 0, discTotal: 0, itemCount: 0 };
+        var c = custMap[r.customer];
+        c.billCount += 1;
+        c.arTotal += r.arAmount;
+        c.discTotal += rowDiscountTotal(r);
+        c.itemCount += r.discounts.length;
+      });
+      var custList = Object.keys(custMap).map(function(k){ return custMap[k]; }).sort(function(a, b){ return b.discTotal - a.discTotal; });
+      var ctbody = document.getElementById('allDiscountCustomerTbody');
+      if(custList.length === 0){
+        ctbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无优惠数据</td></tr>';
+      } else {
+        ctbody.innerHTML = custList.map(function(c){
+          var ratio = c.arTotal > 0 ? (c.discTotal / c.arTotal * 100) : 0;
+          return '<tr>' +
+            '<td>' + escAll(c.customer) + '</td>' +
+            '<td>' + c.billCount + '</td>' +
+            '<td style="text-align:right;">' + fmtM(c.arTotal) + '</td>' +
+            '<td style="text-align:right;color:var(--tms-success);font-weight:600;">- ' + fmtM(c.discTotal) + '</td>' +
+            '<td>' + c.itemCount + '</td>' +
+            '<td>' + ratio.toFixed(2) + '%</td></tr>';
+        }).join('');
+      }
+    } else {
+      // 按账单明细
+      billSection.style.display = '';
+      customerSection.style.display = 'none';
+      var tbody = document.getElementById('allDiscountTbody');
+      if(filtered.length === 0){
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无优惠数据</td></tr>';
+      } else {
+        tbody.innerHTML = filtered.map(function(r){
+          var discTotal = rowDiscountTotal(r);
+          var ratio = r.arAmount > 0 ? (discTotal / r.arAmount * 100) : 0;
+          var tagHtml = r.discounts.map(function(d){ return '<span class="tag tag-green">' + escAll(d.reason) + '</span>'; });
+          var shown = tagHtml.slice(0, 3).join(' ');
+          if(tagHtml.length > 3) shown += ' <span class="tag tag-gray">+' + (tagHtml.length - 3) + '</span>';
+          return '<tr>' +
+            '<td><span class="mono link" onclick="openDetail(\'' + r.arNo + '\')">' + r.arNo + '</span></td>' +
+            '<td>' + escAll(r.customer) + '</td>' +
+            '<td style="text-align:right;">' + fmtM(r.arAmount) + '</td>' +
+            '<td style="text-align:right;color:var(--tms-success);">' + fmtM(r.paidAmount) + '</td>' +
+            '<td style="text-align:right;color:var(--tms-success);font-weight:600;">- ' + fmtM(discTotal) + '</td>' +
+            '<td>' + r.discounts.length + '</td>' +
+            '<td>' + ratio.toFixed(2) + '%</td>' +
+            '<td><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;">' + shown + '</div></td></tr>';
+        }).join('');
+      }
+    }
+  }
+  window.renderAllDiscounts = renderAllDiscounts;
+  window.openAllDiscountModal = function(){
+    renderAllDiscounts();
+    openModal('allDiscountModal');
+  };
+  window.resetAllDiscountFilter = function(){
+    document.getElementById('allDiscountSearch').value = '';
+    document.getElementById('allDiscountTypeFilter').value = '';
+    document.getElementById('allDiscountGroupBy').value = 'byBill';
+    renderAllDiscounts();
   };
 
   // 打开详情时同步渲染订单费用
