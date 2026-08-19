@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客户流水 - TMS供应链管理系统</title>
+    <title>单证装柜 - TMS供应链管理系统</title>
     <style id="theme-vars">
 :root {
   /* === 品牌主色（现代化蓝色）=== */
@@ -389,6 +389,23 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 @keyframes modalIn { from{opacity:0;transform:translateY(-20px) scale(.98);} to{opacity:1;transform:translateY(0) scale(1);} }
 
+/* ========== Price Items ========== */
+.price-items-section { border: 1px solid var(--tms-border); border-radius: var(--tms-radius-md); padding: 12px; background: var(--tms-bg-1); margin-bottom: 18px; }
+.price-items-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.price-items-title { font-size: 14px; font-weight: 600; color: var(--tms-text); }
+.price-items-total { font-size: 14px; color: var(--tms-text-2); }
+.price-items-total strong { color: var(--tms-primary); font-size: 16px; margin-left: 4px; }
+.price-item-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.price-item-row .form-control { margin-bottom: 0; }
+.price-item-row .price-type-select { flex: 1; }
+.price-item-row .price-amount-input { width: 140px; flex-shrink: 0; }
+.price-item-row .btn-remove { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--tms-bg-hover); color: var(--tms-text-3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.price-item-row .btn-remove:hover { background: var(--tms-error-light); color: var(--tms-error); }
+.price-items-empty { font-size: 13px; color: var(--tms-text-3); text-align: center; padding: 12px 0; }
+.ar-ap-tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+.ar-ap-tag.receivable { background: #e6f7ff; color: #096dd9; }
+.ar-ap-tag.payable { background: #fff7e6; color: #d46b08; }
+
 /* ========== Toast ========== */
 .toast-container { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
 .toast {
@@ -519,60 +536,6 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; accent-
 /* ========== 图标（使用 unicode / inline SVG） ========== */
 .i { font-style: normal; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 
-/* ========== 登录页专属 ========== */
-.login-layout {
-  min-height: 100vh; display: flex; background: #fff;
-  position: relative; overflow: hidden;
-}
-.login-hero {
-  flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: space-between;
-  position: relative; z-index: 1;
-  background: linear-gradient(135deg, #0958d9 0%, #1677ff 40%, #36cfc9 100%);
-  color: #fff; overflow: hidden;
-}
-.login-hero::before {
-  content: ''; position: absolute; top: -30%; right: -20%; width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 60%);
-  border-radius: 50%;
-}
-.login-hero::after {
-  content: ''; position: absolute; bottom: -20%; left: -10%; width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 60%);
-  border-radius: 50%;
-}
-.login-brand { display: flex; align-items: center; gap: 12px; color: #fff; position: relative; z-index: 2; }
-.login-brand-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,.2); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,.15); border: 1px solid rgba(255,255,255,.3); }
-.login-brand-name { font-size: 20px; font-weight: 700; }
-.login-brand-sub { font-size: 12px; color: rgba(255,255,255,.7); }
-.login-hero-content { max-width: 480px; position: relative; z-index: 2; }
-.login-hero-title { font-size: 36px; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 16px; letter-spacing: -0.5px; }
-.login-hero-title span { color: #a0e8ff; }
-.login-hero-desc { font-size: 15px; color: rgba(255,255,255,.8); line-height: 1.7; margin-bottom: 36px; }
-.login-features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.login-feature { display: flex; gap: 12px; padding: 14px; background: rgba(255,255,255,.12); backdrop-filter: blur(10px); border-radius: var(--tms-radius-md); border: 1px solid rgba(255,255,255,.18); transition: all .2s; }
-.login-feature:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
-.login-feature-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,.2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-.login-feature-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px; }
-.login-feature-desc { font-size: 11.5px; color: rgba(255,255,255,.7); line-height: 1.4; }
-.login-footer { font-size: 12px; color: rgba(255,255,255,.6); position: relative; z-index: 2; }
-.login-box-wrap { width: 480px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 40px; position: relative; z-index: 1; }
-.login-card { width: 100%; background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(22,119,255,.15); }
-.login-title { font-size: 24px; font-weight: 700; color: var(--tms-text); margin-bottom: 6px; }
-.login-sub { font-size: 14px; color: var(--tms-text-3); margin-bottom: 28px; }
-.login-input-group { position: relative; margin-bottom: 18px; }
-.login-input-group .form-control { height: 44px; padding-left: 42px; font-size: 14px; border-radius: var(--tms-radius-md); }
-.login-input-group .form-control:focus { box-shadow: 0 0 0 3px rgba(22,119,255,.1); }
-.login-input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--tms-text-3); font-size: 16px; }
-.login-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--tms-text-3); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
-.login-eye:hover { color: var(--tms-primary); background: var(--tms-bg-hover); }
-.login-captcha { display: flex; gap: 10px; margin-bottom: 18px; }
-.login-captcha .form-control { flex: 1; height: 44px; border-radius: var(--tms-radius-md); padding-left: 14px; }
-.captcha-img { width: 110px; height: 44px; border-radius: var(--tms-radius-md); background: linear-gradient(135deg,#e8f0fe,#d6e8ff); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; letter-spacing: 4px; color: var(--tms-primary); cursor: pointer; font-family: "Courier New", monospace; font-style: italic; user-select: none; border: 1px solid var(--tms-border); transition: all .2s; }
-.captcha-img:hover { background: linear-gradient(135deg,#d6e8ff,#c2d9ff); }
-.login-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 13px; }
-.login-btn { width: 100%; height: 44px; font-size: 15px; border-radius: var(--tms-radius-md); font-weight: 600; }
-.login-error { color: var(--tms-error); font-size: 12px; margin-top: -12px; margin-bottom: 12px; min-height: 18px; }
-
 /* ========== 两栏布局 ========== */
 .layout-2col { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
 .layout-2col-wide { grid-template-columns: 1fr 400px; }
@@ -671,17 +634,6 @@ th.sortable:hover { color: var(--tms-primary); }
 .action-links .btn-link.danger { color: var(--tms-error); }
 .action-links .btn-link.danger:hover { background: var(--tms-error-light); }
 
-/* ========== 地址卡片 ========== */
-.address-card { padding: 16px; border: 1px solid var(--tms-border-2); border-radius: var(--tms-radius-md); transition: all .2s; cursor: pointer; background: #fff; }
-.address-card:hover { border-color: var(--tms-primary); box-shadow: var(--tms-shadow); }
-.address-tag { display: inline-block; padding: 1px 6px; font-size: 11px; border-radius: 3px; margin-right: 6px; font-weight: 500; }
-.address-tag.default { background: var(--tms-primary-light); color: var(--tms-primary); }
-.address-tag.home { background: var(--tms-success-light); color: #389e0d; }
-.address-tag.company { background: #f9f0ff; color: #722ed1; }
-.address-name { font-size: 15px; font-weight: 600; color: var(--tms-text); margin: 6px 0 4px; }
-.address-phone { font-size: 13px; color: var(--tms-text-2); font-feature-settings: 'tnum'; }
-.address-detail { font-size: 12.5px; color: var(--tms-text-3); margin-top: 6px; line-height: 1.5; }
-
 /* ========== 双卡片并排布局 ========== */
 .card-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .card-pair .card { display: flex; flex-direction: column; }
@@ -738,11 +690,6 @@ th.sortable:hover { color: var(--tms-primary); }
 
 /* ========== hidden 工具类 ========== */
 .hidden { display: none !important; }
-
-/* ========== 登录按钮loading状态 ========== */
-.login-btn.loading { pointer-events: none; opacity: .8; }
-.login-btn .loading-spin { border-top-color: #fff; border-color: rgba(255,255,255,.3); border-top-color: #fff; }
-
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
@@ -810,23 +757,8 @@ th.sortable:hover { color: var(--tms-primary); }
 </head>
 <body>
 
-<!-- Toast 容器 -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Confirm Dialog -->
-<div class="confirm-mask" id="confirmMask">
-  <div class="confirm-box">
-    <div class="confirm-title" id="confirmTitle">确认操作</div>
-    <div class="confirm-msg" id="confirmMsg">确定执行此操作吗？</div>
-    <div class="confirm-actions">
-      <button class="btn" id="confirmCancel">取消</button>
-      <button class="btn btn-primary" id="confirmOk">确定</button>
-    </div>
-  </div>
-</div>
-
 <!-- 侧边栏 -->
-  <aside class="sidebar">
+<aside class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon">T</div>
       <div class="sidebar-logo-text">
@@ -843,7 +775,7 @@ th.sortable:hover { color: var(--tms-primary); }
       </a>
 
       <div class="nav-group-title">业务管理</div>
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">📦</span>
         <span>运单管理</span>
         <span class="nav-caret">▶</span>
@@ -853,7 +785,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="waybill-create.html" class="submenu-item">创建运单</a>
       </div>
 
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">🚢</span>
         <span>提单管理</span>
         <span class="nav-badge">12</span>
@@ -864,7 +796,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="bill-create.html" class="submenu-item">创建提单</a>
       </div>
 
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">📏</span>
         <span>超限管理</span>
         <span class="nav-badge">3</span>
@@ -876,7 +808,7 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
 
       <div class="nav-group-title">仓库作业</div>
-      <a href="document-loading.html" class="nav-item">
+      <a href="document-loading.html" class="nav-item active">
         <span class="nav-icon">📦</span>
         <span>单证装柜</span>
       </a>
@@ -894,7 +826,7 @@ th.sortable:hover { color: var(--tms-primary); }
       </a>
 
       <div class="nav-group-title">财务管理</div>
-      <div class="nav-item has-sub expanded" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub expanded" onclick="void(0)">
         <span class="nav-icon">💰</span>
         <span>应收管理</span>
         <span class="nav-badge">5</span>
@@ -902,13 +834,13 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
       <div class="submenu">
         <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
-        <a href="customer-flow.html" class="submenu-item active">客户流水</a>
+        <a href="customer-flow.html" class="submenu-item">客户流水</a>
         <a href="bill-writeoff.html" class="submenu-item">账单核销</a>
         <a href="receivable-report.html" class="submenu-item">应收报表</a>
       </div>
 
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
-        <span class="nav-icon">💸</span>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">🧾</span>
         <span>应付管理</span>
         <span class="nav-caret">▶</span>
       </div>
@@ -939,7 +871,7 @@ th.sortable:hover { color: var(--tms-primary); }
       </a>
 
       <div class="nav-group-title">基础数据</div>
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">💹</span>
         <span>运价管理</span>
         <span class="nav-caret">▶</span>
@@ -973,638 +905,936 @@ th.sortable:hover { color: var(--tms-primary); }
         </div>
       </div>
     </div>
-  </aside>
+</aside>
 
 <header class="app-header">
-      <div class="header-breadcrumb">
-        <a href="dashboard.html">首页</a>
-        <span class="sep">/</span>
-        <a href="receivable-enhanced.html">财务管理</a>
-        <span class="sep">/</span>
-        <span class="current">客户流水</span>
+    <div class="header-breadcrumb">
+      <a href="dashboard.html">首页</a>
+      <span class="sep">/</span>
+      <a href="#">仓库作业</a>
+      <span class="sep">/</span>
+      <span class="current">单证装柜</span>
+    </div>
+    <div class="header-right">
+      <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
+      <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">
+        🔔
+        <span class="header-badge">3</span>
       </div>
-      <div class="header-right">
-        <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
-        <div class="header-icon-btn" title="消息" onclick="toast('您有3条未读消息','info')">
-          🔔
-          <span class="header-badge">3</span>
-        </div>
-        <div class="theme-toggle" title="主题切换" onclick="toast('主题切换功能开发中','info')">🌙</div>
-        <div class="header-divider"></div>
-        <div class="dropdown-wrap">
-          <div class="header-user" data-dropdown="userMenu">
-            <div class="header-user-avatar">王</div>
-            <span class="header-user-name">王主管</span>
-          </div>
+      <div class="theme-toggle" title="主题切换" onclick="toast('主题切换功能开发中','info')">🌙</div>
+      <div class="header-divider"></div>
+      <div class="dropdown-wrap">
+        <div class="header-user" data-dropdown="userMenu">
+          <div class="header-user-avatar">王</div>
+          <span class="header-user-name">王主管</span>
         </div>
       </div>
-    </header>
+    </div>
+</header>
 
 <main class="app-main">
-      <!-- 页面标题区 -->
-      <div class="page-title-bar">
-        <div>
-          <h1 class="page-title">📋 客户流水</h1>
-          <p class="page-subtitle">客户收付款流水记录查询与导出</p>
-        </div>
-        <div class="page-actions">
-          <a href="receivable-enhanced.html" class="btn">
-            <span>←</span>返回应收管理
-          </a>
-          <button class="btn btn-primary" onclick="doExport()">
-            <span>⬇</span>导出流水
-          </button>
-        </div>
+  <!-- 页面标题区 -->
+  <div class="page-title-bar">
+    <div>
+      <h1 class="page-title">📦 单证装柜</h1>
+      <p class="page-subtitle">运单筛选、调仓、装柜匹配与装柜核对</p>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="dispatchLoadingList()">
+        <span>📤</span>下发装柜清单
+      </button>
+      <button class="btn" onclick="exportLoadingData()">
+        <span>⬇</span>导出装柜数据
+      </button>
+    </div>
+  </div>
+
+  <!-- 运单筛选区 -->
+  <div class="filter-bar">
+    <div class="filter-grid">
+      <div class="filter-item">
+        <label class="filter-label">仓点</label>
+        <select class="form-control" id="fWarehouse">
+          <option value="">全部仓点</option>
+          <option value="义乌仓">义乌仓</option>
+          <option value="杭州仓">杭州仓</option>
+          <option value="深圳仓">深圳仓</option>
+        </select>
       </div>
-
-      <!-- 统计卡 -->
-      <div class="stat-grid">
-        <div class="stat-card" onclick="filterByStat('all')">
-          <div class="stat-info">
-            <div class="stat-label">📊 流水总笔数</div>
-            <div class="stat-value">1,286</div>
-            <div class="stat-trend up">↑ 12.5% 较上月</div>
-          </div>
-          <div class="stat-icon-wrap">📊</div>
-        </div>
-        <div class="stat-card stat-success" onclick="filterByStat('income')">
-          <div class="stat-info">
-            <div class="stat-label">💰 总收入金额</div>
-            <div class="stat-value">¥2,846,300</div>
-            <div class="stat-trend up">↑ ¥286K 较上月</div>
-          </div>
-          <div class="stat-icon-wrap">💰</div>
-        </div>
-        <div class="stat-card stat-cyan" onclick="filterByStat('month')">
-          <div class="stat-info">
-            <div class="stat-label">📅 本月笔数</div>
-            <div class="stat-value">186</div>
-            <div class="stat-trend" style="color:var(--tms-primary);">本月新增流水</div>
-          </div>
-          <div class="stat-icon-wrap">📅</div>
-        </div>
-        <div class="stat-card stat-warning" onclick="filterByStat('monthAmount')">
-          <div class="stat-info">
-            <div class="stat-label">📈 本月金额</div>
-            <div class="stat-value">¥486,200</div>
-            <div class="stat-trend up">↑ 8.3% 较上月</div>
-          </div>
-          <div class="stat-icon-wrap">📈</div>
-        </div>
+      <div class="filter-item">
+        <label class="filter-label">状态</label>
+        <select class="form-control" id="fStatus">
+          <option value="">全部</option>
+          <option value="已收货">已收货</option>
+          <option value="已入库">已入库</option>
+        </select>
       </div>
-
-      <!-- 筛选卡片 -->
-      <div class="filter-bar">
-        <div class="filter-grid">
-          <div class="filter-item">
-            <label class="filter-label">客户名称</label>
-            <input type="text" class="form-control" id="fCustomer" placeholder="请输入客户名称">
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">账单号</label>
-            <input type="text" class="form-control" id="fBillNo" placeholder="请输入账单号">
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">费用类型</label>
-            <select class="form-control" id="fFeeType">
-              <option value="">全部</option>
-              <option value="运费">运费</option>
-              <option value="附加费">附加费</option>
-              <option value="报关费">报关费</option>
-              <option value="仓储费">仓储费</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">业务时间</label>
-            <div class="date-range">
-              <input type="date" class="form-control" id="fDateStart">
-              <span class="date-range-sep">~</span>
-              <input type="date" class="form-control" id="fDateEnd">
-            </div>
-          </div>
-        </div>
-        <div class="filter-actions">
-          <button class="btn" onclick="resetFilter()">重置</button>
-          <button class="btn btn-primary" id="btnQuery" onclick="doQuery()">
-            <span>🔍</span>查询
-          </button>
-        </div>
+      <div class="filter-item">
+        <label class="filter-label">服务</label>
+        <select class="form-control" id="fService">
+          <option value="">全部</option>
+          <option>中美空运专线-FBA</option>
+          <option>中欧铁路专线</option>
+          <option>中美海运专线-FBA</option>
+          <option>东南亚空运专线</option>
+        </select>
       </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn" onclick="resetFilter()">重置</button>
+      <button class="btn btn-primary" onclick="doQuery()">
+        <span>🔍</span>查询
+      </button>
+    </div>
+  </div>
 
-      <!-- 表格卡片 -->
-      <div class="card">
-        <div class="table-toolbar">
-          <div class="toolbar-left">
-            <button class="btn btn-sm" onclick="toast('批量导出功能开发中','info')">批量导出</button>
-            <button class="btn btn-sm" onclick="doExport()">导出当前页</button>
-          </div>
-          <div class="toolbar-right">
-            <div class="search-box">
-              <span class="search-icon">🔍</span>
-              <input type="text" class="form-control" id="tableSearch" oninput="doTableSearch(this.value)" placeholder="搜索流水号/账单号/客户名称">
-            </div>
-            <button class="btn btn-icon btn-sm" title="刷新" onclick="refreshTable()">
-              <span>🔄</span>
-            </button>
-            <button class="btn btn-icon btn-sm" title="列设置" onclick="toast('列设置开发中','info')">
-              <span>⚙️</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="table-wrapper">
-          <table class="data-table" id="flowTable">
-            <thead>
-              <tr>
-                <th class="col-check"><input type="checkbox" class="check-all" onchange="toggleAll(this)"></th>
-                <th class="sortable" data-sort="flowNo">流水号</th>
-                <th class="sortable" data-sort="billNo">账单号</th>
-                <th class="sortable" data-sort="customer">客户名称</th>
-                <th class="sortable" data-sort="feeType">费用类型</th>
-                <th class="sortable" data-sort="amount">金额</th>
-                <th class="sortable" data-sort="currency">币种</th>
-                <th class="sortable" data-sort="bizTime">业务时间</th>
-                <th class="col-action">操作</th>
-              </tr>
-            </thead>
-            <tbody id="flowTbody">
-              <tr data-flow-no="CF20260805-0001" data-bill-no="AR202607-0156" data-customer="华通机械制造有限公司" data-fee-type="运费" data-amount="128500" data-currency="CNY" data-biz-time="2026-08-01 10:23">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0001')">CF20260805-0001</span></td>
-                <td><span class="mono">AR202607-0156</span></td>
-                <td>华通机械制造有限公司</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">¥128,500.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-01 10:23</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0001')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0002" data-bill-no="AR202607-0155" data-customer="鑫海钢结构工程" data-fee-type="附加费" data-amount="8620" data-currency="CNY" data-biz-time="2026-08-02 14:45">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0002')">CF20260805-0002</span></td>
-                <td><span class="mono">AR202607-0155</span></td>
-                <td>鑫海钢结构工程</td>
-                <td><span class="tag tag-orange">附加费</span></td>
-                <td><span class="money-cell">¥8,620.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-02 14:45</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0002')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0003" data-bill-no="AR202607-0154" data-customer="远东国际物流集团" data-fee-type="报关费" data-amount="3200" data-currency="CNY" data-biz-time="2026-08-03 09:12">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0003')">CF20260805-0003</span></td>
-                <td><span class="mono">AR202607-0154</span></td>
-                <td>远东国际物流集团</td>
-                <td><span class="tag tag-cyan">报关费</span></td>
-                <td><span class="money-cell">¥3,200.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-03 09:12</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0003')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0004" data-bill-no="AR202607-0153" data-customer="中远海运供应链" data-fee-type="运费" data-amount="18600" data-currency="USD" data-biz-time="2026-08-03 16:30">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0004')">CF20260805-0004</span></td>
-                <td><span class="mono">AR202607-0153</span></td>
-                <td>中远海运供应链</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">$18,600.00</span></td>
-                <td>USD</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-03 16:30</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0004')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0005" data-bill-no="AR202607-0152" data-customer="振华重工股份" data-fee-type="仓储费" data-amount="15800" data-currency="CNY" data-biz-time="2026-08-04 11:08">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0005')">CF20260805-0005</span></td>
-                <td><span class="mono">AR202607-0152</span></td>
-                <td>振华重工股份</td>
-                <td><span class="tag tag-purple">仓储费</span></td>
-                <td><span class="money-cell">¥15,800.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-04 11:08</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0005')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0006" data-bill-no="AR202607-0151" data-customer="顺丰速运集团" data-fee-type="附加费" data-amount="2450" data-currency="CNY" data-biz-time="2026-08-04 15:22">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0006')">CF20260805-0006</span></td>
-                <td><span class="mono">AR202607-0151</span></td>
-                <td>顺丰速运集团</td>
-                <td><span class="tag tag-orange">附加费</span></td>
-                <td><span class="money-cell">¥2,450.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-04 15:22</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0006')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0007" data-bill-no="AR202607-0150" data-customer="京东物流科技" data-fee-type="运费" data-amount="96300" data-currency="CNY" data-biz-time="2026-08-05 08:55">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0007')">CF20260805-0007</span></td>
-                <td><span class="mono">AR202607-0150</span></td>
-                <td>京东物流科技</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">¥96,300.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-05 08:55</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0007')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0008" data-bill-no="AR202607-0149" data-customer="嘉里大通物流" data-fee-type="报关费" data-amount="4800" data-currency="CNY" data-biz-time="2026-08-05 13:40">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0008')">CF20260805-0008</span></td>
-                <td><span class="mono">AR202607-0149</span></td>
-                <td>嘉里大通物流</td>
-                <td><span class="tag tag-cyan">报关费</span></td>
-                <td><span class="money-cell">¥4,800.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-05 13:40</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0008')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0009" data-bill-no="AR202607-0148" data-customer="德邦物流股份" data-fee-type="仓储费" data-amount="7200" data-currency="CNY" data-biz-time="2026-07-28 10:15">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0009')">CF20260805-0009</span></td>
-                <td><span class="mono">AR202607-0148</span></td>
-                <td>德邦物流股份</td>
-                <td><span class="tag tag-purple">仓储费</span></td>
-                <td><span class="money-cell">¥7,200.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-07-28 10:15</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0009')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0010" data-bill-no="AR202607-0147" data-customer="中外运长航集团" data-fee-type="运费" data-amount="12500" data-currency="EUR" data-biz-time="2026-07-30 17:00">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0010')">CF20260805-0010</span></td>
-                <td><span class="mono">AR202607-0147</span></td>
-                <td>中外运长航集团</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">€12,500.00</span></td>
-                <td>EUR</td>
-                <td><span class="text-muted font-mono text-sm">2026-07-30 17:00</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0010')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 分页 -->
-        <div class="pagination">
-          <div class="pagination-info">共 <b>1,286</b> 条记录，每页 <b>10</b> 条</div>
-          <div class="pagination-pages">
-            <button class="page-btn" disabled onclick="changePage(this)">‹</button>
-            <button class="page-btn active" onclick="changePage(this)">1</button>
-            <button class="page-btn" onclick="changePage(this)">2</button>
-            <button class="page-btn" onclick="changePage(this)">3</button>
-            <button class="page-btn" onclick="changePage(this)">4</button>
-            <button class="page-btn" onclick="changePage(this)">5</button>
-            <span class="text-sm text-muted">...</span>
-            <button class="page-btn" onclick="changePage(this)">129</button>
-            <button class="page-btn" onclick="changePage(this)">›</button>
-            <div class="page-jumper">跳至 <input type="number" min="1" max="129" value="1" onkeydown="if(event.key==='Enter'){toast('跳转到第'+this.value+'页','info');}"> 页</div>
-          </div>
-        </div>
+  <!-- 待配柜运单列表 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-title-bar"></span>
+        待配柜运单列表
       </div>
+      <div class="card-extra">共 <b id="waybillCount" style="color:var(--tms-text-1);">0</b> 单 / 合计 <b id="waybillVol" style="color:var(--tms-primary);">0.0</b> m³</div>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table" id="waybillTable">
+        <thead>
+          <tr>
+            <th class="col-check"><input type="checkbox" class="check-all"></th>
+            <th>运单号</th>
+            <th>客户名称</th>
+            <th>所属仓点</th>
+            <th>入库时间</th>
+            <th>服务</th>
+            <th>件数</th>
+            <th>方数(m³)</th>
+            <th>状态</th>
+            <th class="col-action">操作</th>
+          </tr>
+        </thead>
+        <tbody id="waybillTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 装柜匹配区 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-title-bar"></span>
+        装柜匹配
+      </div>
+      <div class="flex" style="gap:8px;">
+        <button class="btn btn-sm" onclick="openContainerModal()">
+          <span>＋</span>新建柜子
+        </button>
+        <button class="btn btn-sm btn-primary" onclick="autoMatch()">
+          <span>⚡</span>自动匹配装柜
+        </button>
+      </div>
+    </div>
+    <div class="container-info" id="containerInfo"></div>
+    <div class="table-wrapper">
+      <table class="data-table" id="matchResultTable">
+        <thead>
+          <tr>
+            <th class="col-check"><input type="checkbox" class="check-all"></th>
+            <th>序号</th>
+            <th>运单号</th>
+            <th>客户</th>
+            <th>方数(m³)</th>
+            <th>累计方数(m³)</th>
+            <th>状态</th>
+          </tr>
+        </thead>
+        <tbody id="matchResultTbody"></tbody>
+      </table>
+    </div>
+    <div class="match-summary" id="matchSummary">已配 <b>0</b> 单 / 累计 <b>0.0</b> m³ / 剩余容积 <b>76.0</b> m³</div>
+    <div class="table-toolbar">
+      <div class="toolbar-left">
+        <span class="text-sm" style="color:var(--tms-text-3);">人工干预：勾选预配柜运单后移除，或从待配柜列表追加运单</span>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-sm" onclick="openAppendModal()">
+          <span>＋</span>追加运单
+        </button>
+        <button class="btn btn-sm" onclick="removeMatched()">
+          <span>－</span>移除运单
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 装柜核对区 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-title-bar"></span>
+        装柜核对
+      </div>
+      <div class="card-extra">实际装柜数据与预配数据核对，通过后提单进入运输中</div>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table" id="checkTable">
+        <thead>
+          <tr>
+            <th>提单号</th>
+            <th>柜号</th>
+            <th>运单数</th>
+            <th>核定方数(m³)</th>
+            <th>实际装柜数</th>
+            <th>实际方数(m³)</th>
+            <th>状态</th>
+            <th class="col-action">操作</th>
+          </tr>
+        </thead>
+        <tbody id="checkTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 物流节点更新区 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-title-bar"></span>
+        物流节点更新
+      </div>
+      <div class="card-extra">依据 UPS / 联邦渠道查询物流节点，手动录入更新</div>
+    </div>
+    <div class="node-desc">
+      运输中提单依据 UPS / 联邦快递渠道查询物流节点，系统内手动录入 / 更新物流进度节点，节点数据填写至对应提单。
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table" id="nodeTable">
+        <thead>
+          <tr>
+            <th>提单号</th>
+            <th>渠道</th>
+            <th>当前节点</th>
+            <th>节点时间</th>
+            <th>状态</th>
+            <th class="col-action">操作</th>
+          </tr>
+        </thead>
+        <tbody id="nodeTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 操作日志 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-title-bar"></span>
+        操作日志
+      </div>
+      <div class="card-extra">调仓 / 装柜 / 核对 / 节点更新记录</div>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table" id="logTable">
+        <thead>
+          <tr>
+            <th style="width:180px;">时间</th>
+            <th style="width:120px;">操作人</th>
+            <th>操作内容</th>
+          </tr>
+        </thead>
+        <tbody id="logTbody"></tbody>
+      </table>
+    </div>
+  </div>
 </main>
 
-<!-- Modal: 流水详情 -->
-<div class="modal-mask" id="detailModal">
-  <div class="modal modal-md">
+<!-- 调仓弹窗 -->
+<div class="modal-mask" id="transferModal">
+  <div class="modal modal-sm">
     <div class="modal-header">
-      <span class="modal-title">流水详情</span>
-      <button class="modal-close" data-close="detailModal">×</button>
+      <span class="modal-title">调仓</span>
+      <button class="modal-close" data-close="transferModal">×</button>
     </div>
     <div class="modal-body">
-      <div class="desc-list cols-2">
-        <div class="desc-item"><span class="desc-label">流水号</span><span class="desc-value mono" id="dFlowNo">—</span></div>
-        <div class="desc-item"><span class="desc-label">账单号</span><span class="desc-value mono" id="dBillNo">—</span></div>
-        <div class="desc-item"><span class="desc-label">客户名称</span><span class="desc-value" id="dCustomer">—</span></div>
-        <div class="desc-item"><span class="desc-label">费用类型</span><span class="desc-value" id="dFeeType">—</span></div>
-        <div class="desc-item"><span class="desc-label">金额</span><span class="desc-value money-cell" id="dAmount">—</span></div>
-        <div class="desc-item"><span class="desc-label">币种</span><span class="desc-value" id="dCurrency">—</span></div>
-        <div class="desc-item"><span class="desc-label">业务时间</span><span class="desc-value" id="dBizTime">—</span></div>
-        <div class="desc-item"><span class="desc-label">录入时间</span><span class="desc-value" id="dCreateTime">—</span></div>
+      <div class="transfer-info">
+        <div>
+          <span class="lbl">运单号</span>
+          <b id="tfWaybill">-</b>
+        </div>
+        <div>
+          <span class="lbl">当前仓点</span>
+          <b id="tfCurWarehouse">-</b>
+        </div>
       </div>
-      <div class="divider"></div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label class="form-label">备注</label>
-        <div class="text-sm text-muted" id="dRemark">该笔流水为客户正常收付款记录，关联对应应收账单，已核对无误。</div>
+      <div class="form-group">
+        <label class="form-label"><span class="required">*</span>目标仓点</label>
+        <select class="form-control" id="tfTarget"></select>
+      </div>
+      <div class="form-group" style="margin-top:16px;">
+        <label class="form-label">操作备注</label>
+        <textarea class="form-control" id="tfRemark" rows="3" placeholder="请输入调仓备注（选填）"></textarea>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-close="detailModal">关闭</button>
-      <button class="btn btn-primary" onclick="doExport()">导出此流水</button>
+      <button class="btn" data-close="transferModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmTransfer()">确认调仓</button>
     </div>
   </div>
 </div>
 
+<!-- 新建柜子弹窗 -->
+<div class="modal-mask" id="containerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">新建柜子</span>
+      <button class="modal-close" data-close="containerModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>运输类型</label>
+          <select class="form-control" id="cTransport">
+            <option>海运FCL</option>
+            <option>海运LCL</option>
+            <option>空运</option>
+          </select>
+        </div>
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>提单号</label>
+          <input type="text" class="form-control" id="cBillNo" placeholder="BL202608-XXXX">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">柜号</label>
+          <input type="text" class="form-control" id="cBoxNo" placeholder="如 CNTR8013001">
+        </div>
+        <div class="form-col">
+          <label class="form-label">船号/航班号</label>
+          <input type="text" class="form-control" id="cShipNo" placeholder="如 COSCO-0826">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">装箱规格</label>
+          <input type="text" class="form-control" id="cSpec" placeholder="如 40HQ">
+        </div>
+        <div class="form-col">
+          <label class="form-label">单柜容积</label>
+          <select class="form-control" id="cCapacity">
+            <option value="76">76方</option>
+            <option value="80">80方</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">出发地点</label>
+          <input type="text" class="form-control" id="cFrom" placeholder="如 义乌仓">
+        </div>
+        <div class="form-col">
+          <label class="form-label">发往地点</label>
+          <input type="text" class="form-control" id="cTo" placeholder="如 美国洛杉矶">
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="form-col">
+          <label class="form-label">清关代理</label>
+          <select class="form-control" id="cAgent">
+            <option>DHL清关</option>
+            <option>UPS清关</option>
+            <option>自营清关</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="containerModal">取消</button>
+      <button class="btn btn-primary" onclick="saveContainer()">保存柜子</button>
+    </div>
+  </div>
+</div>
+
+<!-- 追加运单弹窗 -->
+<div class="modal-mask" id="appendModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">＋ 追加运单</span>
+      <button class="modal-close" data-close="appendModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-help" style="margin-bottom:10px;">勾选待配柜运单追加至当前柜子，追加后自动校验方数。</div>
+      <div class="append-list" id="appendList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="appendModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmAppend()">确认追加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 更新节点弹窗 -->
+<div class="modal-mask" id="nodeModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">更新物流节点</span>
+      <button class="modal-close" data-close="nodeModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="transfer-info">
+        <div>
+          <span class="lbl">提单号</span>
+          <b id="ndBillNo">-</b>
+        </div>
+        <div>
+          <span class="lbl">渠道</span>
+          <b id="ndChannel">-</b>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="required">*</span>节点名称</label>
+        <input type="text" class="form-control" id="ndName" placeholder="如 已到达目的港">
+      </div>
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label"><span class="required">*</span>节点时间</label>
+          <input type="date" class="form-control" id="ndTime">
+        </div>
+        <div class="form-col">
+          <label class="form-label">节点地点</label>
+          <input type="text" class="form-control" id="ndLocation" placeholder="如 洛杉矶">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">备注</label>
+        <textarea class="form-control" id="ndRemark" rows="2" placeholder="备注（选填）"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-close="nodeModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmNode()">确认更新</button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/app.js"></script>
 <script>
-// ========== Toast ==========
-function toast(msg, type) {
-  type = type || 'info';
-  var container = document.getElementById('toastContainer');
-  var t = document.createElement('div');
-  t.className = 'toast ' + type;
-  var iconMap = { info:'i', success:'✓', error:'✕', warning:'!' };
-  t.innerHTML = '<span class="toast-icon ' + type + '">' + (iconMap[type]||'i') + '</span><span>' + msg + '</span>';
-  container.appendChild(t);
-  setTimeout(function(){ t.style.opacity = '0'; t.style.transform = 'translateY(-12px)'; t.style.transition = 'all .3s'; }, 2500);
-  setTimeout(function(){ t.remove(); }, 2800);
+// ========== 单证装柜页逻辑 ==========
+var WAREHOUSES = ['义乌仓', '杭州仓', '深圳仓'];
+
+var waybills = [
+  { no:'WY202608C001', customer:'华通机械制造有限公司', warehouse:'义乌仓', inTime:'2026-08-18 09:30', service:'中美空运专线-FBA', pieces:128, volume:18.2, status:'已收货', assigned:false },
+  { no:'WY202608C002', customer:'鑫海钢结构工程', warehouse:'杭州仓', inTime:'2026-08-17 14:20', service:'中欧铁路专线', pieces:96, volume:16.5, status:'已入库', assigned:false },
+  { no:'WY202608C003', customer:'博瑞风电设备', warehouse:'深圳仓', inTime:'2026-08-16 11:40', service:'中美海运专线-FBA', pieces:154, volume:15.6, status:'已收货', assigned:false },
+  { no:'WY202608C004', customer:'宏远工程机械', warehouse:'义乌仓', inTime:'2026-08-15 16:10', service:'东南亚空运专线', pieces:110, volume:14.2, status:'已入库', assigned:false },
+  { no:'WY202608C005', customer:'鼎盛化工装备', warehouse:'杭州仓', inTime:'2026-08-14 10:05', service:'中美空运专线-FBA', pieces:87, volume:12.8, status:'已收货', assigned:false },
+  { no:'WY202608C006', customer:'天顺轨道装备', warehouse:'深圳仓', inTime:'2026-08-13 15:50', service:'中欧铁路专线', pieces:132, volume:10.5, status:'已入库', assigned:false }
+];
+
+var matchRows = [];
+var currentContainer = null;
+var transferNo = null;
+var nodeNo = null;
+var blSeq = 104;
+
+var bills = [
+  { no:'BL202608-0101', box:'CNTR8012345', wbCount:5, planVol:69.6, actualCount:5, actualVol:69.8, status:'待核对' },
+  { no:'BL202608-0102', box:'CNTR8016789', wbCount:4, planVol:52.4, actualCount:4, actualVol:52.4, status:'已核对' },
+  { no:'BL202608-0103', box:'CNTR8010234', wbCount:6, planVol:75.2, actualCount:6, actualVol:74.9, status:'运输中' }
+];
+
+var nodes = [
+  { no:'BL202608-0101', channel:'UPS', node:'已到达洛杉矶机场', time:'2026-08-19 08:40', status:'已更新' },
+  { no:'BL202608-0102', channel:'联邦快递', node:'海关清关中', time:'2026-08-18 16:20', status:'已更新' },
+  { no:'BL202608-0103', channel:'UPS', node:'已交承运商运输中', time:'2026-08-18 10:05', status:'待更新' }
+];
+
+var logs = [
+  { time:'2026-08-19 09:12', operator:'王单证', content:'创建柜子：提单 BL202608-0104，柜号 CNTR8013001（海运FCL / 76方）' },
+  { time:'2026-08-18 17:45', operator:'王单证', content:'自动匹配装柜：预配 5 单，累计 69.6 m³，剩余容积 6.4 m³' },
+  { time:'2026-08-18 16:30', operator:'王单证', content:'物流节点更新：提单 BL202608-0101 节点更新为「已到达洛杉矶机场」' }
+];
+
+function $id(id){ return document.getElementById(id); }
+function round1(n){ return Math.round(n * 10) / 10; }
+function fmt1(n){ return (Math.round(n * 10) / 10).toFixed(1); }
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function nowStr(){
+  var d = new Date();
+  function p(n){ return n < 10 ? '0' + n : n; }
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+function getCapacity(){ return currentContainer ? currentContainer.capacity : 76; }
+
+function addLog(content){
+  logs.unshift({ time: nowStr(), operator: '王单证', content: content });
+  renderLogs();
 }
 
-// ========== Confirm Dialog ==========
-var _confirmCb = null;
-function confirmDialog(title, msg, cb, okText, okType) {
-  document.getElementById('confirmTitle').textContent = title || '确认操作';
-  document.getElementById('confirmMsg').innerHTML = msg || '确定执行此操作吗？';
-  var okBtn = document.getElementById('confirmOk');
-  okBtn.textContent = okText || '确定';
-  okBtn.className = 'btn ' + (okType === 'danger' ? 'btn-danger' : okType === 'primary' ? 'btn-primary' : 'btn-primary');
-  _confirmCb = cb;
-  document.getElementById('confirmMask').classList.add('show');
+function waybillStatusHTML(s){
+  if (s === '已入库') return '<span class="tag tag-green">已入库</span>';
+  return '<span class="tag tag-orange">已收货</span>';
 }
-document.getElementById('confirmCancel').onclick = function() {
-  document.getElementById('confirmMask').classList.remove('show');
-  _confirmCb = null;
-};
-document.getElementById('confirmOk').onclick = function() {
-  document.getElementById('confirmMask').classList.remove('show');
-  if (_confirmCb) { var cb = _confirmCb; _confirmCb = null; cb(); }
-};
-document.getElementById('confirmMask').addEventListener('click', function(e) {
-  if (e.target === this) { this.classList.remove('show'); _confirmCb = null; }
-});
+function matchStatusHTML(st){
+  if (st === 'pre') return '<span class="tag tag-blue">预配</span>';
+  if (st === 'issued') return '<span class="tag tag-green">已下发</span>';
+  if (st === 'skip') return '<span class="tag tag-orange">跳过后补</span>';
+  if (st === 'over') return '<span class="tag tag-red">超容待配</span>';
+  return '';
+}
 
-// ========== Modal open/close ==========
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-document.addEventListener('click', function(e) {
-  var closeId = e.target.getAttribute('data-close');
-  if (closeId) {
-    document.getElementById(closeId).classList.remove('show');
+// ========== 运单列表 ==========
+function renderWaybills(){
+  var tbody = $id('waybillTbody');
+  if (!tbody) return;
+  var fw = $id('fWarehouse') ? $id('fWarehouse').value : '';
+  var fs = $id('fStatus') ? $id('fStatus').value : '';
+  var fsv = $id('fService') ? $id('fService').value : '';
+  var rows = waybills.filter(function(w){
+    if (w.assigned) return false;
+    if (fw && w.warehouse !== fw) return false;
+    if (fs && w.status !== fs) return false;
+    if (fsv && w.service !== fsv) return false;
+    return true;
+  });
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty"><div class="empty-icon">📦</div><div class="empty-text">暂无符合条件的待配柜运单</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = rows.map(function(w){
+      return '<tr data-no="' + w.no + '">' +
+        '<td><input type="checkbox" class="row-check"></td>' +
+        '<td><span class="mono link" onclick="viewWaybill(\'' + w.no + '\')">' + w.no + '</span></td>' +
+        '<td>' + esc(w.customer) + '</td>' +
+        '<td>' + w.warehouse + '</td>' +
+        '<td><span class="text-muted font-mono text-sm">' + w.inTime + '</span></td>' +
+        '<td>' + esc(w.service) + '</td>' +
+        '<td class="font-mono">' + w.pieces + '</td>' +
+        '<td class="font-mono" style="font-weight:600;">' + fmt1(w.volume) + '</td>' +
+        '<td>' + waybillStatusHTML(w.status) + '</td>' +
+        '<td class="col-action"><div class="action-links">' +
+          '<button class="btn-link" onclick="openTransfer(\'' + w.no + '\')">调仓</button>' +
+          '<span class="divider-v"></span>' +
+          '<button class="btn-link" onclick="viewWaybill(\'' + w.no + '\')">查看</button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
   }
-});
-
-// ========== 侧边栏子菜单切换 ==========
-function toggleSubmenu(el) {
-  el.classList.toggle('expanded');
+  var total = waybills.filter(function(w){ return !w.assigned; });
+  var vol = total.reduce(function(s, w){ return s + w.volume; }, 0);
+  var c = $id('waybillCount'); if (c) c.textContent = total.length;
+  var v = $id('waybillVol'); if (v) v.textContent = fmt1(vol);
 }
 
-// ========== 查询 ==========
-function doQuery() {
-  var btn = document.getElementById('btnQuery');
-  btn.disabled = true;
-  var originalHTML = btn.innerHTML;
-  btn.innerHTML = '<span class="loading-spin"></span>查询中...';
-  setTimeout(function(){
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
-    var customer = document.getElementById('fCustomer').value.trim();
-    var billNo = document.getElementById('fBillNo').value.trim();
-    var feeType = document.getElementById('fFeeType').value;
-    var dateStart = document.getElementById('fDateStart').value;
-    var dateEnd = document.getElementById('fDateEnd').value;
-    var rows = document.querySelectorAll('#flowTbody tr');
-    var visible = 0;
-    rows.forEach(function(tr){
-      var match = true;
-      if (customer) {
-        match = match && (tr.getAttribute('data-customer').indexOf(customer) > -1);
-      }
-      if (billNo) {
-        match = match && (tr.getAttribute('data-bill-no').toLowerCase().indexOf(billNo.toLowerCase()) > -1);
-      }
-      if (feeType) {
-        match = match && (tr.getAttribute('data-fee-type') === feeType);
-      }
-      if (dateStart) {
-        match = match && (tr.getAttribute('data-biz-time') >= dateStart);
-      }
-      if (dateEnd) {
-        match = match && (tr.getAttribute('data-biz-time') <= dateEnd + ' 23:59:59');
-      }
-      tr.style.display = match ? '' : 'none';
-      if (match) visible++;
-    });
-    toast('查询完成，共找到 ' + visible + ' 条客户流水', 'success');
-  }, 800);
+function viewWaybill(no){
+  toast('查看运单 ' + no, 'info');
 }
 
-// ========== 重置 ==========
-function resetFilter() {
-  document.getElementById('fCustomer').value = '';
-  document.getElementById('fBillNo').value = '';
-  document.getElementById('fFeeType').value = '';
-  document.getElementById('fDateStart').value = '';
-  document.getElementById('fDateEnd').value = '';
-  document.getElementById('tableSearch').value = '';
-  document.querySelectorAll('#flowTbody tr').forEach(function(tr){ tr.style.display = ''; });
+function doQuery(){
+  var rows = waybills.filter(function(w){
+    if (w.assigned) return false;
+    var fw = $id('fWarehouse') ? $id('fWarehouse').value : '';
+    var fs = $id('fStatus') ? $id('fStatus').value : '';
+    var fsv = $id('fService') ? $id('fService').value : '';
+    if (fw && w.warehouse !== fw) return false;
+    if (fs && w.status !== fs) return false;
+    if (fsv && w.service !== fsv) return false;
+    return true;
+  });
+  renderWaybills();
+  toast('查询完成，共找到 ' + rows.length + ' 单待配柜运单', 'success');
+}
+
+function resetFilter(){
+  var fw = $id('fWarehouse'), fs = $id('fStatus'), fsv = $id('fService');
+  if (fw) fw.value = '';
+  if (fs) fs.value = '';
+  if (fsv) fsv.value = '';
+  renderWaybills();
   toast('筛选条件已重置', 'info');
 }
 
-// ========== 表格搜索 ==========
-function doTableSearch(keyword) {
-  keyword = keyword.trim().toLowerCase();
-  var rows = document.querySelectorAll('#flowTbody tr');
-  rows.forEach(function(tr){
-    if (!keyword) { tr.style.display = ''; return; }
-    var flowNo = (tr.getAttribute('data-flow-no') || '').toLowerCase();
-    var billNo = (tr.getAttribute('data-bill-no') || '').toLowerCase();
-    var customer = (tr.getAttribute('data-customer') || '').toLowerCase();
-    if (flowNo.indexOf(keyword) > -1 || billNo.indexOf(keyword) > -1 || customer.indexOf(keyword) > -1) {
-      tr.style.display = '';
-    } else {
-      tr.style.display = 'none';
-    }
-  });
+// ========== 调仓 ==========
+function openTransfer(no){
+  var w = null;
+  waybills.forEach(function(x){ if (x.no === no) w = x; });
+  if (!w) { toast('未找到运单 ' + no, 'error'); return; }
+  transferNo = no;
+  $id('tfWaybill').textContent = w.no;
+  $id('tfCurWarehouse').textContent = w.warehouse;
+  var sel = $id('tfTarget');
+  sel.innerHTML = '<option value="">请选择目标仓点</option>' + WAREHOUSES.filter(function(wh){ return wh !== w.warehouse; }).map(function(wh){ return '<option value="' + wh + '">' + wh + '</option>'; }).join('');
+  $id('tfRemark').value = '';
+  openModal('transferModal');
 }
 
-// ========== 刷新 ==========
-function refreshTable() {
-  var rows = document.querySelectorAll('#flowTbody tr');
-  rows.forEach(function(tr){ tr.classList.add('row-fade-in'); });
-  setTimeout(function(){
-    rows.forEach(function(tr){ tr.classList.remove('row-fade-in'); });
-  }, 400);
-  toast('表格已刷新', 'success');
+function confirmTransfer(){
+  var target = $id('tfTarget').value;
+  if (!target) { toast('请选择目标仓点', 'warning'); return; }
+  var w = null;
+  waybills.forEach(function(x){ if (x.no === transferNo) w = x; });
+  if (!w) { toast('运单不存在或已被移除', 'error'); closeModal('transferModal'); return; }
+  var old = w.warehouse;
+  var remark = $id('tfRemark').value.trim();
+  w.warehouse = target;
+  closeModal('transferModal');
+  renderWaybills();
+  addLog('调仓：运单 ' + w.no + ' 由 ' + old + ' 调至 ' + target + (remark ? '（' + remark + '）' : ''));
+  toast('调仓成功', 'success');
 }
 
-// ========== 导出 ==========
-function doExport() {
-  confirmDialog('确认导出', '确定要导出当前筛选条件下的客户流水记录吗？', function(){
-    toast('正在导出客户流水数据，请稍候...', 'info');
-    setTimeout(function(){
-      toast('导出成功！文件「客户流水_20260805.xlsx」已生成', 'success');
-    }, 1200);
-  }, '确认导出', 'primary');
+// ========== 新建柜子 ==========
+function openContainerModal(){
+  $id('cBillNo').value = 'BL202608-' + blSeq;
+  $id('cBoxNo').value = '';
+  $id('cShipNo').value = '';
+  $id('cSpec').value = '';
+  $id('cFrom').value = '';
+  $id('cTo').value = '';
+  openModal('containerModal');
 }
 
-// ========== 查看详情 ==========
-function viewDetail(flowNo) {
-  var tr = document.querySelector('#flowTbody tr[data-flow-no="' + flowNo + '"]');
-  if (!tr) { toast('未找到流水记录', 'error'); return; }
-  document.getElementById('dFlowNo').textContent = tr.getAttribute('data-flow-no');
-  document.getElementById('dBillNo').textContent = tr.getAttribute('data-bill-no');
-  document.getElementById('dCustomer').textContent = tr.getAttribute('data-customer');
-  document.getElementById('dFeeType').textContent = tr.getAttribute('data-fee-type');
-  var amount = parseFloat(tr.getAttribute('data-amount'));
-  var currency = tr.getAttribute('data-currency');
-  var symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : '¥';
-  document.getElementById('dAmount').textContent = symbol + amount.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2});
-  document.getElementById('dCurrency').textContent = currency;
-  document.getElementById('dBizTime').textContent = tr.getAttribute('data-biz-time');
-  document.getElementById('dCreateTime').textContent = tr.getAttribute('data-biz-time');
-  openModal('detailModal');
-}
-
-// ========== 统计卡筛选 ==========
-function filterByStat(type) {
-  var labels = {all:'全部流水', income:'总收入流水', month:'本月流水', monthAmount:'本月金额流水'};
-  toast('已按「' + labels[type] + '」筛选统计', 'info');
-}
-
-// ========== 全选/反选 ==========
-function toggleAll(el) {
-  var checked = el.checked;
-  document.querySelectorAll('#flowTbody .row-check').forEach(function(c){
-    if (c.closest('tr').style.display !== 'none') c.checked = checked;
-  });
-}
-
-// ========== 表格排序 ==========
-var sortState = { column: null, direction: 'asc' };
-document.addEventListener('click', function(e){
-  var th = e.target.closest('th.sortable');
-  if (!th) return;
-  var table = th.closest('table');
-  var col = th.getAttribute('data-sort');
-  if (!col) return;
-  var newDir = (sortState.column === col && sortState.direction === 'asc') ? 'desc' : 'asc';
-  sortState = { column: col, direction: newDir };
-  table.querySelectorAll('th.sortable').forEach(function(h){ h.classList.remove('sort-asc','sort-desc'); });
-  th.classList.add(newDir === 'asc' ? 'sort-asc' : 'sort-desc');
-  sortTable(table, col, newDir);
-});
-
-function sortTable(table, col, dir) {
-  var tbody = table.querySelector('tbody');
-  var rows = Array.from(tbody.querySelectorAll('tr'));
-  rows.sort(function(a, b){
-    var va = getSortValue(a, col);
-    var vb = getSortValue(b, col);
-    if (typeof va === 'number' && typeof vb === 'number') {
-      return dir === 'asc' ? va - vb : vb - va;
-    }
-    va = String(va).toLowerCase();
-    vb = String(vb).toLowerCase();
-    if (va < vb) return dir === 'asc' ? -1 : 1;
-    if (va > vb) return dir === 'asc' ? 1 : -1;
-    return 0;
-  });
-  rows.forEach(function(r){ tbody.appendChild(r); });
-}
-
-function getSortValue(row, col) {
-  var map = {
-    flowNo: 'data-flow-no',
-    billNo: 'data-bill-no',
-    customer: 'data-customer',
-    feeType: 'data-fee-type',
-    currency: 'data-currency',
-    bizTime: 'data-biz-time'
+function saveContainer(){
+  var billNo = $id('cBillNo').value.trim();
+  if (!billNo) { toast('请填写提单号', 'error'); return; }
+  currentContainer = {
+    transport: $id('cTransport').value,
+    billNo: billNo,
+    boxNo: $id('cBoxNo').value.trim(),
+    shipNo: $id('cShipNo').value.trim(),
+    spec: $id('cSpec').value.trim(),
+    from: $id('cFrom').value.trim(),
+    to: $id('cTo').value.trim(),
+    agent: $id('cAgent').value,
+    capacity: Number($id('cCapacity').value) || 76
   };
-  if (col === 'amount') {
-    return parseFloat(row.getAttribute('data-amount')) || 0;
-  }
-  var attr = map[col];
-  return attr ? (row.getAttribute(attr) || '') : '';
+  blSeq++;
+  closeModal('containerModal');
+  renderContainerInfo();
+  renderMatch();
+  addLog('新建柜子：提单 ' + billNo + '，柜号 ' + (currentContainer.boxNo || '-') + '（' + currentContainer.transport + ' / ' + currentContainer.capacity + '方）');
+  toast('柜子创建成功', 'success');
 }
 
-// ========== 分页 ==========
-function changePage(btn) {
-  if (btn.disabled) return;
-  var pages = document.querySelectorAll('.pagination .page-btn');
-  pages.forEach(function(p){ p.classList.remove('active'); });
-  if (!isNaN(parseInt(btn.textContent))) {
-    btn.classList.add('active');
-    toast('已切换到第 ' + btn.textContent + ' 页', 'info');
-  } else if (btn.textContent === '›') {
-    var active = document.querySelector('.pagination .page-btn.active');
-    var next = active.nextElementSibling;
-    while (next && (isNaN(parseInt(next.textContent)) || next.disabled)) next = next.nextElementSibling;
-    if (next) { next.classList.add('active'); toast('已切换到第 ' + next.textContent + ' 页', 'info'); }
-  } else if (btn.textContent === '‹') {
-    var active = document.querySelector('.pagination .page-btn.active');
-    var prev = active.previousElementSibling;
-    while (prev && (isNaN(parseInt(prev.textContent)) || prev.disabled)) prev = prev.previousElementSibling;
-    if (prev) { prev.classList.add('active'); toast('已切换到第 ' + prev.textContent + ' 页', 'info'); }
+function renderContainerInfo(){
+  var el = $id('containerInfo');
+  if (!el) return;
+  if (currentContainer) {
+    el.innerHTML =
+      '<span>运输类型 <b>' + esc(currentContainer.transport) + '</b></span>' +
+      '<span>提单号 <b>' + esc(currentContainer.billNo) + '</b></span>' +
+      '<span>柜号 <b>' + esc(currentContainer.boxNo || '-') + '</b></span>' +
+      '<span>船号/航班 <b>' + esc(currentContainer.shipNo || '-') + '</b></span>' +
+      '<span>装箱规格 <b>' + esc(currentContainer.spec || '-') + '</b></span>' +
+      '<span>出发 <b>' + esc(currentContainer.from || '-') + '</b></span>' +
+      '<span>发往 <b>' + esc(currentContainer.to || '-') + '</b></span>' +
+      '<span>清关代理 <b>' + esc(currentContainer.agent) + '</b></span>' +
+      '<span>单柜容积 <b>' + currentContainer.capacity + '方</b></span>';
+  } else {
+    el.innerHTML = '<span>尚未创建柜子，自动匹配将使用默认单柜容积 <b>76 方</b>（点击右上角「新建柜子」创建）</span>';
   }
 }
 
-// ========== Init ==========
-document.addEventListener('DOMContentLoaded', function() {
-  toast('客户流水页面加载完成', 'success');
+// ========== 自动匹配装柜 ==========
+function autoMatch(){
+  var capacity = getCapacity();
+  if (!currentContainer) toast('未创建柜子，自动匹配使用默认单柜容积 76 方', 'info');
+  // 清除上一次匹配结果（已匹配运单回到待配柜池）
+  matchRows.forEach(function(r){
+    if (r.status === 'pre' || r.status === 'issued') r.w.assigned = false;
+  });
+  matchRows = [];
+  // 优先入库时间最早；单柜最多 15 单；不拆运单
+  var candidates = waybills.filter(function(w){ return !w.assigned; }).sort(function(a, b){
+    return a.inTime.localeCompare(b.inTime) || a.no.localeCompare(b.no);
+  });
+  var count = 0, cum = 0;
+  candidates.forEach(function(w){
+    if (w.volume > capacity) {
+      // 单票即超容，无法入柜
+      matchRows.push({ w: w, volume: w.volume, cumulative: cum, status: 'over' });
+      return;
+    }
+    if (count < 15 && cum + w.volume <= capacity + 1e-9) {
+      w.assigned = true;
+      count++;
+      cum = round1(cum + w.volume);
+      matchRows.push({ w: w, volume: w.volume, cumulative: cum, status: 'pre' });
+    } else {
+      // 超容跳过，向后匹配剩余方数可容纳的运单，留在待配柜列表
+      matchRows.push({ w: w, volume: w.volume, cumulative: cum, status: 'skip' });
+    }
+  });
+  renderMatch();
+  renderWaybills();
+  addLog('自动匹配装柜：预配 ' + count + ' 单，累计 ' + fmt1(cum) + ' m³，剩余容积 ' + fmt1(round1(capacity - cum)) + ' m³');
+  toast('自动匹配完成，预配 ' + count + ' 单，累计 ' + fmt1(cum) + ' m³', 'success');
+}
+
+function recomputeMatch(){
+  var capacity = getCapacity();
+  var cum = 0;
+  matchRows.forEach(function(r){
+    if (r.status === 'pre' || r.status === 'issued') cum = round1(cum + r.volume);
+    r.cumulative = cum;
+  });
+  var total = round1(matchRows.reduce(function(s, r){
+    return (r.status === 'pre' || r.status === 'issued') ? s + r.volume : s;
+  }, 0));
+  return { capacity: capacity, total: total };
+}
+
+function renderMatch(){
+  var tbody = $id('matchResultTbody');
+  if (!tbody) return;
+  var capacity = getCapacity();
+  if (matchRows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📦</div><div class="empty-text">暂无预配柜结果，点击「自动匹配装柜」按规则配柜</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = matchRows.map(function(r, i){
+      var cls = r.cumulative > capacity + 1e-9 ? ' over-cap' : '';
+      return '<tr data-no="' + r.w.no + '" class="' + cls.trim() + '">' +
+        '<td><input type="checkbox" class="row-check"></td>' +
+        '<td>' + (i + 1) + '</td>' +
+        '<td><span class="mono link" onclick="viewWaybill(\'' + r.w.no + '\')">' + r.w.no + '</span></td>' +
+        '<td>' + esc(r.w.customer) + '</td>' +
+        '<td class="font-mono" style="font-weight:600;">' + fmt1(r.volume) + '</td>' +
+        '<td class="font-mono">' + fmt1(r.cumulative) + '</td>' +
+        '<td>' + matchStatusHTML(r.status) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+  var matched = matchRows.filter(function(r){ return r.status === 'pre' || r.status === 'issued'; });
+  var total = round1(matched.reduce(function(s, r){ return s + r.volume; }, 0));
+  var ms = $id('matchSummary');
+  if (ms) {
+    ms.innerHTML = '已配 <b>' + matched.length + '</b> 单 / 累计 <b>' + fmt1(total) + '</b> m³ / 剩余容积 <b>' + fmt1(round1(capacity - total)) + '</b> m³';
+  }
+}
+
+// ========== 人工干预：追加 / 移除 ==========
+function openAppendModal(){
+  var candidates = waybills.filter(function(w){ return !w.assigned; });
+  var list = $id('appendList');
+  if (candidates.length === 0) {
+    list.innerHTML = '<div class="empty" style="padding:30px 20px;"><div class="empty-text">待配柜列表已无运单可追加</div></div>';
+  } else {
+    list.innerHTML = candidates.map(function(w){
+      return '<label class="append-item">' +
+        '<input type="checkbox" class="row-check" value="' + w.no + '">' +
+        '<span class="mono">' + w.no + '</span>' +
+        '<span style="flex:1;color:var(--tms-text-2);">' + esc(w.customer) + '</span>' +
+        '<span style="color:var(--tms-text-3);">' + fmt1(w.volume) + ' m³</span>' +
+      '</label>';
+    }).join('');
+  }
+  openModal('appendModal');
+}
+
+function confirmAppend(){
+  var checked = document.querySelectorAll('#appendList .row-check:checked');
+  var nos = [];
+  checked.forEach(function(c){ nos.push(c.value); });
+  if (nos.length === 0) { toast('请先勾选要追加的运单', 'warning'); return; }
+  nos.forEach(function(no){
+    waybills.forEach(function(w){
+      if (w.no === no && !w.assigned) {
+        w.assigned = true;
+        matchRows.push({ w: w, volume: w.volume, cumulative: 0, status: 'pre' });
+      }
+    });
+  });
+  var st = recomputeMatch();
+  renderMatch();
+  renderWaybills();
+  closeModal('appendModal');
+  addLog('人工追加：' + nos.length + ' 个运单追加至当前柜子（累计 ' + fmt1(st.total) + ' m³）');
+  if (st.total > st.capacity + 1e-9) {
+    toast('超容警告：追加后累计方数 ' + fmt1(st.total) + ' m³ 超过单柜容积 ' + st.capacity + ' m³', 'warning');
+  } else {
+    toast('已追加 ' + nos.length + ' 个运单至当前柜子', 'success');
+  }
+}
+
+function removeMatched(){
+  var checked = document.querySelectorAll('#matchResultTable tbody .row-check:checked');
+  var nos = [];
+  checked.forEach(function(c){
+    var tr = c.closest('tr');
+    if (tr) nos.push(tr.getAttribute('data-no'));
+  });
+  if (nos.length === 0) { toast('请先勾选要移除的运单', 'warning'); return; }
+  confirmDialog('移除运单', '确定将选中的 <b>' + nos.length + '</b> 个运单移出当前柜子吗？移除后将回到待配柜列表。', function(){
+    nos.forEach(function(no){
+      for (var i = matchRows.length - 1; i >= 0; i--) {
+        if (matchRows[i].w.no === no && (matchRows[i].status === 'pre' || matchRows[i].status === 'issued')) {
+          matchRows[i].w.assigned = false;
+          matchRows.splice(i, 1);
+        }
+      }
+    });
+    var st = recomputeMatch();
+    renderMatch();
+    renderWaybills();
+    addLog('人工移除：' + nos.length + ' 个运单移出当前柜子，回到待配柜列表');
+    if (st.total > st.capacity + 1e-9) {
+      toast('超容警告：当前累计方数 ' + fmt1(st.total) + ' m³ 超过单柜容积 ' + st.capacity + ' m³', 'warning');
+    } else {
+      toast('已移除 ' + nos.length + ' 个运单', 'success');
+    }
+  }, '移除', 'danger');
+}
+
+// ========== 下发装柜清单 / 导出 ==========
+function dispatchLoadingList(){
+  var pre = matchRows.filter(function(r){ return r.status === 'pre'; });
+  if (pre.length === 0) {
+    toast('当前没有已预配的运单，请先执行自动匹配装柜', 'warning');
+    return;
+  }
+  pre.forEach(function(r){ r.status = 'issued'; });
+  renderMatch();
+  addLog('下发装柜清单：提单 ' + (currentContainer ? currentContainer.billNo : '-') + ' 已下发至义乌仓仓库端');
+  toast('装柜清单已下发至义乌仓仓库端', 'success');
+}
+
+function exportLoadingData(){
+  toast('正在导出装柜数据...', 'info');
+  setTimeout(function(){ toast('导出成功，文件已生成', 'success'); }, 800);
+}
+
+// ========== 装柜核对 ==========
+function renderBills(){
+  var tbody = $id('checkTbody');
+  if (!tbody) return;
+  tbody.innerHTML = bills.map(function(b){
+    var tag = b.status === '待核对' ? 'tag-orange' : (b.status === '已核对' ? 'tag-green' : 'tag-blue');
+    return '<tr data-no="' + b.no + '">' +
+      '<td><span class="mono link" onclick="toast(\'查看提单 ' + b.no + '\',\'info\')">' + b.no + '</span></td>' +
+      '<td class="font-mono">' + b.box + '</td>' +
+      '<td class="font-mono">' + b.wbCount + '</td>' +
+      '<td class="font-mono">' + fmt1(b.planVol) + '</td>' +
+      '<td class="font-mono">' + b.actualCount + '</td>' +
+      '<td class="font-mono" style="font-weight:600;">' + fmt1(b.actualVol) + '</td>' +
+      '<td><span class="tag ' + tag + '">' + b.status + '</span></td>' +
+      '<td class="col-action"><div class="action-links">' +
+        '<button class="btn-link" onclick="checkBill(\'' + b.no + '\')">核对</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function checkBill(no){
+  var b = null;
+  bills.forEach(function(x){ if (x.no === no) b = x; });
+  if (!b) { toast('未找到提单 ' + no, 'error'); return; }
+  confirmDialog('装柜核对', '确定提单 <b>' + no + '</b> 装柜核对无误吗？核对通过后提单状态将更新为「运输中」。', function(){
+    b.status = '运输中';
+    renderBills();
+    addLog('装柜核对：提单 ' + no + ' 核对无误，状态更新为运输中');
+    toast('装柜核对无误，提单状态已更新为运输中', 'success');
+  }, '核对通过', 'primary');
+}
+
+// ========== 物流节点更新 ==========
+function renderNodes(){
+  var tbody = $id('nodeTbody');
+  if (!tbody) return;
+  tbody.innerHTML = nodes.map(function(n){
+    var tag = n.status === '已更新' ? 'tag-green' : 'tag-orange';
+    return '<tr data-no="' + n.no + '">' +
+      '<td><span class="mono link" onclick="toast(\'查看提单 ' + n.no + '\',\'info\')">' + n.no + '</span></td>' +
+      '<td>' + n.channel + '</td>' +
+      '<td>' + esc(n.node) + '</td>' +
+      '<td><span class="text-muted font-mono text-sm">' + n.time + '</span></td>' +
+      '<td><span class="tag ' + tag + '">' + n.status + '</span></td>' +
+      '<td class="col-action"><div class="action-links">' +
+        '<button class="btn-link" onclick="openNode(\'' + n.no + '\')">更新节点</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function openNode(no){
+  var n = null;
+  nodes.forEach(function(x){ if (x.no === no) n = x; });
+  if (!n) { toast('未找到提单 ' + no, 'error'); return; }
+  nodeNo = no;
+  $id('ndBillNo').textContent = n.no;
+  $id('ndChannel').textContent = n.channel;
+  $id('ndName').value = '';
+  $id('ndTime').value = '';
+  $id('ndLocation').value = '';
+  $id('ndRemark').value = '';
+  openModal('nodeModal');
+}
+
+function confirmNode(){
+  var name = $id('ndName').value.trim();
+  var time = $id('ndTime').value;
+  if (!name) { toast('请填写节点名称', 'error'); return; }
+  if (!time) { toast('请选择节点时间', 'error'); return; }
+  var n = null;
+  nodes.forEach(function(x){ if (x.no === nodeNo) n = x; });
+  if (!n) { toast('提单不存在', 'error'); closeModal('nodeModal'); return; }
+  var location = $id('ndLocation').value.trim();
+  var remark = $id('ndRemark').value.trim();
+  n.node = name + (location ? '（' + location + '）' : '');
+  n.time = time;
+  n.status = '已更新';
+  closeModal('nodeModal');
+  renderNodes();
+  addLog('物流节点更新：提单 ' + n.no + ' 节点更新为「' + name + '」' + (remark ? '（' + remark + '）' : ''));
+  toast('物流节点更新成功', 'success');
+}
+
+// ========== 操作日志 ==========
+function renderLogs(){
+  var tbody = $id('logTbody');
+  if (!tbody) return;
+  if (logs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3"><div class="empty" style="padding:40px 20px;"><div class="empty-text">暂无操作日志</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = logs.map(function(l){
+    return '<tr>' +
+      '<td><span class="text-muted font-mono text-sm">' + l.time + '</span></td>' +
+      '<td>' + l.operator + '</td>' +
+      '<td>' + esc(l.content) + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', function(){
+  renderWaybills();
+  renderMatch();
+  renderBills();
+  renderNodes();
+  renderLogs();
+  renderContainerInfo();
 });
 </script>
 
-    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
     <style>
-      .no-scrollbar::-webkit-scrollbar { display: none; }
-      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      [data-icon] {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-position: center;
-        mask-position: center;
-        background-color: currentColor;
-      }
-      .date-range { display: flex; align-items: center; gap: 6px; }
-      .date-range .form-control { flex: 1; min-width: 0; }
-      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
-      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
-      .row-fade-in { animation: rowFadeIn .3s ease; }
-      @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .data-table thead th { position: sticky; top: 0; z-index: 2; }
+      /* ========== 单证装柜页专属 ========== */
+      .container-info { display: flex; flex-wrap: wrap; gap: 6px 24px; padding: 12px 20px; background: var(--tms-bg); border-bottom: 1px solid var(--tms-border-2); font-size: 13px; }
+      .container-info span { color: var(--tms-text-3); }
+      .container-info b { color: var(--tms-text-1); font-weight: 600; margin-left: 4px; }
+      .match-summary { display: flex; flex-wrap: wrap; gap: 12px 28px; padding: 14px 20px; background: var(--tms-primary-bg); border-bottom: 1px solid var(--tms-border-2); font-size: 13px; color: var(--tms-text-2); }
+      .match-summary b { color: var(--tms-primary); font-size: 15px; font-feature-settings: 'tnum'; margin-left: 4px; }
+      .over-cap td { background: var(--tms-error-light) !important; color: var(--tms-error); }
+      .over-cap .mono { color: var(--tms-error); }
+      .over-cap .tag { background: var(--tms-error-light); color: var(--tms-error); }
+      .transfer-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px; background: var(--tms-bg); border: 1px solid var(--tms-border-2); border-radius: var(--tms-radius); margin-bottom: 16px; }
+      .transfer-info .lbl { display: block; font-size: 12px; color: var(--tms-text-3); margin-bottom: 4px; }
+      .transfer-info b { font-size: 14px; color: var(--tms-text-1); }
+      .append-list { max-height: 320px; overflow-y: auto; border: 1px solid var(--tms-border-2); border-radius: var(--tms-radius); }
+      .append-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--tms-border-2); font-size: 13px; color: var(--tms-text-1); cursor: pointer; }
+      .append-item:last-child { border-bottom: none; }
+      .append-item:hover { background: var(--tms-bg-hover); }
+      .append-item .mono { min-width: 130px; }
+      .node-desc { padding: 12px 20px; background: var(--tms-primary-bg); border-bottom: 1px solid var(--tms-border-2); font-size: 13px; color: var(--tms-text-2); line-height: 1.7; }
     </style>
+    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
 </body>
 </html>

@@ -87,18 +87,57 @@
     "derivationType": "in-place-edit",
     "affectedPages": [
       {
-        "nodeId": "page-receivable-enhanced",
-        "htmlSrc": "pages/receivable-enhanced.html",
-        "title": "应收管理-增强版",
-        "changeType": "add-all-orders-discount-view"
+        "nodeId": "page-document-loading",
+        "htmlSrc": "pages/document-loading.html",
+        "title": "单证装柜",
+        "changeType": "phase2-new-page"
+      },
+      {
+        "nodeId": "page-warehouse-receiving",
+        "htmlSrc": "pages/warehouse-receiving.html",
+        "title": "到仓收货",
+        "changeType": "phase2-new-page"
+      },
+      {
+        "nodeId": "page-warehouse-inbound",
+        "htmlSrc": "pages/warehouse-inbound.html",
+        "title": "拣货入库",
+        "changeType": "phase2-new-page"
+      },
+      {
+        "nodeId": "page-warehouse-outbound",
+        "htmlSrc": "pages/warehouse-outbound.html",
+        "title": "出库盘点",
+        "changeType": "phase2-new-page"
       }
     ],
     "expectedDispatches": [
       {
-        "nodeId": "page-receivable-enhanced",
-        "packetType": "ExistingEditPagePacket",
+        "nodeId": "page-document-loading",
+        "packetType": "NewPagePacket",
         "status": "completed",
-        "changedFiles": ["pages/receivable-enhanced.html"],
+        "changedFiles": ["pages/document-loading.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      },
+      {
+        "nodeId": "page-warehouse-receiving",
+        "packetType": "NewPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/warehouse-receiving.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      },
+      {
+        "nodeId": "page-warehouse-inbound",
+        "packetType": "NewPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/warehouse-inbound.html"],
+        "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
+      },
+      {
+        "nodeId": "page-warehouse-outbound",
+        "packetType": "NewPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/warehouse-outbound.html"],
         "toolCallLedger": { "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0 }
       }
     ],

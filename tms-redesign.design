@@ -39,10 +39,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-ece73297",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-2e3f0d9f",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -64,10 +64,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-846ed3dd",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-3613adb3",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -89,10 +89,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-cf212dbd",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-ec9905cd",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -114,10 +114,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-549978d5",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-457f38b7",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -139,10 +139,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-2e6ac26b",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-982aec4c",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -164,10 +164,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-22fbbf51",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-be58bb51",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -189,10 +189,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-f1e48c9e",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-44b83c9e",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -214,10 +214,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-fab8d30f",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-37c69909",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -239,10 +239,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-95e0a891",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-dd66c46f",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -266,8 +266,8 @@
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-99c0446b",
-          "measuredAt": 1786416197068
+          "sourceHash": "fnv1a-b676b6c0",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -289,10 +289,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-4d3715d2",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-d5712ba0",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -316,8 +316,8 @@
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-78295dd4",
-          "measuredAt": 1786416197068
+          "sourceHash": "fnv1a-d5a24832",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -339,10 +339,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-616e8fdb",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-9f6c69a5",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -364,10 +364,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-ca69eb28",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-86d25a5a",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -389,10 +389,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-7e512d88",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-a0fed8a6",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -414,10 +414,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-4cae5f93",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-1ef6583d",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -457,10 +457,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-27ff23e3",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-fb1f36f5",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -482,10 +482,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-c8b26b16",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-f15fa8fc",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -509,8 +509,8 @@
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-59268ca8",
-          "measuredAt": 1786416197068
+          "sourceHash": "fnv1a-4e38f394",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -532,10 +532,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 100,
+          "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-34b5e1bf",
-          "measuredAt": 1786342787761
+          "sourceHash": "fnv1a-2ff06f95",
+          "measuredAt": 1787103564887
         }
       },
       "devMetadata": {
@@ -567,10 +567,110 @@
         "htmlSrc": "pages/customer.html",
         "interactions": []
       }
+    },
+    {
+      "id": "page-document-loading",
+      "title": "单证装柜",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103213488,
+      "canvasData": {
+        "x": 14260,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-60895969",
+          "measuredAt": 1787103564887
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/document-loading.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-warehouse-receiving",
+      "title": "到仓收货",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103213488,
+      "canvasData": {
+        "x": 14880,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-0244ad65",
+          "measuredAt": 1787103564887
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/warehouse-receiving.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-warehouse-inbound",
+      "title": "拣货入库",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103213488,
+      "canvasData": {
+        "x": 15500,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-7be935d7",
+          "measuredAt": 1787103564887
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/warehouse-inbound.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-warehouse-outbound",
+      "title": "出库盘点",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103213488,
+      "canvasData": {
+        "x": 16120,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-50e25510",
+          "measuredAt": 1787103564887
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/warehouse-outbound.html",
+        "interactions": []
+      }
     }
   ],
   "config": {
-    "autoLayout": true,
+    "autoLayout": false,
     "deviceType": "desktop",
     "viewportMode": "app-shell",
     "showEdge": false,

@@ -533,6 +533,106 @@
         "htmlSrc": "pages/supplier-management.html",
         "interactions": []
       }
+    },
+    {
+      "id": "page-document-loading",
+      "title": "单证装柜",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103367396,
+      "canvasData": {
+        "x": 14260,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-2dec16d",
+          "measuredAt": 1787103367396
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/document-loading.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-warehouse-receiving",
+      "title": "到仓收货",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103367396,
+      "canvasData": {
+        "x": 14880,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-708c77",
+          "measuredAt": 1787103367396
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/warehouse-receiving.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-warehouse-inbound",
+      "title": "拣货入库",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103367396,
+      "canvasData": {
+        "x": 15500,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-d37a11b",
+          "measuredAt": 1787103367396
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/warehouse-inbound.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-warehouse-outbound",
+      "title": "出库盘点",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1787103367396,
+      "canvasData": {
+        "x": 16120,
+        "y": 0,
+        "w": 1440,
+        "h": 1800,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 100,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-527e59a",
+          "measuredAt": 1787103367396
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/warehouse-outbound.html",
+        "interactions": []
+      }
     }
   ],
   "config": {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客户流水 - TMS供应链管理系统</title>
+    <title>出库盘点 - TMS供应链管理系统</title>
     <style id="theme-vars">
 :root {
   /* === 品牌主色（现代化蓝色）=== */
@@ -388,6 +388,23 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
 .modal-footer { padding: 12px 24px; border-top: 1px solid var(--tms-border-2); display: flex; justify-content: flex-end; gap: 8px; background: #fafbfc; border-radius: 0 0 var(--tms-radius-lg) var(--tms-radius-lg); }
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 @keyframes modalIn { from{opacity:0;transform:translateY(-20px) scale(.98);} to{opacity:1;transform:translateY(0) scale(1);} }
+
+/* ========== Price Items ========== */
+.price-items-section { border: 1px solid var(--tms-border); border-radius: var(--tms-radius-md); padding: 12px; background: var(--tms-bg-1); margin-bottom: 18px; }
+.price-items-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.price-items-title { font-size: 14px; font-weight: 600; color: var(--tms-text); }
+.price-items-total { font-size: 14px; color: var(--tms-text-2); }
+.price-items-total strong { color: var(--tms-primary); font-size: 16px; margin-left: 4px; }
+.price-item-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.price-item-row .form-control { margin-bottom: 0; }
+.price-item-row .price-type-select { flex: 1; }
+.price-item-row .price-amount-input { width: 140px; flex-shrink: 0; }
+.price-item-row .btn-remove { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--tms-bg-hover); color: var(--tms-text-3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.price-item-row .btn-remove:hover { background: var(--tms-error-light); color: var(--tms-error); }
+.price-items-empty { font-size: 13px; color: var(--tms-text-3); text-align: center; padding: 12px 0; }
+.ar-ap-tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+.ar-ap-tag.receivable { background: #e6f7ff; color: #096dd9; }
+.ar-ap-tag.payable { background: #fff7e6; color: #d46b08; }
 
 /* ========== Toast ========== */
 .toast-container { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
@@ -810,23 +827,8 @@ th.sortable:hover { color: var(--tms-primary); }
 </head>
 <body>
 
-<!-- Toast 容器 -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Confirm Dialog -->
-<div class="confirm-mask" id="confirmMask">
-  <div class="confirm-box">
-    <div class="confirm-title" id="confirmTitle">确认操作</div>
-    <div class="confirm-msg" id="confirmMsg">确定执行此操作吗？</div>
-    <div class="confirm-actions">
-      <button class="btn" id="confirmCancel">取消</button>
-      <button class="btn btn-primary" id="confirmOk">确定</button>
-    </div>
-  </div>
-</div>
-
 <!-- 侧边栏 -->
-  <aside class="sidebar">
+<aside class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon">T</div>
       <div class="sidebar-logo-text">
@@ -843,7 +845,7 @@ th.sortable:hover { color: var(--tms-primary); }
       </a>
 
       <div class="nav-group-title">业务管理</div>
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">📦</span>
         <span>运单管理</span>
         <span class="nav-caret">▶</span>
@@ -853,7 +855,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="waybill-create.html" class="submenu-item">创建运单</a>
       </div>
 
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">🚢</span>
         <span>提单管理</span>
         <span class="nav-badge">12</span>
@@ -864,7 +866,7 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="bill-create.html" class="submenu-item">创建提单</a>
       </div>
 
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">📏</span>
         <span>超限管理</span>
         <span class="nav-badge">3</span>
@@ -888,13 +890,13 @@ th.sortable:hover { color: var(--tms-primary); }
         <span class="nav-icon">📋</span>
         <span>拣货入库</span>
       </a>
-      <a href="warehouse-outbound.html" class="nav-item">
+      <a href="warehouse-outbound.html" class="nav-item active">
         <span class="nav-icon">🚚</span>
         <span>出库盘点</span>
       </a>
 
       <div class="nav-group-title">财务管理</div>
-      <div class="nav-item has-sub expanded" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub expanded" onclick="void(0)">
         <span class="nav-icon">💰</span>
         <span>应收管理</span>
         <span class="nav-badge">5</span>
@@ -902,13 +904,13 @@ th.sortable:hover { color: var(--tms-primary); }
       </div>
       <div class="submenu">
         <a href="receivable-enhanced.html" class="submenu-item">应收账单</a>
-        <a href="customer-flow.html" class="submenu-item active">客户流水</a>
+        <a href="customer-flow.html" class="submenu-item">客户流水</a>
         <a href="bill-writeoff.html" class="submenu-item">账单核销</a>
         <a href="receivable-report.html" class="submenu-item">应收报表</a>
       </div>
 
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
-        <span class="nav-icon">💸</span>
+      <div class="nav-item has-sub" onclick="void(0)">
+        <span class="nav-icon">🧾</span>
         <span>应付管理</span>
         <span class="nav-caret">▶</span>
       </div>
@@ -939,7 +941,7 @@ th.sortable:hover { color: var(--tms-primary); }
       </a>
 
       <div class="nav-group-title">基础数据</div>
-      <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
+      <div class="nav-item has-sub" onclick="void(0)">
         <span class="nav-icon">💹</span>
         <span>运价管理</span>
         <span class="nav-caret">▶</span>
@@ -979,9 +981,9 @@ th.sortable:hover { color: var(--tms-primary); }
       <div class="header-breadcrumb">
         <a href="dashboard.html">首页</a>
         <span class="sep">/</span>
-        <a href="receivable-enhanced.html">财务管理</a>
+        <a href="#">仓库作业</a>
         <span class="sep">/</span>
-        <span class="current">客户流水</span>
+        <span class="current">出库盘点</span>
       </div>
       <div class="header-right">
         <div class="header-icon-btn" title="搜索" onclick="toast('搜索功能开发中','info')">🔍</div>
@@ -1004,607 +1006,628 @@ th.sortable:hover { color: var(--tms-primary); }
       <!-- 页面标题区 -->
       <div class="page-title-bar">
         <div>
-          <h1 class="page-title">📋 客户流水</h1>
-          <p class="page-subtitle">客户收付款流水记录查询与导出</p>
+          <h1 class="page-title">🚚 出库盘点</h1>
+          <p class="page-subtitle">装柜出库作业与库存盘点</p>
         </div>
         <div class="page-actions">
-          <a href="receivable-enhanced.html" class="btn">
-            <span>←</span>返回应收管理
-          </a>
-          <button class="btn btn-primary" onclick="doExport()">
-            <span>⬇</span>导出流水
+          <button class="btn" onclick="viewLoadingList()">
+            <span>📋</span>查看装柜清单
+          </button>
+          <button class="btn btn-primary" onclick="submitLoadingDone()">
+            <span>✅</span>提交装柜完成
+          </button>
+          <button class="btn" onclick="printStockResult()">
+            <span>🖨</span>打印盘点结果
           </button>
         </div>
       </div>
 
-      <!-- 统计卡 -->
-      <div class="stat-grid">
-        <div class="stat-card" onclick="filterByStat('all')">
-          <div class="stat-info">
-            <div class="stat-label">📊 流水总笔数</div>
-            <div class="stat-value">1,286</div>
-            <div class="stat-trend up">↑ 12.5% 较上月</div>
-          </div>
-          <div class="stat-icon-wrap">📊</div>
+      <!-- 1. 出库信息区 -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="card-title"><span class="card-title-bar"></span>出库信息</div>
+          <div class="card-extra">共 4 个出库柜</div>
         </div>
-        <div class="stat-card stat-success" onclick="filterByStat('income')">
-          <div class="stat-info">
-            <div class="stat-label">💰 总收入金额</div>
-            <div class="stat-value">¥2,846,300</div>
-            <div class="stat-trend up">↑ ¥286K 较上月</div>
+        <div class="card-body">
+          <div class="desc-note">📌 单证部门向仓库提供出库信息（出库柜号、对应运单信息、核定出库货物数量、对应客户运号信息）；查看装柜清单作为出库、装货作业依据；完成实物装柜后提交【装柜完成】，回传实际装柜数据。</div>
+          <div class="table-wrapper">
+            <table class="data-table" id="outboundTable">
+              <thead>
+                <tr>
+                  <th>出库柜号</th>
+                  <th>提单号</th>
+                  <th>运单数</th>
+                  <th>核定箱数</th>
+                  <th>核定方数</th>
+                  <th>出库状态</th>
+                  <th class="col-action">操作</th>
+                </tr>
+              </thead>
+              <tbody id="outboundTbody">
+                <tr data-id="GK-260801-A" data-status="pending">
+                  <td><span class="mono font-semibold">GK-260801-A</span></td>
+                  <td><span class="mono">BL-2026-0801</span></td>
+                  <td>8</td>
+                  <td class="font-semibold">96</td>
+                  <td>12.5</td>
+                  <td class="status-cell"><span class="tag tag-gray">待出库</span></td>
+                  <td class="col-action">
+                    <div class="action-links">
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260801-A')">装柜</button>
+                      <span class="divider-v"></span>
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260801-A')">核对</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-id="GK-260802-B" data-status="loading">
+                  <td><span class="mono font-semibold">GK-260802-B</span></td>
+                  <td><span class="mono">BL-2026-0802</span></td>
+                  <td>6</td>
+                  <td class="font-semibold">72</td>
+                  <td>9.8</td>
+                  <td class="status-cell"><span class="tag tag-orange">装柜中</span></td>
+                  <td class="col-action">
+                    <div class="action-links">
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260802-B')">装柜</button>
+                      <span class="divider-v"></span>
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260802-B')">核对</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-id="GK-260803-C" data-status="loaded">
+                  <td><span class="mono font-semibold">GK-260803-C</span></td>
+                  <td><span class="mono">BL-2026-0803</span></td>
+                  <td>10</td>
+                  <td class="font-semibold">120</td>
+                  <td>15.2</td>
+                  <td class="status-cell"><span class="tag tag-green">已装柜</span></td>
+                  <td class="col-action">
+                    <div class="action-links">
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260803-C')">装柜</button>
+                      <span class="divider-v"></span>
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260803-C')">核对</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-id="GK-260804-D" data-status="loading">
+                  <td><span class="mono font-semibold">GK-260804-D</span></td>
+                  <td><span class="mono">BL-2026-0804</span></td>
+                  <td>5</td>
+                  <td class="font-semibold">60</td>
+                  <td>7.6</td>
+                  <td class="status-cell"><span class="tag tag-orange">装柜中</span></td>
+                  <td class="col-action">
+                    <div class="action-links">
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260804-D')">装柜</button>
+                      <span class="divider-v"></span>
+                      <button class="btn-link" onclick="openLoadingListModal('GK-260804-D')">核对</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div class="stat-icon-wrap">💰</div>
-        </div>
-        <div class="stat-card stat-cyan" onclick="filterByStat('month')">
-          <div class="stat-info">
-            <div class="stat-label">📅 本月笔数</div>
-            <div class="stat-value">186</div>
-            <div class="stat-trend" style="color:var(--tms-primary);">本月新增流水</div>
-          </div>
-          <div class="stat-icon-wrap">📅</div>
-        </div>
-        <div class="stat-card stat-warning" onclick="filterByStat('monthAmount')">
-          <div class="stat-info">
-            <div class="stat-label">📈 本月金额</div>
-            <div class="stat-value">¥486,200</div>
-            <div class="stat-trend up">↑ 8.3% 较上月</div>
-          </div>
-          <div class="stat-icon-wrap">📈</div>
         </div>
       </div>
 
-      <!-- 筛选卡片 -->
-      <div class="filter-bar">
-        <div class="filter-grid">
-          <div class="filter-item">
-            <label class="filter-label">客户名称</label>
-            <input type="text" class="form-control" id="fCustomer" placeholder="请输入客户名称">
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">账单号</label>
-            <input type="text" class="form-control" id="fBillNo" placeholder="请输入账单号">
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">费用类型</label>
-            <select class="form-control" id="fFeeType">
-              <option value="">全部</option>
-              <option value="运费">运费</option>
-              <option value="附加费">附加费</option>
-              <option value="报关费">报关费</option>
-              <option value="仓储费">仓储费</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">业务时间</label>
-            <div class="date-range">
-              <input type="date" class="form-control" id="fDateStart">
-              <span class="date-range-sep">~</span>
-              <input type="date" class="form-control" id="fDateEnd">
-            </div>
-          </div>
+      <!-- 2. 实际出库核对区 -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="card-title"><span class="card-title-bar"></span>实际出库核对</div>
+          <div class="card-extra">系统自动比对核定与实际出库数据</div>
         </div>
-        <div class="filter-actions">
-          <button class="btn" onclick="resetFilter()">重置</button>
-          <button class="btn btn-primary" id="btnQuery" onclick="doQuery()">
-            <span>🔍</span>查询
-          </button>
+        <div class="card-body">
+          <div class="desc-note">🔍 系统自动比对核定出库数量与实际装柜数据，差异数据（少出）实时登记备注；状态为差异的运单，系统自动扣减对应在库库存数量（下表模拟展示扣减后库存）。</div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>运单号</th>
+                  <th>客户</th>
+                  <th>核定箱数</th>
+                  <th>实际出库箱数</th>
+                  <th>差异箱数</th>
+                  <th>差异备注</th>
+                  <th>在库库存</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="mono">WY202608A001</span></td>
+                  <td>深圳汇智科技</td>
+                  <td>12</td>
+                  <td>12</td>
+                  <td class="diff-cell font-semibold">0</td>
+                  <td class="text-muted">—</td>
+                  <td><span class="font-semibold">96 箱</span></td>
+                  <td><span class="tag tag-green">正常</span></td>
+                </tr>
+                <tr>
+                  <td><span class="mono">WY202608B002</span></td>
+                  <td>广州远达贸易</td>
+                  <td>20</td>
+                  <td>20</td>
+                  <td class="diff-cell font-semibold">0</td>
+                  <td class="text-muted">—</td>
+                  <td><span class="font-semibold">150 箱</span></td>
+                  <td><span class="tag tag-green">正常</span></td>
+                </tr>
+                <tr>
+                  <td><span class="mono">WY202608A013</span></td>
+                  <td>深圳汇智科技</td>
+                  <td>40</td>
+                  <td>38</td>
+                  <td class="diff-cell font-semibold">
+                    <span class="diff-red">-2</span>
+                    <span class="tag tag-red">少出</span>
+                  </td>
+                  <td>客户确认少发 2 箱，后续补发</td>
+                  <td>
+                    <span class="font-semibold">38 箱</span>
+                    <div class="text-sm text-muted">原 40 箱，已自动扣减 2 箱</div>
+                  </td>
+                  <td><span class="tag tag-red">差异</span></td>
+                </tr>
+                <tr>
+                  <td><span class="mono">WY202608C021</span></td>
+                  <td>上海海盈供应链</td>
+                  <td>15</td>
+                  <td>15</td>
+                  <td class="diff-cell font-semibold">0</td>
+                  <td class="text-muted">—</td>
+                  <td><span class="font-semibold">60 箱</span></td>
+                  <td><span class="tag tag-green">正常</span></td>
+                </tr>
+                <tr>
+                  <td><span class="mono">WY202608D032</span></td>
+                  <td>宁波联丰物流</td>
+                  <td>25</td>
+                  <td>25</td>
+                  <td class="diff-cell font-semibold">0</td>
+                  <td class="text-muted">—</td>
+                  <td><span class="font-semibold">120 箱</span></td>
+                  <td><span class="tag tag-green">正常</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <!-- 表格卡片 -->
+      <!-- 3. 出库归档卡片 -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="card-title"><span class="card-title-bar"></span>出库归档</div>
+          <div class="card-extra">归档留存</div>
+        </div>
+        <div class="card-body">
+          <div class="desc-note">🗂 所有出库明细、操作日志、异常记录归档留存，支持随时追溯。</div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>操作人</th>
+                  <th>出库柜号</th>
+                  <th>操作内容</th>
+                  <th>归档类型</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="text-muted font-mono text-sm">2026-08-19 09:30</span></td>
+                  <td>陈仓管</td>
+                  <td><span class="mono">GK-260801-A</span></td>
+                  <td>提交装柜完成（实际 96 箱，数据已回传单证端）</td>
+                  <td><span class="tag tag-gray">操作日志</span></td>
+                </tr>
+                <tr>
+                  <td><span class="text-muted font-mono text-sm">2026-08-19 09:12</span></td>
+                  <td>陈仓管</td>
+                  <td><span class="mono">GK-260801-A</span></td>
+                  <td>装柜清单核对，实物与单据数据一致</td>
+                  <td><span class="tag tag-gray">操作日志</span></td>
+                </tr>
+                <tr>
+                  <td><span class="text-muted font-mono text-sm">2026-08-19 08:50</span></td>
+                  <td>王单证</td>
+                  <td><span class="mono">GK-260801-A</span></td>
+                  <td>下发核定出库信息（8 票 96 箱）</td>
+                  <td><span class="tag tag-blue">出库明细</span></td>
+                </tr>
+                <tr>
+                  <td><span class="text-muted font-mono text-sm">2026-08-19 08:40</span></td>
+                  <td>陈仓管</td>
+                  <td><span class="mono">GK-260802-B</span></td>
+                  <td>运单 WY202608A013 少出 2 箱，登记异常并扣减在库库存</td>
+                  <td><span class="tag tag-red">异常记录</span></td>
+                </tr>
+                <tr>
+                  <td><span class="text-muted font-mono text-sm">2026-08-18 16:20</span></td>
+                  <td>王单证</td>
+                  <td><span class="mono">GK-260804-D</span></td>
+                  <td>下发核定出库信息（5 票 60 箱）</td>
+                  <td><span class="tag tag-blue">出库明细</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 库存盘点区 -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="card-title"><span class="card-title-bar"></span>库存盘点</div>
+          <div class="flex items-center gap-3">
+            <span class="card-extra">盘点批次：<span id="stockBatch">—</span></span>
+            <button class="btn btn-primary" id="btnStartStock" onclick="startStockCheck()">▶ 开始盘点</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="desc-note">📱 PDA 扫描仓位二维码，系统自动匹配对应运单，调取该仓位存放货品与系统剩余库存数量；人工清点实际在库数量进行比对，库存一致标记正常，存在数量异常标记差异并登记异常原因与备注。</div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>仓位码</th>
+                  <th>运单号</th>
+                  <th>系统库存</th>
+                  <th>实际库存</th>
+                  <th>差异</th>
+                  <th>盘点结果</th>
+                  <th>异常原因</th>
+                  <th>备注</th>
+                </tr>
+              </thead>
+              <tbody id="stockTbody">
+                <tr data-sys="60">
+                  <td><span class="mono font-semibold">A-01-03</span></td>
+                  <td><span class="mono">WY202608C021</span></td>
+                  <td class="font-semibold">60</td>
+                  <td><input type="number" class="form-control mini-input" min="0" value="60" oninput="onStockInput(this)"></td>
+                  <td class="diff-cell font-semibold">0</td>
+                  <td class="result-cell"><span class="tag tag-green">正常</span></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value=""></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value=""></td>
+                </tr>
+                <tr data-sys="38">
+                  <td><span class="mono font-semibold">B-02-11</span></td>
+                  <td><span class="mono">WY202608A013</span></td>
+                  <td class="font-semibold">38</td>
+                  <td><input type="number" class="form-control mini-input" min="0" value="36" oninput="onStockInput(this)"></td>
+                  <td class="diff-cell font-semibold"><span class="diff-red">-2</span></td>
+                  <td class="result-cell"><span class="tag tag-red">差异</span></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value="数量短少"></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value="盘点短少 2 箱，待复核"></td>
+                </tr>
+                <tr data-sys="120">
+                  <td><span class="mono font-semibold">C-01-07</span></td>
+                  <td><span class="mono">WY202608D032</span></td>
+                  <td class="font-semibold">120</td>
+                  <td><input type="number" class="form-control mini-input" min="0" value="120" oninput="onStockInput(this)"></td>
+                  <td class="diff-cell font-semibold">0</td>
+                  <td class="result-cell"><span class="tag tag-green">正常</span></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value=""></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value=""></td>
+                </tr>
+                <tr data-sys="45">
+                  <td><span class="mono font-semibold">D-03-02</span></td>
+                  <td><span class="mono">WY202608E044</span></td>
+                  <td class="font-semibold">45</td>
+                  <td><input type="number" class="form-control mini-input" min="0" value="44" oninput="onStockInput(this)"></td>
+                  <td class="diff-cell font-semibold"><span class="diff-red">-1</span></td>
+                  <td class="result-cell"><span class="tag tag-red">差异</span></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value="数量短少"></td>
+                  <td><input type="text" class="form-control mini-input wide" placeholder="—" value="货损 1 箱，登记异常"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 盘点汇总卡片 -->
       <div class="card">
-        <div class="table-toolbar">
-          <div class="toolbar-left">
-            <button class="btn btn-sm" onclick="toast('批量导出功能开发中','info')">批量导出</button>
-            <button class="btn btn-sm" onclick="doExport()">导出当前页</button>
-          </div>
-          <div class="toolbar-right">
-            <div class="search-box">
-              <span class="search-icon">🔍</span>
-              <input type="text" class="form-control" id="tableSearch" oninput="doTableSearch(this.value)" placeholder="搜索流水号/账单号/客户名称">
+        <div class="card-header">
+          <div class="card-title"><span class="card-title-bar"></span>盘点汇总</div>
+          <div class="card-extra">批次：PD2026-0819-01</div>
+        </div>
+        <div class="card-body">
+          <div class="summary-card mb-4">
+            <div class="stock-sum-grid desc-list">
+              <div class="desc-item">
+                <span class="desc-label">系统库存合计</span>
+                <span class="desc-value" id="sumSys">263 箱</span>
+              </div>
+              <div class="desc-item">
+                <span class="desc-label">实际库存合计</span>
+                <span class="desc-value" id="sumAct">260 箱</span>
+              </div>
+              <div class="desc-item">
+                <span class="desc-label">差异数量合计</span>
+                <span class="desc-value diff-red" id="sumDiff">-3 箱</span>
+              </div>
+              <div class="desc-item">
+                <span class="desc-label">异常记录数</span>
+                <span class="desc-value" id="sumAbn">2 条</span>
+              </div>
+              <div class="desc-item">
+                <span class="desc-label">盘点时间</span>
+                <span class="desc-value">2026-08-19 10:35</span>
+              </div>
+              <div class="desc-item">
+                <span class="desc-label">操作人员</span>
+                <span class="desc-value">陈仓管</span>
+              </div>
             </div>
-            <button class="btn btn-icon btn-sm" title="刷新" onclick="refreshTable()">
-              <span>🔄</span>
-            </button>
-            <button class="btn btn-icon btn-sm" title="列设置" onclick="toast('列设置开发中','info')">
-              <span>⚙️</span>
-            </button>
           </div>
-        </div>
-
-        <div class="table-wrapper">
-          <table class="data-table" id="flowTable">
-            <thead>
-              <tr>
-                <th class="col-check"><input type="checkbox" class="check-all" onchange="toggleAll(this)"></th>
-                <th class="sortable" data-sort="flowNo">流水号</th>
-                <th class="sortable" data-sort="billNo">账单号</th>
-                <th class="sortable" data-sort="customer">客户名称</th>
-                <th class="sortable" data-sort="feeType">费用类型</th>
-                <th class="sortable" data-sort="amount">金额</th>
-                <th class="sortable" data-sort="currency">币种</th>
-                <th class="sortable" data-sort="bizTime">业务时间</th>
-                <th class="col-action">操作</th>
-              </tr>
-            </thead>
-            <tbody id="flowTbody">
-              <tr data-flow-no="CF20260805-0001" data-bill-no="AR202607-0156" data-customer="华通机械制造有限公司" data-fee-type="运费" data-amount="128500" data-currency="CNY" data-biz-time="2026-08-01 10:23">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0001')">CF20260805-0001</span></td>
-                <td><span class="mono">AR202607-0156</span></td>
-                <td>华通机械制造有限公司</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">¥128,500.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-01 10:23</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0001')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0002" data-bill-no="AR202607-0155" data-customer="鑫海钢结构工程" data-fee-type="附加费" data-amount="8620" data-currency="CNY" data-biz-time="2026-08-02 14:45">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0002')">CF20260805-0002</span></td>
-                <td><span class="mono">AR202607-0155</span></td>
-                <td>鑫海钢结构工程</td>
-                <td><span class="tag tag-orange">附加费</span></td>
-                <td><span class="money-cell">¥8,620.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-02 14:45</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0002')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0003" data-bill-no="AR202607-0154" data-customer="远东国际物流集团" data-fee-type="报关费" data-amount="3200" data-currency="CNY" data-biz-time="2026-08-03 09:12">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0003')">CF20260805-0003</span></td>
-                <td><span class="mono">AR202607-0154</span></td>
-                <td>远东国际物流集团</td>
-                <td><span class="tag tag-cyan">报关费</span></td>
-                <td><span class="money-cell">¥3,200.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-03 09:12</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0003')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0004" data-bill-no="AR202607-0153" data-customer="中远海运供应链" data-fee-type="运费" data-amount="18600" data-currency="USD" data-biz-time="2026-08-03 16:30">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0004')">CF20260805-0004</span></td>
-                <td><span class="mono">AR202607-0153</span></td>
-                <td>中远海运供应链</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">$18,600.00</span></td>
-                <td>USD</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-03 16:30</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0004')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0005" data-bill-no="AR202607-0152" data-customer="振华重工股份" data-fee-type="仓储费" data-amount="15800" data-currency="CNY" data-biz-time="2026-08-04 11:08">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0005')">CF20260805-0005</span></td>
-                <td><span class="mono">AR202607-0152</span></td>
-                <td>振华重工股份</td>
-                <td><span class="tag tag-purple">仓储费</span></td>
-                <td><span class="money-cell">¥15,800.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-04 11:08</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0005')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0006" data-bill-no="AR202607-0151" data-customer="顺丰速运集团" data-fee-type="附加费" data-amount="2450" data-currency="CNY" data-biz-time="2026-08-04 15:22">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0006')">CF20260805-0006</span></td>
-                <td><span class="mono">AR202607-0151</span></td>
-                <td>顺丰速运集团</td>
-                <td><span class="tag tag-orange">附加费</span></td>
-                <td><span class="money-cell">¥2,450.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-04 15:22</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0006')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0007" data-bill-no="AR202607-0150" data-customer="京东物流科技" data-fee-type="运费" data-amount="96300" data-currency="CNY" data-biz-time="2026-08-05 08:55">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0007')">CF20260805-0007</span></td>
-                <td><span class="mono">AR202607-0150</span></td>
-                <td>京东物流科技</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">¥96,300.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-05 08:55</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0007')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0008" data-bill-no="AR202607-0149" data-customer="嘉里大通物流" data-fee-type="报关费" data-amount="4800" data-currency="CNY" data-biz-time="2026-08-05 13:40">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0008')">CF20260805-0008</span></td>
-                <td><span class="mono">AR202607-0149</span></td>
-                <td>嘉里大通物流</td>
-                <td><span class="tag tag-cyan">报关费</span></td>
-                <td><span class="money-cell">¥4,800.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-08-05 13:40</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0008')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0009" data-bill-no="AR202607-0148" data-customer="德邦物流股份" data-fee-type="仓储费" data-amount="7200" data-currency="CNY" data-biz-time="2026-07-28 10:15">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0009')">CF20260805-0009</span></td>
-                <td><span class="mono">AR202607-0148</span></td>
-                <td>德邦物流股份</td>
-                <td><span class="tag tag-purple">仓储费</span></td>
-                <td><span class="money-cell">¥7,200.00</span></td>
-                <td>CNY</td>
-                <td><span class="text-muted font-mono text-sm">2026-07-28 10:15</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0009')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-flow-no="CF20260805-0010" data-bill-no="AR202607-0147" data-customer="中外运长航集团" data-fee-type="运费" data-amount="12500" data-currency="EUR" data-biz-time="2026-07-30 17:00">
-                <td><input type="checkbox" class="row-check"></td>
-                <td><span class="mono link" onclick="viewDetail('CF20260805-0010')">CF20260805-0010</span></td>
-                <td><span class="mono">AR202607-0147</span></td>
-                <td>中外运长航集团</td>
-                <td><span class="tag tag-blue">运费</span></td>
-                <td><span class="money-cell">€12,500.00</span></td>
-                <td>EUR</td>
-                <td><span class="text-muted font-mono text-sm">2026-07-30 17:00</span></td>
-                <td class="col-action">
-                  <div class="action-links">
-                    <button class="btn-link" onclick="viewDetail('CF20260805-0010')">查看详情</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 分页 -->
-        <div class="pagination">
-          <div class="pagination-info">共 <b>1,286</b> 条记录，每页 <b>10</b> 条</div>
-          <div class="pagination-pages">
-            <button class="page-btn" disabled onclick="changePage(this)">‹</button>
-            <button class="page-btn active" onclick="changePage(this)">1</button>
-            <button class="page-btn" onclick="changePage(this)">2</button>
-            <button class="page-btn" onclick="changePage(this)">3</button>
-            <button class="page-btn" onclick="changePage(this)">4</button>
-            <button class="page-btn" onclick="changePage(this)">5</button>
-            <span class="text-sm text-muted">...</span>
-            <button class="page-btn" onclick="changePage(this)">129</button>
-            <button class="page-btn" onclick="changePage(this)">›</button>
-            <div class="page-jumper">跳至 <input type="number" min="1" max="129" value="1" onkeydown="if(event.key==='Enter'){toast('跳转到第'+this.value+'页','info');}"> 页</div>
+          <div class="flex items-center justify-end gap-3">
+            <button class="btn" onclick="printStockResult()">
+              <span>🖨</span>打印盘点结果
+            </button>
+            <button class="btn btn-primary" onclick="submitStockCheck()">
+              <span>✅</span>提交盘点
+            </button>
           </div>
         </div>
       </div>
 </main>
 
-<!-- Modal: 流水详情 -->
-<div class="modal-mask" id="detailModal">
-  <div class="modal modal-md">
+<!-- 装柜清单弹窗 -->
+<div class="modal-mask" id="loadingListModal">
+  <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">流水详情</span>
-      <button class="modal-close" data-close="detailModal">×</button>
+      <span class="modal-title">📋 装柜清单<span class="card-extra" id="loadingListCabinet" style="margin-left:10px;"></span></span>
+      <button class="modal-close" data-close="loadingListModal">&times;</button>
     </div>
     <div class="modal-body">
-      <div class="desc-list cols-2">
-        <div class="desc-item"><span class="desc-label">流水号</span><span class="desc-value mono" id="dFlowNo">—</span></div>
-        <div class="desc-item"><span class="desc-label">账单号</span><span class="desc-value mono" id="dBillNo">—</span></div>
-        <div class="desc-item"><span class="desc-label">客户名称</span><span class="desc-value" id="dCustomer">—</span></div>
-        <div class="desc-item"><span class="desc-label">费用类型</span><span class="desc-value" id="dFeeType">—</span></div>
-        <div class="desc-item"><span class="desc-label">金额</span><span class="desc-value money-cell" id="dAmount">—</span></div>
-        <div class="desc-item"><span class="desc-label">币种</span><span class="desc-value" id="dCurrency">—</span></div>
-        <div class="desc-item"><span class="desc-label">业务时间</span><span class="desc-value" id="dBizTime">—</span></div>
-        <div class="desc-item"><span class="desc-label">录入时间</span><span class="desc-value" id="dCreateTime">—</span></div>
-      </div>
-      <div class="divider"></div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label class="form-label">备注</label>
-        <div class="text-sm text-muted" id="dRemark">该笔流水为客户正常收付款记录，关联对应应收账单，已核对无误。</div>
+      <div class="desc-note">🔍 核对实际出库箱数、货品与系统单据数据一致，差异数据（少出）实时录入系统备注。</div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>运单号</th>
+              <th>客户</th>
+              <th>核定箱数</th>
+              <th>核定方数</th>
+              <th>实际箱数</th>
+              <th>实际方数</th>
+              <th>差异</th>
+            </tr>
+          </thead>
+          <tbody id="loadingListBody"></tbody>
+        </table>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-close="detailModal">关闭</button>
-      <button class="btn btn-primary" onclick="doExport()">导出此流水</button>
+      <button class="btn" data-close="loadingListModal">取消</button>
+      <button class="btn btn-primary" onclick="confirmLoadingDone()">✅ 确认装柜完成</button>
     </div>
   </div>
 </div>
 
+<script src="../assets/app.js"></script>
 <script>
-// ========== Toast ==========
-function toast(msg, type) {
-  type = type || 'info';
-  var container = document.getElementById('toastContainer');
-  var t = document.createElement('div');
-  t.className = 'toast ' + type;
-  var iconMap = { info:'i', success:'✓', error:'✕', warning:'!' };
-  t.innerHTML = '<span class="toast-icon ' + type + '">' + (iconMap[type]||'i') + '</span><span>' + msg + '</span>';
-  container.appendChild(t);
-  setTimeout(function(){ t.style.opacity = '0'; t.style.transform = 'translateY(-12px)'; t.style.transition = 'all .3s'; }, 2500);
-  setTimeout(function(){ t.remove(); }, 2800);
-}
-
-// ========== Confirm Dialog ==========
-var _confirmCb = null;
-function confirmDialog(title, msg, cb, okText, okType) {
-  document.getElementById('confirmTitle').textContent = title || '确认操作';
-  document.getElementById('confirmMsg').innerHTML = msg || '确定执行此操作吗？';
-  var okBtn = document.getElementById('confirmOk');
-  okBtn.textContent = okText || '确定';
-  okBtn.className = 'btn ' + (okType === 'danger' ? 'btn-danger' : okType === 'primary' ? 'btn-primary' : 'btn-primary');
-  _confirmCb = cb;
-  document.getElementById('confirmMask').classList.add('show');
-}
-document.getElementById('confirmCancel').onclick = function() {
-  document.getElementById('confirmMask').classList.remove('show');
-  _confirmCb = null;
-};
-document.getElementById('confirmOk').onclick = function() {
-  document.getElementById('confirmMask').classList.remove('show');
-  if (_confirmCb) { var cb = _confirmCb; _confirmCb = null; cb(); }
-};
-document.getElementById('confirmMask').addEventListener('click', function(e) {
-  if (e.target === this) { this.classList.remove('show'); _confirmCb = null; }
-});
-
-// ========== Modal open/close ==========
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-document.addEventListener('click', function(e) {
-  var closeId = e.target.getAttribute('data-close');
-  if (closeId) {
-    document.getElementById(closeId).classList.remove('show');
+// ========== 出库柜装柜清单数据 ==========
+var outboundCabinets = [
+  {
+    id: 'GK-260801-A', bill: 'BL-2026-0801', status: 'pending',
+    details: [
+      { wb: 'WY202608A001', cust: '深圳汇智科技', boxes: 12, cbm: 1.6 },
+      { wb: 'WY202608A003', cust: '华通机械制造', boxes: 18, cbm: 2.4 },
+      { wb: 'WY202608A005', cust: '鑫海钢结构工程', boxes: 10, cbm: 1.3 },
+      { wb: 'WY202608A007', cust: '博瑞风电设备', boxes: 14, cbm: 1.8 },
+      { wb: 'WY202608A009', cust: '鼎盛化工装备', boxes: 8, cbm: 1.1 },
+      { wb: 'WY202608A011', cust: '联丰国际物流', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608A013', cust: '深圳汇智科技', boxes: 10, cbm: 1.4 },
+      { wb: 'WY202608A015', cust: '华通机械制造', boxes: 12, cbm: 1.4 }
+    ]
+  },
+  {
+    id: 'GK-260802-B', bill: 'BL-2026-0802', status: 'loading',
+    details: [
+      { wb: 'WY202608B002', cust: '广州远达贸易', boxes: 14, cbm: 1.9 },
+      { wb: 'WY202608B004', cust: '上海海盈供应链', boxes: 10, cbm: 1.4 },
+      { wb: 'WY202608B006', cust: '宁波联丰物流', boxes: 12, cbm: 1.6 },
+      { wb: 'WY202608B008', cust: '深圳汇智科技', boxes: 16, cbm: 2.1 },
+      { wb: 'WY202608B010', cust: '华通机械制造', boxes: 10, cbm: 1.4 },
+      { wb: 'WY202608B012', cust: '鑫海钢结构工程', boxes: 10, cbm: 1.4 }
+    ]
+  },
+  {
+    id: 'GK-260803-C', bill: 'BL-2026-0803', status: 'loaded',
+    details: [
+      { wb: 'WY202608C021', cust: '上海海盈供应链', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C023', cust: '宁波联丰物流', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C025', cust: '鼎盛化工装备', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C027', cust: '深圳汇智科技', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C029', cust: '华通机械制造', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C031', cust: '鑫海钢结构工程', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C033', cust: '博瑞风电设备', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C035', cust: '联丰国际物流', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608C037', cust: '广州远达贸易', boxes: 12, cbm: 1.6 },
+      { wb: 'WY202608C039', cust: '上海海盈供应链', boxes: 12, cbm: 1.6 }
+    ]
+  },
+  {
+    id: 'GK-260804-D', bill: 'BL-2026-0804', status: 'loading',
+    details: [
+      { wb: 'WY202608D032', cust: '宁波联丰物流', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608D034', cust: '华通机械制造', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608D036', cust: '深圳汇智科技', boxes: 12, cbm: 1.5 },
+      { wb: 'WY202608D038', cust: '鑫海钢结构工程', boxes: 12, cbm: 1.6 },
+      { wb: 'WY202608D040', cust: '鼎盛化工装备', boxes: 12, cbm: 1.5 }
+    ]
   }
-});
+];
 
-// ========== 侧边栏子菜单切换 ==========
-function toggleSubmenu(el) {
-  el.classList.toggle('expanded');
-}
+var currentCabinetId = null;
+var stockStarted = false;
 
-// ========== 查询 ==========
-function doQuery() {
-  var btn = document.getElementById('btnQuery');
-  btn.disabled = true;
-  var originalHTML = btn.innerHTML;
-  btn.innerHTML = '<span class="loading-spin"></span>查询中...';
-  setTimeout(function(){
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
-    var customer = document.getElementById('fCustomer').value.trim();
-    var billNo = document.getElementById('fBillNo').value.trim();
-    var feeType = document.getElementById('fFeeType').value;
-    var dateStart = document.getElementById('fDateStart').value;
-    var dateEnd = document.getElementById('fDateEnd').value;
-    var rows = document.querySelectorAll('#flowTbody tr');
-    var visible = 0;
-    rows.forEach(function(tr){
-      var match = true;
-      if (customer) {
-        match = match && (tr.getAttribute('data-customer').indexOf(customer) > -1);
-      }
-      if (billNo) {
-        match = match && (tr.getAttribute('data-bill-no').toLowerCase().indexOf(billNo.toLowerCase()) > -1);
-      }
-      if (feeType) {
-        match = match && (tr.getAttribute('data-fee-type') === feeType);
-      }
-      if (dateStart) {
-        match = match && (tr.getAttribute('data-biz-time') >= dateStart);
-      }
-      if (dateEnd) {
-        match = match && (tr.getAttribute('data-biz-time') <= dateEnd + ' 23:59:59');
-      }
-      tr.style.display = match ? '' : 'none';
-      if (match) visible++;
-    });
-    toast('查询完成，共找到 ' + visible + ' 条客户流水', 'success');
-  }, 800);
-}
-
-// ========== 重置 ==========
-function resetFilter() {
-  document.getElementById('fCustomer').value = '';
-  document.getElementById('fBillNo').value = '';
-  document.getElementById('fFeeType').value = '';
-  document.getElementById('fDateStart').value = '';
-  document.getElementById('fDateEnd').value = '';
-  document.getElementById('tableSearch').value = '';
-  document.querySelectorAll('#flowTbody tr').forEach(function(tr){ tr.style.display = ''; });
-  toast('筛选条件已重置', 'info');
-}
-
-// ========== 表格搜索 ==========
-function doTableSearch(keyword) {
-  keyword = keyword.trim().toLowerCase();
-  var rows = document.querySelectorAll('#flowTbody tr');
-  rows.forEach(function(tr){
-    if (!keyword) { tr.style.display = ''; return; }
-    var flowNo = (tr.getAttribute('data-flow-no') || '').toLowerCase();
-    var billNo = (tr.getAttribute('data-bill-no') || '').toLowerCase();
-    var customer = (tr.getAttribute('data-customer') || '').toLowerCase();
-    if (flowNo.indexOf(keyword) > -1 || billNo.indexOf(keyword) > -1 || customer.indexOf(keyword) > -1) {
-      tr.style.display = '';
-    } else {
-      tr.style.display = 'none';
-    }
-  });
-}
-
-// ========== 刷新 ==========
-function refreshTable() {
-  var rows = document.querySelectorAll('#flowTbody tr');
-  rows.forEach(function(tr){ tr.classList.add('row-fade-in'); });
-  setTimeout(function(){
-    rows.forEach(function(tr){ tr.classList.remove('row-fade-in'); });
-  }, 400);
-  toast('表格已刷新', 'success');
-}
-
-// ========== 导出 ==========
-function doExport() {
-  confirmDialog('确认导出', '确定要导出当前筛选条件下的客户流水记录吗？', function(){
-    toast('正在导出客户流水数据，请稍候...', 'info');
-    setTimeout(function(){
-      toast('导出成功！文件「客户流水_20260805.xlsx」已生成', 'success');
-    }, 1200);
-  }, '确认导出', 'primary');
-}
-
-// ========== 查看详情 ==========
-function viewDetail(flowNo) {
-  var tr = document.querySelector('#flowTbody tr[data-flow-no="' + flowNo + '"]');
-  if (!tr) { toast('未找到流水记录', 'error'); return; }
-  document.getElementById('dFlowNo').textContent = tr.getAttribute('data-flow-no');
-  document.getElementById('dBillNo').textContent = tr.getAttribute('data-bill-no');
-  document.getElementById('dCustomer').textContent = tr.getAttribute('data-customer');
-  document.getElementById('dFeeType').textContent = tr.getAttribute('data-fee-type');
-  var amount = parseFloat(tr.getAttribute('data-amount'));
-  var currency = tr.getAttribute('data-currency');
-  var symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : '¥';
-  document.getElementById('dAmount').textContent = symbol + amount.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2});
-  document.getElementById('dCurrency').textContent = currency;
-  document.getElementById('dBizTime').textContent = tr.getAttribute('data-biz-time');
-  document.getElementById('dCreateTime').textContent = tr.getAttribute('data-biz-time');
-  openModal('detailModal');
-}
-
-// ========== 统计卡筛选 ==========
-function filterByStat(type) {
-  var labels = {all:'全部流水', income:'总收入流水', month:'本月流水', monthAmount:'本月金额流水'};
-  toast('已按「' + labels[type] + '」筛选统计', 'info');
-}
-
-// ========== 全选/反选 ==========
-function toggleAll(el) {
-  var checked = el.checked;
-  document.querySelectorAll('#flowTbody .row-check').forEach(function(c){
-    if (c.closest('tr').style.display !== 'none') c.checked = checked;
-  });
-}
-
-// ========== 表格排序 ==========
-var sortState = { column: null, direction: 'asc' };
-document.addEventListener('click', function(e){
-  var th = e.target.closest('th.sortable');
-  if (!th) return;
-  var table = th.closest('table');
-  var col = th.getAttribute('data-sort');
-  if (!col) return;
-  var newDir = (sortState.column === col && sortState.direction === 'asc') ? 'desc' : 'asc';
-  sortState = { column: col, direction: newDir };
-  table.querySelectorAll('th.sortable').forEach(function(h){ h.classList.remove('sort-asc','sort-desc'); });
-  th.classList.add(newDir === 'asc' ? 'sort-asc' : 'sort-desc');
-  sortTable(table, col, newDir);
-});
-
-function sortTable(table, col, dir) {
-  var tbody = table.querySelector('tbody');
-  var rows = Array.from(tbody.querySelectorAll('tr'));
-  rows.sort(function(a, b){
-    var va = getSortValue(a, col);
-    var vb = getSortValue(b, col);
-    if (typeof va === 'number' && typeof vb === 'number') {
-      return dir === 'asc' ? va - vb : vb - va;
-    }
-    va = String(va).toLowerCase();
-    vb = String(vb).toLowerCase();
-    if (va < vb) return dir === 'asc' ? -1 : 1;
-    if (va > vb) return dir === 'asc' ? 1 : -1;
-    return 0;
-  });
-  rows.forEach(function(r){ tbody.appendChild(r); });
-}
-
-function getSortValue(row, col) {
-  var map = {
-    flowNo: 'data-flow-no',
-    billNo: 'data-bill-no',
-    customer: 'data-customer',
-    feeType: 'data-fee-type',
-    currency: 'data-currency',
-    bizTime: 'data-biz-time'
-  };
-  if (col === 'amount') {
-    return parseFloat(row.getAttribute('data-amount')) || 0;
+function getCabinet(id) {
+  for (var i = 0; i < outboundCabinets.length; i++) {
+    if (outboundCabinets[i].id === id) return outboundCabinets[i];
   }
-  var attr = map[col];
-  return attr ? (row.getAttribute(attr) || '') : '';
+  return null;
 }
 
-// ========== 分页 ==========
-function changePage(btn) {
-  if (btn.disabled) return;
-  var pages = document.querySelectorAll('.pagination .page-btn');
-  pages.forEach(function(p){ p.classList.remove('active'); });
-  if (!isNaN(parseInt(btn.textContent))) {
-    btn.classList.add('active');
-    toast('已切换到第 ' + btn.textContent + ' 页', 'info');
-  } else if (btn.textContent === '›') {
-    var active = document.querySelector('.pagination .page-btn.active');
-    var next = active.nextElementSibling;
-    while (next && (isNaN(parseInt(next.textContent)) || next.disabled)) next = next.nextElementSibling;
-    if (next) { next.classList.add('active'); toast('已切换到第 ' + next.textContent + ' 页', 'info'); }
-  } else if (btn.textContent === '‹') {
-    var active = document.querySelector('.pagination .page-btn.active');
-    var prev = active.previousElementSibling;
-    while (prev && (isNaN(parseInt(prev.textContent)) || prev.disabled)) prev = prev.previousElementSibling;
-    if (prev) { prev.classList.add('active'); toast('已切换到第 ' + prev.textContent + ' 页', 'info'); }
+// ========== 装柜清单弹窗 ==========
+function openLoadingListModal(id) {
+  var cab = getCabinet(id);
+  if (!cab) { toast('未找到该出库柜的装柜清单', 'error'); return; }
+  currentCabinetId = id;
+  var title = document.getElementById('loadingListCabinet');
+  if (title) title.textContent = '｜' + cab.id + '（提单 ' + cab.bill + '）';
+  var tbody = document.getElementById('loadingListBody');
+  if (!tbody) return;
+  tbody.innerHTML = cab.details.map(function(d) {
+    return '<tr>' +
+      '<td><span class="mono">' + d.wb + '</span></td>' +
+      '<td>' + d.cust + '</td>' +
+      '<td class="font-semibold">' + d.boxes + '</td>' +
+      '<td>' + d.cbm + '</td>' +
+      '<td><input type="number" class="form-control mini-input" min="0" value="' + d.boxes + '" oninput="calcLoadingDiff(this)"></td>' +
+      '<td><input type="number" class="form-control mini-input" min="0" step="0.1" value="' + d.cbm + '" oninput="calcLoadingDiff(this)"></td>' +
+      '<td class="diff-cell font-semibold">0</td>' +
+      '</tr>';
+  }).join('');
+  openModal('loadingListModal');
+}
+
+function calcLoadingDiff(input) {
+  var tr = input ? input.closest('tr') : null;
+  if (!tr) return;
+  var planCell = tr.querySelectorAll('td')[2];
+  var diffCell = tr.querySelector('.diff-cell');
+  if (!planCell || !diffCell) return;
+  var plan = parseInt(planCell.textContent, 10) || 0;
+  var boxInput = tr.querySelector('input[type="number"]');
+  var act = boxInput ? (parseInt(boxInput.value, 10) || 0) : 0;
+  var diff = act - plan;
+  diffCell.textContent = diff === 0 ? '0' : (diff > 0 ? '+' + diff : diff);
+  diffCell.style.color = diff < 0 ? 'var(--tms-error)' : (diff > 0 ? 'var(--tms-success)' : '');
+}
+
+function confirmLoadingDone() {
+  var cab = getCabinet(currentCabinetId);
+  if (!cab) { toast('请先选择出库柜', 'warning'); return; }
+  cab.status = 'loaded';
+  var row = document.querySelector('#outboundTbody tr[data-id="' + cab.id + '"]');
+  if (row) {
+    row.setAttribute('data-status', 'loaded');
+    var cell = row.querySelector('.status-cell');
+    if (cell) cell.innerHTML = '<span class="tag tag-green">已装柜</span>';
   }
+  toast('装柜完成，实际装柜数据已回传单证端', 'success');
+  closeModal('loadingListModal');
+}
+
+// ========== 页面操作按钮 ==========
+function viewLoadingList() {
+  var cab = outboundCabinets[0];
+  if (!cab) { toast('暂无出库任务', 'warning'); return; }
+  openLoadingListModal(cab.id);
+}
+
+function submitLoadingDone() {
+  var cab = null;
+  for (var i = 0; i < outboundCabinets.length; i++) {
+    if (outboundCabinets[i].status !== 'loaded') { cab = outboundCabinets[i]; break; }
+  }
+  if (!cab) { toast('当前无待装柜的出库任务', 'warning'); return; }
+  openLoadingListModal(cab.id);
+}
+
+function printStockResult() {
+  toast('盘点结果已发送至打印机，需客户提供打印模板', 'info');
+}
+
+// ========== 库存盘点 ==========
+function startStockCheck() {
+  if (stockStarted) { toast('本批次盘点进行中，可直接录入实际库存', 'info'); return; }
+  stockStarted = true;
+  var batch = document.getElementById('stockBatch');
+  if (batch) batch.innerHTML = '<span class="tag tag-blue">PD2026-0819-01</span>';
+  var btn = document.getElementById('btnStartStock');
+  if (btn) btn.disabled = true;
+  toast('盘点已开始，请使用 PDA 扫描仓位二维码', 'success');
+}
+
+function onStockInput(input) {
+  var tr = input ? input.closest('tr') : null;
+  if (!tr) return;
+  var sys = parseInt(tr.getAttribute('data-sys') || '0', 10);
+  var act = parseInt(input.value, 10);
+  if (isNaN(act)) act = 0;
+  var diff = act - sys;
+  var diffCell = tr.querySelector('.diff-cell');
+  if (diffCell) {
+    diffCell.textContent = diff === 0 ? '0' : (diff > 0 ? '+' + diff : diff);
+    diffCell.style.color = diff < 0 ? 'var(--tms-error)' : (diff > 0 ? 'var(--tms-success)' : '');
+  }
+  var resultCell = tr.querySelector('.result-cell');
+  if (resultCell) {
+    resultCell.innerHTML = diff === 0
+      ? '<span class="tag tag-green">正常</span>'
+      : '<span class="tag tag-red">差异</span>';
+  }
+  recalcStockSummary();
+}
+
+function recalcStockSummary() {
+  var sysSum = 0, actSum = 0, abn = 0;
+  var rows = document.querySelectorAll('#stockTbody tr');
+  rows.forEach(function(tr) {
+    var sys = parseInt(tr.getAttribute('data-sys') || '0', 10);
+    var inp = tr.querySelector('input[type="number"]');
+    var act = inp ? (parseInt(inp.value, 10) || 0) : 0;
+    sysSum += sys;
+    actSum += act;
+    if (sys !== act) abn++;
+  });
+  var diff = actSum - sysSum;
+  var el;
+  el = document.getElementById('sumSys');
+  if (el) el.textContent = sysSum + ' 箱';
+  el = document.getElementById('sumAct');
+  if (el) el.textContent = actSum + ' 箱';
+  el = document.getElementById('sumDiff');
+  if (el) {
+    el.textContent = (diff > 0 ? '+' : '') + diff + ' 箱';
+    el.style.color = diff < 0 ? 'var(--tms-error)' : (diff > 0 ? 'var(--tms-warning)' : '');
+  }
+  el = document.getElementById('sumAbn');
+  if (el) el.textContent = abn + ' 条';
+}
+
+function submitStockCheck() {
+  if (!stockStarted) { toast('请先开始盘点', 'warning'); return; }
+  toast('盘点已完成并归档', 'success');
 }
 
 // ========== Init ==========
 document.addEventListener('DOMContentLoaded', function() {
-  toast('客户流水页面加载完成', 'success');
+  recalcStockSummary();
 });
 </script>
 
-    <style>td,th{word-break:break-all;word-break:auto-phrase;}th{white-space:nowrap;}body{background:var(--tms-bg);color:var(--tms-foreground);}</style>
     <style>
-      .no-scrollbar::-webkit-scrollbar { display: none; }
-      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      [data-icon] {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-position: center;
-        mask-position: center;
-        background-color: currentColor;
+      .desc-note {
+        display: flex; gap: 8px; padding: 12px 14px;
+        background: var(--tms-bg); border: 1px solid var(--tms-border-2);
+        border-radius: var(--tms-radius);
+        font-size: 13px; color: var(--tms-text-2); line-height: 1.7;
+        margin-bottom: 16px;
       }
-      .date-range { display: flex; align-items: center; gap: 6px; }
-      .date-range .form-control { flex: 1; min-width: 0; }
-      .date-range-sep { color: var(--tms-text-3); font-size: 12px; flex-shrink: 0; }
-      .money-cell { font-weight: 700; font-feature-settings: 'tnum'; }
-      .row-fade-in { animation: rowFadeIn .3s ease; }
-      @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .data-table thead th { position: sticky; top: 0; z-index: 2; }
+      .diff-red { color: var(--tms-error); }
+      .diff-green { color: var(--tms-success); }
+      .mini-input { width: 76px; height: 30px; padding: 0 8px; font-size: 13px; }
+      .mini-input.wide { width: 128px; }
+      .stock-sum-grid { grid-template-columns: repeat(3, 1fr); }
+      .stock-sum-grid .desc-label { min-width: 0; }
     </style>
+
 </body>
 </html>

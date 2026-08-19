@@ -743,6 +743,24 @@ th.sortable:hover { color: var(--tms-primary); }
 .login-btn.loading { pointer-events: none; opacity: .8; }
 .login-btn .loading-spin { border-top-color: #fff; border-color: rgba(255,255,255,.3); border-top-color: #fff; }
 
+/* ========== 单页表单分区 ========== */
+.form-sections { display: flex; flex-direction: column; gap: 16px; }
+.form-grid { display: grid; gap: 16px 20px; }
+.form-grid.cols-1 { grid-template-columns: 1fr; }
+.form-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.form-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.form-grid .form-group { margin-bottom: 0; }
+.form-col-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.form-col-pair .form-col { min-width: 0; }
+.form-col-title { font-size: 14px; font-weight: 600; color: var(--tms-text-1); margin: 0 0 14px; padding-left: 10px; border-left: 3px solid var(--tms-primary); display: flex; align-items: center; gap: 6px; }
+.form-col-title:first-child { margin-top: 0; }
+.radio-group { display: flex; align-items: center; gap: 20px; min-height: 34px; }
+.radio-wrapper { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; color: var(--tms-text-1); user-select: none; white-space: nowrap; }
+@media (max-width: 1280px) {
+  .form-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+  .form-col-pair { grid-template-columns: 1fr; gap: 24px; }
+}
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
@@ -858,7 +876,25 @@ th.sortable:hover { color: var(--tms-primary); }
             <a href="#" class="submenu-item" onclick="toast('超限审批开发中','info');return false;">超限审批</a>
         </div>
 
-        <div class="nav-group-title">财务管理</div>
+        <div class="nav-group-title">仓库作业</div>
+      <a href="document-loading.html" class="nav-item">
+        <span class="nav-icon">📦</span>
+        <span>单证装柜</span>
+      </a>
+      <a href="warehouse-receiving.html" class="nav-item">
+        <span class="nav-icon">📥</span>
+        <span>到仓收货</span>
+      </a>
+      <a href="warehouse-inbound.html" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span>拣货入库</span>
+      </a>
+      <a href="warehouse-outbound.html" class="nav-item">
+        <span class="nav-icon">🚚</span>
+        <span>出库盘点</span>
+      </a>
+
+      <div class="nav-group-title">财务管理</div>
         <div class="nav-item has-sub" onclick="toggleSubmenu(this)">
             <span class="nav-icon">💰</span>
             <span>应收管理</span>
@@ -942,1244 +978,531 @@ th.sortable:hover { color: var(--tms-primary); }
         </div>
     </div>
 
-    <!-- 步骤条 -->
-    <div class="steps" id="stepsBar">
-        <div class="step active" data-step="1" onclick="goToStep(1)">
-            <div class="step-circle">1</div>
-            <div class="step-title">提单基本信息</div>
-        </div>
-        <div class="step" data-step="2" onclick="goToStep(2)">
-            <div class="step-circle">2</div>
-            <div class="step-title">收发货人信息</div>
-        </div>
-        <div class="step" data-step="3" onclick="goToStep(3)">
-            <div class="step-circle">3</div>
-            <div class="step-title">集装箱与货物配载</div>
-        </div>
-        <div class="step" data-step="4" onclick="goToStep(4)">
-            <div class="step-circle">4</div>
-            <div class="step-title">费用确认</div>
-        </div>
-    </div>
+    <!-- ========== 单页滚动分区表单 ========== -->
+    <div class="form-sections">
 
-    <!-- ========== 步骤1：提单基本信息 ========== -->
-    <div class="step-pane active" id="step1">
+        <!-- 卡片1：提单基本信息 -->
         <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="card-title-bar"></span>📋 提单基本信息</div>
+            </div>
             <div class="card-body">
-                <!-- 提单类型与航次信息 -->
-                <h3 class="section-title">提单类型与航次信息</h3>
                 <div class="form-grid cols-3">
                     <div class="form-group">
-                        <label class="form-label"><span class="required">*</span>提单类型</label>
-                        <select class="form-control" id="billType" onchange="onBillTypeChange()">
-                            <option value="MBL">海运提单 MB/L</option>
-                            <option value="HBL">海运分提单 HB/L</option>
-                            <option value="AWB">空运提单 AWB</option>
-                            <option value="RAIL">铁路运单</option>
+                        <label class="form-label">箱型</label>
+                        <select class="form-control" id="blBoxType">
+                            <option value="20GP" selected>20GP</option>
+                            <option value="40GP">40GP</option>
+                            <option value="40HQ">40HQ</option>
+                            <option value="45HQ">45HQ</option>
+                            <option value="LCL">拼箱</option>
+                            <option value="AIR">空运</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" id="billNoLabel">提单号/主单号</label>
-                        <input type="text" class="form-control" id="billNo" value="COSU6234567890" placeholder="系统自动生成，可修改">
-                        <div class="form-help" id="billNoHelp">如：COSU6234567890 / MAWB 999-12345678</div>
-                    </div>
-                    <div class="form-group" id="houseBillGroup">
-                        <label class="form-label">分单号</label>
-                        <input type="text" class="form-control" id="houseBillNo" placeholder="HB/L分单号（选填）">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label"><span class="required">*</span><span id="vesselLabel">船名/航次</span></label>
-                        <input type="text" class="form-control" id="vesselVoyage" value="COSCO SHIPPING / 067E" placeholder="如：COSCO SHIPPING / 067E">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label"><span class="required">*</span><span id="carrierLabel">承运人/船公司</span></label>
-                        <select class="form-control" id="carrier">
-                            <option value="">请选择</option>
-                            <optgroup label="海运船公司">
-                                <option value="COSCO">中远海运 COSCO</option>
-                                <option value="MAERSK">马士基 Maersk</option>
-                                <option value="ZIM">以星 ZIM</option>
-                                <option value="MATSON">美森 MATSON</option>
-                                <option value="EVERGREEN">长荣 EVERGREEN</option>
-                                <option value="HAPAG">赫伯罗特 Hapag-Lloyd</option>
-                                <option value="ONE">ONE</option>
-                                <option value="YML">阳明 YML</option>
-                            </optgroup>
-                            <optgroup label="航空公司">
-                                <option value="CATHAY">国泰航空 Cathay Pacific</option>
-                                <option value="KOREAN">大韩航空 Korean Air</option>
-                                <option value="AIRCHINA">中国国航 Air China</option>
-                                <option value="CSN">中国南航 China Southern</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- 航线信息 -->
-                <h3 class="section-title mt-4">航线信息</h3>
-                <div class="form-grid cols-3">
-                    <div class="form-group">
-                        <label class="form-label"><span class="required">*</span>起运港 POL</label>
-                        <select class="form-control" id="pol">
-                            <option value="">请选择</option>
-                            <option value="SHA" selected>上海 SHA</option>
-                            <option value="SZX">深圳 SZX</option>
-                            <option value="NGB">宁波 NGB</option>
-                            <option value="QIN">青岛 QIN</option>
-                            <option value="CAN">广州 CAN</option>
-                            <option value="TSN">天津 TSN</option>
-                            <option value="XMN">厦门 XMN</option>
+                        <label class="form-label">线路</label>
+                        <select class="form-control" id="blLine">
+                            <option value="" selected>请选择线路</option>
+                            <option value="US_AIR">中美空运专线</option>
+                            <option value="US_SEA">中美海运专线</option>
+                            <option value="EU_RAIL">中欧铁路专线</option>
+                            <option value="SEA_AIR">东南亚空运</option>
+                            <option value="KR_JP_SEA">日韩海运</option>
+                            <option value="CN_TRUCK">国内陆运</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">中转港</label>
-                        <input type="text" class="form-control" id="transitPort" placeholder="经转港如：釜山 PUS / 香港 HKG（选填）">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label"><span class="required">*</span>目的港 POD</label>
-                        <select class="form-control" id="pod">
-                            <option value="">请选择</option>
-                            <option value="LAX" selected>洛杉矶 LAX</option>
-                            <option value="LGB">长滩 LGB</option>
-                            <option value="NYC">纽约 NYC</option>
-                            <option value="RTM">鹿特丹 RTM</option>
-                            <option value="HAM">汉堡 HAM</option>
-                            <option value="TYO">东京 TYO</option>
-                            <option value="SIN">新加坡 SIN</option>
-                            <option value="SYD">悉尼 SYD</option>
+                        <label class="form-label">干线级别</label>
+                        <select class="form-control" id="blTrunkLevel">
+                            <option value="" selected>请选择干线级别</option>
+                            <option value="T1">一级干线</option>
+                            <option value="T2">二级干线</option>
+                            <option value="BRANCH">支线</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">最终目的地 FND</label>
-                        <input type="text" class="form-control" id="fnd" placeholder="最终目的地（选填）">
+                        <label class="form-label"><span class="required">*</span>提单号</label>
+                        <input type="text" class="form-control" id="blNo" value="COSU6234567890" placeholder="如 COSU6234567890">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">运输条款</label>
-                        <select class="form-control" id="transportTerm">
-                            <option value="CY-CY" selected>CY-CY（场到场）</option>
-                            <option value="DOOR-DOOR">DOOR-DOOR（门到门）</option>
-                            <option value="CY-DOOR">CY-DOOR（场到门）</option>
-                            <option value="DOOR-CY">DOOR-CY（门到场）</option>
-                            <option value="CFS-CFS">CFS-CFS（站到站）</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- 时间信息 -->
-                <h3 class="section-title mt-4">时间信息</h3>
-                <div class="form-grid cols-3">
-                    <div class="form-group">
-                        <label class="form-label"><span class="required">*</span>预计开船日 ETD</label>
-                        <input type="date" class="form-control" id="etd">
+                        <label class="form-label">班次</label>
+                        <input type="text" class="form-control" id="blShift" placeholder="如 067E">
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span class="required">*</span>预计到港日 ETA</label>
-                        <input type="date" class="form-control" id="eta">
+                        <label class="form-label">铅封号</label>
+                        <input type="text" class="form-control" id="blSealNo" placeholder="如 封条号/铅封号">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">实际开船日 ATD</label>
-                        <input type="date" class="form-control" id="atd">
+                        <label class="form-label">限制重量(kg)</label>
+                        <input type="number" class="form-control" id="blWeightLimit" placeholder="如 28000" min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">实际到港日 ATA</label>
-                        <input type="date" class="form-control" id="ata">
-                    </div>
-                    <div class="form-group" id="cyClosingGroup">
-                        <label class="form-label">截关时间 CY Closing</label>
-                        <input type="datetime-local" class="form-control" id="cyClosing">
+                        <label class="form-label">限制方数(m³)</label>
+                        <input type="number" class="form-control" id="blCbmLimit" placeholder="如 68" min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">补料截止时间 SI Cut-off</label>
-                        <input type="datetime-local" class="form-control" id="siCutoff">
-                    </div>
-                    <div class="form-group" id="freeTimeGroup">
-                        <label class="form-label">免箱期 Free Time</label>
-                        <input type="text" class="form-control" id="freeTime" value="14天" placeholder="如：7天 / 14天">
-                    </div>
-                </div>
-
-                <!-- 其他信息 -->
-                <h3 class="section-title mt-4">其他信息</h3>
-                <div class="form-grid cols-3">
-                    <div class="form-group">
-                        <label class="form-label">运费条款</label>
-                        <div class="radio-group">
-                            <label class="radio-wrapper"><input type="radio" name="freightTerm" value="PREPAID" checked> FREIGHT PREPAID 预付</label>
-                            <label class="radio-wrapper"><input type="radio" name="freightTerm" value="COLLECT"> FREIGHT COLLECT 到付</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">提单签发地点</label>
-                        <input type="text" class="form-control" id="issuePlace" value="SHANGHAI" placeholder="如：SHANGHAI">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">提单签发日期</label>
-                        <input type="date" class="form-control" id="issueDate">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">签发人</label>
-                        <select class="form-control" id="issuer">
-                            <option value="">请选择</option>
-                            <option value="zhangxm" selected>张小美</option>
-                            <option value="lixh">李晓华</option>
-                            <option value="wangxm">王小明</option>
+                        <label class="form-label">提货方式</label>
+                        <select class="form-control" id="blPickupMethod">
+                            <option value="SELF" selected>自送</option>
+                            <option value="PICKUP">上门提货</option>
+                            <option value="EXPRESS">快递</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">销售代表</label>
-                        <select class="form-control" id="salesRep">
-                            <option value="">请选择</option>
-                            <option value="chenjl" selected>陈经理</option>
-                            <option value="liuz">刘总</option>
-                            <option value="zhouyw">周业务</option>
+                        <label class="form-label">派送方式</label>
+                        <select class="form-control" id="blDeliveryMethod">
+                            <option value="DELIVERY" selected>送货上门</option>
+                            <option value="SELF">自提</option>
+                            <option value="EXPRESS">快递</option>
                         </select>
                     </div>
-                    <div class="form-group" style="grid-column: span 3;">
-                        <label class="form-label">操作备注</label>
-                        <textarea class="form-control" id="remarks" rows="3" placeholder="输入操作备注信息..."></textarea>
+                    <div class="form-group">
+                        <label class="form-label">贸易条款</label>
+                        <select class="form-control" id="blTradeTerms">
+                            <option value="EXW">EXW</option>
+                            <option value="FOB" selected>FOB</option>
+                            <option value="CIF">CIF</option>
+                            <option value="DDP">DDP</option>
+                            <option value="DDU">DDU</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">供应商</label>
+                        <select class="form-control" id="blSupplier">
+                            <option value="" selected>请选择供应商</option>
+                            <option value="SHUANGYU">双裕国际</option>
+                            <option value="HUAMAO">华贸物流</option>
+                            <option value="NBHT">宁波海通国际</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">承运商</label>
+                        <select class="form-control" id="blCarrier">
+                            <option value="COSCO" selected>COSCO</option>
+                            <option value="MAERSK">MAERSK</option>
+                            <option value="MSC">MSC</option>
+                            <option value="COSCO_CN">中远海运</option>
+                            <option value="SF">顺丰国际</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span class="required">*</span>出发地点</label>
+                        <select class="form-control" id="blDeparture">
+                            <option value="" selected>请选择出发地点</option>
+                            <option value="SHANGHAI">上海</option>
+                            <option value="SHENZHEN">深圳</option>
+                            <option value="NINGBO">宁波</option>
+                            <option value="YIWU">义乌</option>
+                            <option value="GUANGZHOU">广州</option>
+                            <option value="QINGDAO">青岛</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">截单时间</label>
+                        <input type="datetime-local" class="form-control" id="blCutoffTime">
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- ========== 步骤2：收发货人信息 ========== -->
-    <div class="step-pane" id="step2">
-        <!-- 发货人 -->
+        <!-- 卡片2：收件人 / 发件人 -->
         <div class="card">
             <div class="card-header">
-                <div class="card-title"><span class="card-title-bar"></span>发货人 Shipper</div>
-                <button class="addr-book-btn" onclick="openAddrBook('shipper')">📖 从地址簿导入</button>
+                <div class="card-title"><span class="card-title-bar"></span>👤 收件人 / 发件人</div>
             </div>
             <div class="card-body">
-                <div class="form-grid cols-2">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label"><span class="required">*</span>公司名称</label>
-                        <input type="text" class="form-control" id="shipperName" placeholder="请输入发货人公司全称">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label"><span class="required">*</span>地址</label>
-                        <textarea class="form-control" id="shipperAddr" rows="2" placeholder="请输入详细地址"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">联系人</label>
-                        <input type="text" class="form-control" id="shipperContact" placeholder="联系人姓名">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">电话</label>
-                        <input type="text" class="form-control" id="shipperPhone" placeholder="联系电话">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label">统一社会信用代码/税号</label>
-                        <input type="text" class="form-control" id="shipperTaxNo" placeholder="选填">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 收货人 -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><span class="card-title-bar"></span>收货人 Consignee</div>
-            </div>
-            <div class="card-body">
-                <div class="form-grid cols-2">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label"><span class="required">*</span>公司名称</label>
-                        <input type="text" class="form-control" id="consigneeName" placeholder="To Order 时填写 TO ORDER 或 TO ORDER OF SHIPPER">
-                        <div class="form-help">指示提单可填写：TO ORDER / TO ORDER OF SHIPPER / TO ORDER OF XXX BANK</div>
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label"><span class="required">*</span>地址</label>
-                        <textarea class="form-control" id="consigneeAddr" rows="2" placeholder="请输入详细地址"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">联系人</label>
-                        <input type="text" class="form-control" id="consigneeContact" placeholder="联系人姓名">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">电话</label>
-                        <input type="text" class="form-control" id="consigneePhone" placeholder="联系电话">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label">通知方选择</label>
-                        <div class="radio-group">
-                            <label class="radio-wrapper"><input type="radio" name="notifyOption" value="same" checked onchange="toggleNotifyParty()"> Same as Consignee（与收货人相同）</label>
-                            <label class="radio-wrapper"><input type="radio" name="notifyOption" value="other" onchange="toggleNotifyParty()"> 另行指定通知方</label>
+                <div class="form-col-pair">
+                    <!-- 收件人信息 -->
+                    <div class="form-col">
+                        <h3 class="form-col-title">收件人信息</h3>
+                        <div class="form-grid cols-2">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">地址库</label>
+                                <select class="form-control" id="rcAddrBook">
+                                    <option value="" selected>请选择地址库</option>
+                                    <option value="ONT8">Amazon FBA ONT8</option>
+                                    <option value="LAX9">Amazon FBA LAX9</option>
+                                    <option value="SY_YIWU">双裕国际-义乌仓</option>
+                                    <option value="HM_SZ">华贸物流-深圳仓</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><span class="required">*</span>收件人</label>
+                                <input type="text" class="form-control" id="rcName" placeholder="收件人姓名">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">收件人公司</label>
+                                <input type="text" class="form-control" id="rcCompany" placeholder="收件人公司名称">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">收件人地址</label>
+                                <input type="text" class="form-control" id="rcAddress" placeholder="收件人详细地址">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">收件人城市/州/邮编</label>
+                                <input type="text" class="form-control" id="rcCityStateZip" placeholder="如 Los Angeles, CA 90001">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">收件人国家</label>
+                                <select class="form-control" id="rcCountry">
+                                    <option value="US" selected>美国</option>
+                                    <option value="CA">加拿大</option>
+                                    <option value="JP">日本</option>
+                                    <option value="DE">德国</option>
+                                    <option value="GB">英国</option>
+                                    <option value="FR">法国</option>
+                                    <option value="AU">澳大利亚</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">收件人电话</label>
+                                <input type="text" class="form-control" id="rcPhone" placeholder="收件人联系电话">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">收件人邮箱</label>
+                                <input type="email" class="form-control" id="rcEmail" placeholder="收件人邮箱">
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 通知方（默认隐藏） -->
-        <div class="card hidden" id="notifyPartyCard">
-            <div class="card-header">
-                <div class="card-title"><span class="card-title-bar"></span>通知方 Notify Party</div>
-                <button class="addr-book-btn" onclick="openAddrBook('notify')">📖 从地址簿导入</button>
-            </div>
-            <div class="card-body">
-                <div class="form-grid cols-2">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label"><span class="required">*</span>公司名称</label>
-                        <input type="text" class="form-control" id="notifyName" placeholder="请输入通知方公司名称">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label">地址</label>
-                        <textarea class="form-control" id="notifyAddr" rows="2" placeholder="请输入详细地址"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">联系人</label>
-                        <input type="text" class="form-control" id="notifyContact" placeholder="联系人姓名">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">电话</label>
-                        <input type="text" class="form-control" id="notifyPhone" placeholder="联系电话">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== 步骤3：集装箱与货物配载 ========== -->
-    <div class="step-pane" id="step3">
-        <!-- 集装箱信息 -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><span class="card-title-bar"></span>集装箱信息 <span class="section-tag" id="containerSectionTag">（海运）</span></div>
-            </div>
-            <div class="card-body" style="padding: 0;">
-                <div class="table-wrapper" style="border: none; border-radius: 0;">
-                    <table class="data-table" id="containerTable">
-                        <thead>
-                            <tr>
-                                <th style="width:50px">序号</th>
-                                <th style="width:110px"><span class="required">*</span>柜型</th>
-                                <th class="sea-field">柜号</th>
-                                <th class="sea-field">封条号 Seal No.</th>
-                                <th>铅封号</th>
-                                <th style="width:90px">件数 PCS</th>
-                                <th style="width:100px">毛重 KG</th>
-                                <th style="width:100px">体积 CBM</th>
-                                <th style="width:70px">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="containerTbody">
-                            <!-- 动态行 -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="table-add-row" onclick="addContainerRow()">＋ 添加集装箱</div>
-            </div>
-        </div>
-
-        <!-- 集装箱配货/关联运单 -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><span class="card-title-bar"></span>集装箱配货 / 关联运单</div>
-                <button class="btn btn-primary btn-sm" onclick="openWaybillPicker()">📋 从待配货列表选择</button>
-            </div>
-            <div class="card-body">
-                <p class="text-muted text-sm" style="margin:0 0 12px;">将待出货的运单分配到集装箱中</p>
-                <div class="table-wrapper">
-                    <table class="data-table" id="allocationTable">
-                        <thead>
-                            <tr>
-                                <th style="width:50px">序号</th>
-                                <th style="width:160px">运单号</th>
-                                <th style="width:140px">客户</th>
-                                <th>品名</th>
-                                <th style="width:80px">件数</th>
-                                <th style="width:90px">重量 KG</th>
-                                <th style="width:90px">体积 CBM</th>
-                                <th style="width:140px">分配柜号</th>
-                                <th style="width:70px">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="allocationTbody">
-                            <!-- 动态行 -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="table-add-row" onclick="addAllocationRow()">＋ 添加运单</div>
-
-                <!-- 货物汇总卡片 -->
-                <div class="cargo-summary" id="cargoSummary">
-                    <div class="cargo-summary-item">总柜量：<b id="sumCntrs">0</b></div>
-                    <div class="cargo-summary-item">总件数：<b id="sumPcs">0</b> PCS</div>
-                    <div class="cargo-summary-item">总毛重：<b id="sumWeight">0</b> KG</div>
-                    <div class="cargo-summary-item">总体积：<b id="sumVolume">0</b> CBM</div>
-                    <div class="cargo-summary-item highlight">总运单数：<b id="sumWaybills">0</b> 票</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 货物描述/唛头 -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><span class="card-title-bar"></span>货物描述 / 唛头</div>
-            </div>
-            <div class="card-body">
-                <div class="form-grid cols-1">
-                    <div class="form-group">
-                        <label class="form-label"><span class="required">*</span>货物品名 Description of Goods</label>
-                        <textarea class="form-control" id="cargoDesc" rows="3" placeholder="如：FURNITURE / ELECTRONIC PRODUCTS / GENERAL CARGO"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">唛头 Shipping Marks</label>
-                        <textarea class="form-control" id="shippingMarks" rows="2" placeholder="请输入唛头信息"></textarea>
-                    </div>
-                </div>
-
-                <!-- 危险品折叠 -->
-                <div class="collapsible-header" onclick="toggleCollapsible(this)">
-                    <span class="caret">▶</span>
-                    <span>⚠️ 危险品信息（可选）</span>
-                </div>
-                <div class="collapsible-body">
-                    <div class="form-grid cols-3">
-                        <div class="form-group">
-                            <label class="form-label">UN编号</label>
-                            <input type="text" class="form-control" placeholder="如：UN1263">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">危险品等级</label>
-                            <select class="form-control">
-                                <option value="">请选择</option>
-                                <option value="1">第1类 爆炸品</option>
-                                <option value="2">第2类 气体</option>
-                                <option value="3">第3类 易燃液体</option>
-                                <option value="4">第4类 易燃固体</option>
-                                <option value="5">第5类 氧化剂</option>
-                                <option value="6">第6类 毒性物质</option>
-                                <option value="7">第7类 放射性物质</option>
-                                <option value="8">第8类 腐蚀性物质</option>
-                                <option value="9">第9类 杂项危险品</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">应急联系电话</label>
-                            <input type="text" class="form-control" placeholder="24小时应急电话">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 文件上传 -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><span class="card-title-bar"></span>文件上传</div>
-            </div>
-            <div class="card-body">
-                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-                    <div class="upload-icon">📁</div>
-                    <div class="upload-text">点击或拖拽文件到此处上传</div>
-                    <div class="upload-hint">支持补料单(SI)、装箱单(Packing List)、商业发票(Commercial Invoice)等，单个文件不超过20MB</div>
-                </div>
-                <input type="file" id="fileInput" multiple style="display:none" onchange="handleFileSelect(event)">
-                <div class="upload-file-list" id="fileList"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== 步骤4：费用确认 ========== -->
-    <div class="step-pane" id="step4">
-        <div class="layout-2col">
-            <div>
-                <!-- 费用明细 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title"><span class="card-title-bar"></span>费用明细</div>
-                    </div>
-                    <div class="card-body" style="padding: 0;">
-                        <div class="table-wrapper" style="border: none; border-radius: 0;">
-                            <table class="data-table" id="feeTable">
-                                <thead>
-                                    <tr>
-                                        <th style="width:50px">序号</th>
-                                        <th>费用项目</th>
-                                        <th style="width:100px">收付类型</th>
-                                        <th style="width:110px">金额</th>
-                                        <th style="width:80px">币种</th>
-                                        <th>结算对象</th>
-                                        <th>备注</th>
-                                        <th style="width:60px">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="feeTbody">
-                                    <!-- 动态行 -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="table-add-row" onclick="addFeeRow()">＋ 添加费用项</div>
-                    </div>
-                </div>
-
-                <!-- 签单确认 -->
-                <div class="confirm-sign-section">
-                    <label class="checkbox-wrapper" style="font-size: 14px;">
-                        <input type="checkbox" id="signConfirm" onchange="updateIssueBtn()">
-                        我确认以上提单信息准确无误，申请签发提单
-                    </label>
-                    <div style="margin-top: 16px;">
-                        <label class="form-label">签单方式</label>
-                        <div class="sign-method-group">
-                            <label class="sign-method-card selected" onclick="selectSignMethod(this, 'original')">
-                                <input type="radio" name="signMethod" value="original" checked>
-                                <div class="sign-icon">📄</div>
-                                <div class="sign-name">正本提单 Original</div>
-                                <div class="sign-desc">签发3正3副纸质提单</div>
-                            </label>
-                            <label class="sign-method-card" onclick="selectSignMethod(this, 'telex')">
-                                <input type="radio" name="signMethod" value="telex">
-                                <div class="sign-icon">📠</div>
-                                <div class="sign-name">电放提单 Telex Release</div>
-                                <div class="sign-desc">电放，目的港凭副本提货</div>
-                            </label>
-                            <label class="sign-method-card" onclick="selectSignMethod(this, 'seaway')">
-                                <input type="radio" name="signMethod" value="seaway">
-                                <div class="sign-icon">🌊</div>
-                                <div class="sign-name">海运单 Sea Waybill</div>
-                                <div class="sign-desc">海运单，直接放货给收货人</div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 右侧费用汇总 -->
-            <div>
-                <div class="fee-summary-card">
-                    <div class="card-header">
-                        <div class="card-title"><span>💰</span> 费用汇总</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="summary-row payable">
-                            <span>应付合计</span>
-                            <span class="summary-value" id="sumPayable">$0.00</span>
-                        </div>
-                        <div class="summary-row receivable">
-                            <span>应收合计</span>
-                            <span class="summary-value" id="sumReceivable">$0.00</span>
-                        </div>
-                        <div class="summary-row profit" id="profitRow">
-                            <span>毛利</span>
-                            <span class="summary-value" id="sumProfit">$0.00</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>毛利率</span>
-                            <span class="summary-value" id="profitRate">0%</span>
-                        </div>
-                        <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--tms-border-2);">
-                            <div class="form-grid cols-1">
-                                <div class="form-group">
-                                    <label class="form-label">结算条款/付款方式</label>
-                                    <select class="form-control">
-                                        <option>月结30天</option>
-                                        <option>月结60天</option>
-                                        <option>票结</option>
-                                        <option>预付</option>
-                                        <option>到付</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">币别</label>
-                                    <select class="form-control" id="feeCurrency" onchange="recalcFees()">
-                                        <option value="USD">USD 美元</option>
-                                        <option value="CNY">CNY 人民币</option>
-                                    </select>
-                                </div>
+                    <!-- 发件人信息 -->
+                    <div class="form-col">
+                        <h3 class="form-col-title">发件人信息</h3>
+                        <div class="form-grid cols-2">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">发件人地址库</label>
+                                <select class="form-control" id="snAddrBook">
+                                    <option value="" selected>请选择地址库</option>
+                                    <option value="ONT8">Amazon FBA ONT8</option>
+                                    <option value="LAX9">Amazon FBA LAX9</option>
+                                    <option value="SY_YIWU">双裕国际-义乌仓</option>
+                                    <option value="HM_SZ">华贸物流-深圳仓</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><span class="required">*</span>发件人</label>
+                                <input type="text" class="form-control" id="snName" placeholder="发件人姓名">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">发件人公司</label>
+                                <input type="text" class="form-control" id="snCompany" placeholder="发件人公司名称">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">发件人地址</label>
+                                <input type="text" class="form-control" id="snAddress" placeholder="发件人详细地址">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">发件人城市/州/邮编</label>
+                                <input type="text" class="form-control" id="snCityStateZip" placeholder="如 Yiwu, Zhejiang 322000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">发件人国家</label>
+                                <select class="form-control" id="snCountry">
+                                    <option value="CN" selected>中国</option>
+                                    <option value="US">美国</option>
+                                    <option value="CA">加拿大</option>
+                                    <option value="JP">日本</option>
+                                    <option value="DE">德国</option>
+                                    <option value="GB">英国</option>
+                                    <option value="FR">法国</option>
+                                    <option value="AU">澳大利亚</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">发件人电话</label>
+                                <input type="text" class="form-control" id="snPhone" placeholder="发件人联系电话">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">发件人邮箱</label>
+                                <input type="email" class="form-control" id="snEmail" placeholder="发件人邮箱">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- 卡片3：附加信息 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="card-title-bar"></span>📌 附加信息</div>
+            </div>
+            <div class="card-body">
+                <div class="form-col-pair">
+                    <!-- 参考号与备注 -->
+                    <div class="form-col">
+                        <h3 class="form-col-title">参考信息</h3>
+                        <div class="form-grid cols-2">
+                            <div class="form-group">
+                                <label class="form-label">GPS跟踪器</label>
+                                <select class="form-control" id="blGps">
+                                    <option value="NONE" selected>无</option>
+                                    <option value="DEVICE">有</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">GPS设备号</label>
+                                <input type="text" class="form-control" id="blGpsDeviceNo" placeholder="如 GT1000234">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">参考号一</label>
+                                <input type="text" class="form-control" id="blRefNo1" placeholder="参考号一">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">参考号二</label>
+                                <input type="text" class="form-control" id="blRefNo2" placeholder="参考号二">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">参考号三</label>
+                                <input type="text" class="form-control" id="blRefNo3" placeholder="参考号三">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">备注</label>
+                                <textarea class="form-control" id="blRemark" rows="3" placeholder="输入备注信息..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 业务信息 -->
+                    <div class="form-col">
+                        <h3 class="form-col-title">业务信息</h3>
+                        <div class="form-grid cols-2">
+                            <div class="form-group">
+                                <label class="form-label">销售代表</label>
+                                <select class="form-control" id="blSalesRep">
+                                    <option value="" selected>请选择销售代表</option>
+                                    <option value="zhangjl">张经理</option>
+                                    <option value="chenxs">陈销售</option>
+                                    <option value="wangxs">王销售</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">是否购买保险</label>
+                                <div class="radio-group">
+                                    <label class="radio-wrapper"><input type="radio" name="blInsurance" value="NO" checked> 否</label>
+                                    <label class="radio-wrapper"><input type="radio" name="blInsurance" value="YES"> 是</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">海外仓代理</label>
+                                <input type="text" class="form-control" id="blWhAgent" placeholder="海外仓代理名称">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">客户名</label>
+                                <input type="text" class="form-control" id="blCustomerName" placeholder="客户名称">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片4：运输代理与协同 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="card-title-bar"></span>🚛 运输代理与协同</div>
+            </div>
+            <div class="card-body">
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label class="form-label">报关代理</label>
+                        <select class="form-control" id="blCustomsAgent">
+                            <option value="" selected>请选择报关代理</option>
+                            <option value="SUTONG">速通报关行</option>
+                            <option value="JIALI">嘉里报关行</option>
+                            <option value="SELF">自营报关</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">清关代理</label>
+                        <select class="form-control" id="blClearanceAgent">
+                            <option value="" selected>请选择清关代理</option>
+                            <option value="DHL">DHL清关</option>
+                            <option value="UPS">UPS清关</option>
+                            <option value="SELF">自营清关</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">报关行信息</label>
+                        <input type="text" class="form-control" id="blCustomsInfo" placeholder="报关行名称/编码">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">转运快递货站</label>
+                        <select class="form-control" id="blTransferStation">
+                            <option value="" selected>请选择货站</option>
+                            <option value="SH1">上海一仓</option>
+                            <option value="SZ">深圳仓</option>
+                            <option value="YW">义乌仓</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">供应商服务</label>
+                        <select class="form-control" id="blSupplierService">
+                            <option value="" selected>请选择服务</option>
+                            <option value="STD">标准报关</option>
+                            <option value="EXPRESS">加急报关</option>
+                            <option value="WH">仓储服务</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">关联方</label>
+                        <select class="form-control" id="blRelatedParty">
+                            <option value="NONE" selected>无</option>
+                            <option value="CUST_A">关联客户A</option>
+                            <option value="CUST_B">关联客户B</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">单证员</label>
+                        <select class="form-control" id="blDocClerk">
+                            <option value="" selected>请选择单证员</option>
+                            <option value="zhao">赵单证</option>
+                            <option value="qian">钱单证</option>
+                            <option value="sun">孙单证</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">渠道管理员</label>
+                        <select class="form-control" id="blChannelAdmin">
+                            <option value="" selected>请选择渠道</option>
+                            <option value="CH_A">渠道A</option>
+                            <option value="CH_B">渠道B</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">财务</label>
+                        <select class="form-control" id="blFinance">
+                            <option value="" selected>请选择财务</option>
+                            <option value="wang">王财务</option>
+                            <option value="li">李财务</option>
+                            <option value="zhao">赵财务</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">财务代表</label>
+                        <select class="form-control" id="blFinanceRep">
+                            <option value="" selected>请选择财务代表</option>
+                            <option value="qian">钱会计</option>
+                            <option value="sun">孙财务</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">内部备注</label>
+                        <textarea class="form-control" id="blInnerRemark" rows="3" placeholder="输入内部备注..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片5：财务应收 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="card-title-bar"></span>💰 财务应收</div>
+            </div>
+            <div class="card-body">
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label class="form-label">清关应收</label>
+                        <input type="number" class="form-control" id="blCustomsReceivable" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">尾端应收</label>
+                        <input type="number" class="form-control" id="blTailReceivable" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片6：预计时间 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="card-title-bar"></span>🕐 预计时间</div>
+            </div>
+            <div class="card-body">
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label class="form-label">预计离港时间</label>
+                        <input type="date" class="form-control" id="blEtdDepart">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">预计出发时间</label>
+                        <input type="date" class="form-control" id="blEtdDepart2">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">预计到港时间</label>
+                        <input type="date" class="form-control" id="blEtdArrive">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">预计清关时间</label>
+                        <input type="date" class="form-control" id="blEtdClearance">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">预计送货时间</label>
+                        <input type="date" class="form-control" id="blEtdDeliver">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">预计到仓时间</label>
+                        <input type="date" class="form-control" id="blEtdWarehouse">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片7：实际时间 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="card-title-bar"></span>⏱ 实际时间</div>
+            </div>
+            <div class="card-body">
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label class="form-label">实际出发时间</label>
+                        <input type="date" class="form-control" id="blAtdDepart">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">实际到达时间</label>
+                        <input type="date" class="form-control" id="blAtaArrive">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">实际清关时间</label>
+                        <input type="date" class="form-control" id="blAtaClearance">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">实际送货时间</label>
+                        <input type="date" class="form-control" id="blAtaDeliver">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">实际到仓时间</label>
+                        <input type="date" class="form-control" id="blAtaWarehouse">
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </main>
-
-<!-- 底部操作栏 -->
-<div class="form-footer-bar">
-    <div class="footer-left">
-        <button class="btn" onclick="cancelForm()">取消</button>
-    </div>
-    <div class="footer-right">
-        <button class="btn" id="prevBtn" onclick="prevStep()" style="display:none;">← 上一步</button>
-        <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">下一步 →</button>
-        <button class="btn" id="saveDraftBtn" onclick="saveDraft()" style="display:none;">保存草稿</button>
-        <button class="btn btn-primary" id="issueBtn" onclick="confirmIssue()" style="display:none;" disabled>确认签发</button>
-    </div>
-</div>
-
-<!-- 待配货运单选择模态框 -->
-<div class="modal-mask" id="waybillModal">
-    <div class="modal modal-lg">
-        <div class="modal-header">
-            <div class="modal-title">选择待配货运单</div>
-            <button class="modal-close" onclick="closeModal('waybillModal')">✕</button>
-        </div>
-        <div class="modal-body">
-            <div style="margin-bottom: 12px; display: flex; gap: 8px;">
-                <input type="text" class="form-control" placeholder="搜索运单号/客户/品名..." style="flex:1;" id="wbSearchInput" oninput="filterWaybills()">
-            </div>
-            <div class="waybill-select-list" id="waybillSelectList">
-                <!-- 模拟数据 -->
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="closeModal('waybillModal')">取消</button>
-            <button class="btn btn-primary" onclick="confirmSelectWaybills()">确认添加（<span id="selectedWbCount">0</span>）</button>
-        </div>
-    </div>
-</div>
-
-<!-- 地址簿模态框 -->
-<div class="modal-mask" id="addrBookModal">
-    <div class="modal">
-        <div class="modal-header">
-            <div class="modal-title">从地址簿选择</div>
-            <button class="modal-close" onclick="closeModal('addrBookModal')">✕</button>
-        </div>
-        <div class="modal-body">
-            <div style="padding: 20px; text-align: center; color: var(--tms-text-3);">
-                <div style="font-size: 48px; margin-bottom: 12px;">📍</div>
-                <div>地址簿功能演示</div>
-                <div class="text-sm" style="margin-top: 8px;">实际环境中此处将打开地址簿选择器，选择后自动填充到对应字段。</div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="closeModal('addrBookModal')">关闭</button>
-        </div>
-    </div>
-</div>
-
-<!-- 确认签发对话框 -->
-<div class="modal-mask" id="confirmDialog">
-    <div class="modal modal-sm confirm-dialog">
-        <div class="modal-body">
-            <div class="confirm-icon">🚢</div>
-            <div class="confirm-title">确认签发提单？</div>
-            <div class="confirm-desc">
-                提单号：<b id="confirmBillNo" style="color:var(--tms-primary);">COSU6234567890</b><br>
-                签发后将正式生成提单记录，请确认信息无误。
-            </div>
-        </div>
-        <div class="modal-footer" style="justify-content: center;">
-            <button class="btn" onclick="closeModal('confirmDialog')">取消</button>
-            <button class="btn btn-primary" onclick="doIssue()">确认签发</button>
-        </div>
-    </div>
-</div>
 
 <!-- Toast 容器 -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
 // ========== 全局状态 ==========
-let currentStep = 1;
-const totalSteps = 4;
-let containerRowIdx = 0;
-let allocationRowIdx = 0;
-let feeRowIdx = 0;
-let uploadedFiles = [];
-let selectedWaybills = new Set();
-let currentAddrTarget = '';
-
-// 模拟待配货运单数据
-const mockWaybills = [
-    { no: 'WB20240728001', customer: '深圳市华通贸易有限公司', product: '家具 FURNITURE', pcs: 120, weight: 3500, volume: 28.5 },
-    { no: 'WB20240728002', customer: '广州电子科技有限公司', product: '电子产品 ELECTRONICS', pcs: 350, weight: 2200, volume: 15.8 },
-    { no: 'WB20240728003', customer: '宁波普货进出口公司', product: '普货 GENERAL CARGO', pcs: 80, weight: 1800, volume: 12.0 },
-    { no: 'WB20240728004', customer: '上海服装贸易有限公司', product: '服装 GARMENTS', pcs: 500, weight: 1200, volume: 18.5 },
-    { no: 'WB20240728005', customer: '青岛机械制造有限公司', product: '机械零件 MACHINERY PARTS', pcs: 25, weight: 5600, volume: 22.0 },
-    { no: 'WB20240728006', customer: '厦门工艺品进出口公司', product: '工艺品 HANDICRAFTS', pcs: 200, weight: 950, volume: 10.2 },
-];
-
-// 默认费用项（海运）
-const defaultSeaFees = [
-    { name: '海运费 Freight', type: 'payable', amount: 3200, currency: 'USD', party: '中远海运 COSCO', remark: 'O/F' },
-    { name: 'THC 码头操作费', type: 'payable', amount: 750, currency: 'CNY', party: '码头', remark: '' },
-    { name: '文件费 DOC', type: 'payable', amount: 450, currency: 'CNY', party: '船代', remark: '' },
-    { name: '订舱费 Booking', type: 'payable', amount: 350, currency: 'CNY', party: '船公司', remark: '' },
-    { name: '打单费 EIR', type: 'payable', amount: 100, currency: 'CNY', party: '车队', remark: '' },
-    { name: '报关费 Customs Clearance', type: 'payable', amount: 300, currency: 'CNY', party: '报关行', remark: '' },
-    { name: '拖车费 Trucking', type: 'payable', amount: 2800, currency: 'CNY', party: '车队', remark: '' },
-    { name: '附加费（BAF/CAF/PSS/EBS）', type: 'payable', amount: 500, currency: 'USD', party: '船公司', remark: '' },
-    { name: '销售应收海运费', type: 'receivable', amount: 4500, currency: 'USD', party: '客户（按销售价）', remark: '' },
-    { name: '销售收入', type: 'receivable', amount: 2500, currency: 'CNY', party: '客户', remark: 'LOCAL CHARGES' },
-];
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', function() {
-    // 设置默认日期
-    const today = new Date();
-    const nextWeek = new Date(today.getTime() + 7*24*60*60*1000);
-    document.getElementById('etd').value = formatDate(nextWeek);
-    const etaDate = new Date(nextWeek.getTime() + 21*24*60*60*1000);
-    document.getElementById('eta').value = formatDate(etaDate);
-    document.getElementById('issueDate').value = formatDate(today);
-
-    // 初始化默认行
-    addContainerRow();
-    addContainerRow();
-    addAllocationRow();
-    initFeeRows();
-
-    // 上传区拖拽
-    setupUpload();
+    // 截单时间默认：明天 18:00
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(18, 0, 0, 0);
+    const cutoff = document.getElementById('blCutoffTime');
+    if (cutoff && !cutoff.value) {
+        cutoff.value = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T18:00';
+    }
 });
-
-function formatDate(d) {
-    return d.toISOString().split('T')[0];
-}
 
 // ========== 侧边栏折叠 ==========
 function toggleSubmenu(el) {
     el.classList.toggle('expanded');
 }
-
-// ========== 步骤导航 ==========
-function goToStep(step) {
-    // 校验前序步骤
-    if (step > currentStep) {
-        if (!validateStep(currentStep)) return;
-    }
-    currentStep = step;
-    updateStepUI();
-}
-
-function nextStep() {
-    if (!validateStep(currentStep)) return;
-    if (currentStep < totalSteps) {
-        currentStep++;
-        updateStepUI();
-    }
-}
-
-function prevStep() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateStepUI();
-    }
-}
-
-function updateStepUI() {
-    // 更新步骤条
-    document.querySelectorAll('.step').forEach(function(s) {
-        const sNum = parseInt(s.dataset.step);
-        s.classList.remove('active', 'done');
-        if (sNum < currentStep) s.classList.add('done');
-        else if (sNum === currentStep) s.classList.add('active');
-    });
-
-    // 更新面板
-    document.querySelectorAll('.step-pane').forEach(function(p) { p.classList.remove('active'); });
-    document.getElementById('step' + currentStep).classList.add('active');
-
-    // 更新按钮
-    document.getElementById('prevBtn').style.display = currentStep > 1 ? '' : 'none';
-    document.getElementById('nextBtn').style.display = currentStep < totalSteps ? '' : 'none';
-    document.getElementById('saveDraftBtn').style.display = currentStep === totalSteps ? '' : 'none';
-    document.getElementById('issueBtn').style.display = currentStep === totalSteps ? '' : 'none';
-
-    // 滚动到顶部
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ========== 步骤校验 ==========
-function validateStep(step) {
-    clearErrors();
-    let valid = true;
-
-    if (step === 1) {
-        const requiredFields = [
-            { id: 'billType', name: '提单类型' },
-            { id: 'billNo', name: '提单号' },
-            { id: 'vesselVoyage', name: '船名/航次' },
-            { id: 'carrier', name: '承运人' },
-            { id: 'pol', name: '起运港' },
-            { id: 'pod', name: '目的港' },
-            { id: 'etd', name: '预计开船日' },
-            { id: 'eta', name: '预计到港日' },
-        ];
-        requiredFields.forEach(function(f) {
-            const el = document.getElementById(f.id);
-            if (!el.value.trim()) {
-                el.classList.add('error');
-                valid = false;
-            }
-        });
-        if (!valid) toast('请填写必填项（带 * 号的字段）', 'error');
-    } else if (step === 2) {
-        const requiredFields = [
-            { id: 'shipperName', name: '发货人公司名称' },
-            { id: 'shipperAddr', name: '发货人地址' },
-            { id: 'consigneeName', name: '收货人公司名称' },
-            { id: 'consigneeAddr', name: '收货人地址' },
-        ];
-        requiredFields.forEach(function(f) {
-            const el = document.getElementById(f.id);
-            if (!el.value.trim()) {
-                el.classList.add('error');
-                valid = false;
-            }
-        });
-        // 通知方
-        const notifyOpt = document.querySelector('input[name="notifyOption"]:checked').value;
-        if (notifyOpt === 'other') {
-            const nf = document.getElementById('notifyName');
-            if (!nf.value.trim()) { nf.classList.add('error'); valid = false; }
-        }
-        if (!valid) toast('请填写收发货人必填信息', 'error');
-    } else if (step === 3) {
-        // 至少有一个集装箱
-        const rows = document.querySelectorAll('#containerTbody tr');
-        let hasValid = false;
-        rows.forEach(function(r) {
-            const type = r.querySelector('.cntr-type');
-            if (type && type.value) hasValid = true;
-        });
-        if (!hasValid) {
-            toast('请至少添加一个集装箱/货物信息', 'error');
-            valid = false;
-        }
-        // 品名
-        const cargoDesc = document.getElementById('cargoDesc');
-        if (!cargoDesc.value.trim()) {
-            cargoDesc.classList.add('error');
-            toast('请填写货物品名', 'error');
-            valid = false;
-        }
-    }
-
-    return valid;
-}
-
-function clearErrors() {
-    document.querySelectorAll('.form-control.error').forEach(function(el) { el.classList.remove('error'); });
-}
-
-// ========== 提单类型联动 ==========
-function onBillTypeChange() {
-    const type = document.getElementById('billType').value;
-    const isAir = type === 'AWB';
-    const isRail = type === 'RAIL';
-
-    // 船名/航班号
-    document.getElementById('vesselLabel').textContent = isAir ? '航班号' : '船名/航次';
-    document.getElementById('vesselVoyage').placeholder = isAir ? '如：CX2561' : '如：COSCO SHIPPING / 067E';
-    if (isAir && document.getElementById('vesselVoyage').value === 'COSCO SHIPPING / 067E') {
-        document.getElementById('vesselVoyage').value = 'CX2561';
-    }
-
-    // 承运人标签
-    document.getElementById('carrierLabel').textContent = isAir ? '航空公司' : '承运人/船公司';
-
-    // 提单号标签
-    document.getElementById('billNoLabel').textContent = isAir ? '主单号 MAWB' : (type === 'RAIL' ? '运单号' : '提单号/主单号');
-    if (isAir && document.getElementById('billNo').value === 'COSU6234567890') {
-        document.getElementById('billNo').value = '999-12345678';
-    } else if (!isAir && document.getElementById('billNo').value === '999-12345678') {
-        document.getElementById('billNo').value = 'COSU6234567890';
-    }
-    document.getElementById('billNoHelp').textContent = isAir ? 'MAWB号格式：999-12345678' : '如：COSU6234567890';
-
-    // HB/L分单号（仅HB/L时显示）
-    document.getElementById('houseBillGroup').style.display = type === 'HBL' ? '' : 'none';
-
-    // 海运相关字段（空运/铁路时禁用/隐藏）
-    const seaFields = document.querySelectorAll('.sea-field');
-    const seaGroups = ['cyClosingGroup', 'freeTimeGroup'];
-    if (isAir || isRail) {
-        seaFields.forEach(function(el) { el.style.display = 'none'; });
-        seaGroups.forEach(function(id) { document.getElementById(id).style.display = 'none'; });
-        document.getElementById('containerSectionTag').textContent = isAir ? '（空运散货/ULD）' : '（铁路）';
-    } else {
-        seaFields.forEach(function(el) { el.style.display = ''; });
-        seaGroups.forEach(function(id) { document.getElementById(id).style.display = ''; });
-        document.getElementById('containerSectionTag').textContent = '（海运）';
-    }
-
-    // 重置柜型选项
-    refreshContainerTypeOptions(isAir);
-}
-
-function refreshContainerTypeOptions(isAir) {
-    document.querySelectorAll('.cntr-type').forEach(function(sel) {
-        const currentVal = sel.value;
-        sel.innerHTML = '';
-        if (isAir) {
-            sel.innerHTML = '<option value="">请选择</option><option value="BULK">散货 BULK</option><option value="ULD">ULD 集装器</option>';
-        } else {
-            sel.innerHTML = '<option value="">请选择</option>' +
-                '<option value="20GP">20GP 标准柜</option>' +
-                '<option value="40GP">40GP 标准柜</option>' +
-                '<option value="40HQ">40HQ 高柜</option>' +
-                '<option value="45HQ">45HQ 高柜</option>' +
-                '<option value="20RF" data-special="reefer">20RF 冷藏柜</option>' +
-                '<option value="40RF" data-special="reefer">40RF 冷藏柜</option>' +
-                '<option value="40OT" data-special="special">40OT 开顶柜</option>' +
-                '<option value="40FR" data-special="special">40FR 框架柜</option>';
-        }
-        sel.value = currentVal;
-    });
-}
-
-// ========== 通知方显示/隐藏 ==========
-function toggleNotifyParty() {
-    const opt = document.querySelector('input[name="notifyOption"]:checked').value;
-    document.getElementById('notifyPartyCard').classList.toggle('hidden', opt !== 'other');
-}
-
-// ========== 集装箱行 ==========
-function addContainerRow() {
-    containerRowIdx++;
-    const tbody = document.getElementById('containerTbody');
-    const tr = document.createElement('tr');
-    tr.dataset.idx = containerRowIdx;
-    const isAir = document.getElementById('billType').value === 'AWB';
-    const typeOptions = isAir
-        ? '<option value="">请选择</option><option value="BULK">散货 BULK</option><option value="ULD">ULD 集装器</option>'
-        : '<option value="">请选择</option>' +
-          '<option value="20GP">20GP</option><option value="40GP">40GP</option>' +
-          '<option value="40HQ">40HQ</option><option value="45HQ">45HQ</option>' +
-          '<option value="20RF" data-special="reefer">20RF 冷藏</option>' +
-          '<option value="40RF" data-special="reefer">40RF 冷藏</option>' +
-          '<option value="40OT" data-special="special">40OT 开顶</option>' +
-          '<option value="40FR" data-special="special">40FR 框架</option>';
-
-    tr.innerHTML = '<td class="text-center cntr-idx"></td>' +
-        '<td><select class="form-control cntr-type" onchange="onCntrTypeChange(this)">' + typeOptions + '</select></td>' +
-        '<td class="sea-field"><input type="text" class="form-control cntr-no" placeholder="如：COSU1234567"></td>' +
-        '<td class="sea-field"><input type="text" class="form-control cntr-seal" placeholder="封条号"></td>' +
-        '<td><input type="text" class="form-control cntr-lead" placeholder="铅封号"></td>' +
-        '<td><input type="number" class="form-control cntr-pcs" placeholder="0" oninput="recalcCargo()"></td>' +
-        '<td><input type="number" class="form-control cntr-weight" placeholder="0" step="0.01" oninput="recalcCargo()"></td>' +
-        '<td><input type="number" class="form-control cntr-volume" placeholder="0" step="0.01" oninput="recalcCargo()"></td>' +
-        '<td class="col-action"><button class="btn-link text-red" onclick="removeContainerRow(this)">删除</button></td>';
-    tbody.appendChild(tr);
-    // 重排序号
-    tbody.querySelectorAll('tr').forEach(function(r, i) { r.querySelector('.cntr-idx').textContent = i + 1; });
-    recalcCargo();
-}
-
-function removeContainerRow(btn) {
-    const tr = btn.closest('tr');
-    tr.remove();
-    // 重排序号
-    document.querySelectorAll('#containerTbody tr').forEach(function(r, i) {
-        r.querySelector('.cntr-idx').textContent = i + 1;
-    });
-    recalcCargo();
-    refreshAllocationCntrOptions();
-}
-
-function onCntrTypeChange(sel) {
-    const opt = sel.options[sel.selectedIndex];
-    const isSpecial = opt.dataset.special;
-    sel.style.color = isSpecial === 'reefer' ? '#08979c' : (isSpecial === 'special' ? '#d46b08' : '');
-    sel.style.fontWeight = isSpecial ? '600' : '';
-    refreshAllocationCntrOptions();
-}
-
-function getContainerList() {
-    const list = [];
-    document.querySelectorAll('#containerTbody tr').forEach(function(r) {
-        const type = r.querySelector('.cntr-type').value;
-        const no = r.querySelector('.cntr-no') ? r.querySelector('.cntr-no').value : '';
-        if (type) list.push({ type: type, no: no || type });
-    });
-    return list;
-}
-
-// ========== 配货/运单行 ==========
-function addAllocationRow(data) {
-    allocationRowIdx++;
-    const tbody = document.getElementById('allocationTbody');
-    const tr = document.createElement('tr');
-    tr.dataset.idx = allocationRowIdx;
-    const cntrs = getContainerList();
-    let cntrOptions = '<option value="">未分配</option>';
-    cntrs.forEach(function(c, i) { cntrOptions += '<option value="' + i + '">' + c.type + (c.no ? ' (' + c.no + ')' : '') + '</option>'; });
-
-    const d = data || { no: '', customer: '', product: '', pcs: '', weight: '', volume: '' };
-    tr.innerHTML = '<td class="text-center alloc-idx"></td>' +
-        '<td><input type="text" class="form-control mono alloc-no" value="' + d.no + '" placeholder="点击选择..." readonly style="cursor:pointer;background:var(--tms-primary-bg);" onclick="openWaybillPicker()"></td>' +
-        '<td><input type="text" class="form-control alloc-customer" value="' + d.customer + '" placeholder="客户"></td>' +
-        '<td><input type="text" class="form-control alloc-product" value="' + d.product + '" placeholder="品名"></td>' +
-        '<td><input type="number" class="form-control alloc-pcs" value="' + d.pcs + '" placeholder="0" oninput="recalcCargo()"></td>' +
-        '<td><input type="number" class="form-control alloc-weight" value="' + d.weight + '" placeholder="0" step="0.01" oninput="recalcCargo()"></td>' +
-        '<td><input type="number" class="form-control alloc-volume" value="' + d.volume + '" placeholder="0" step="0.01" oninput="recalcCargo()"></td>' +
-        '<td><select class="form-control alloc-cntr">' + cntrOptions + '</select></td>' +
-        '<td class="col-action"><button class="btn-link text-red" onclick="removeAllocationRow(this)">移除</button></td>';
-    tbody.appendChild(tr);
-    tbody.querySelectorAll('tr').forEach(function(r, i) { r.querySelector('.alloc-idx').textContent = i + 1; });
-    recalcCargo();
-}
-
-function removeAllocationRow(btn) {
-    const tr = btn.closest('tr');
-    tr.remove();
-    document.querySelectorAll('#allocationTbody tr').forEach(function(r, i) {
-        r.querySelector('.alloc-idx').textContent = i + 1;
-    });
-    recalcCargo();
-}
-
-function refreshAllocationCntrOptions() {
-    const cntrs = getContainerList();
-    let cntrOptions = '<option value="">未分配</option>';
-    cntrs.forEach(function(c, i) { cntrOptions += '<option value="' + i + '">' + c.type + (c.no ? ' (' + c.no + ')' : '') + '</option>'; });
-    document.querySelectorAll('.alloc-cntr').forEach(function(sel) {
-        const cur = sel.value;
-        sel.innerHTML = cntrOptions;
-        sel.value = cur;
-    });
-}
-
-// ========== 货物汇总计算 ==========
-function recalcCargo() {
-    let totalPcs = 0, totalWeight = 0, totalVolume = 0;
-    const cntrTypeCount = {};
-
-    document.querySelectorAll('#containerTbody tr').forEach(function(r) {
-        const type = r.querySelector('.cntr-type').value;
-        if (type) {
-            cntrTypeCount[type] = (cntrTypeCount[type] || 0) + 1;
-        }
-        const pcs = parseFloat(r.querySelector('.cntr-pcs').value) || 0;
-        const w = parseFloat(r.querySelector('.cntr-weight').value) || 0;
-        const v = parseFloat(r.querySelector('.cntr-volume').value) || 0;
-        totalPcs += pcs; totalWeight += w; totalVolume += v;
-    });
-
-    // 配货行也累加（避免重复计算，这里以集装箱为准，但显示运单数）
-    let wbCount = 0;
-    document.querySelectorAll('#allocationTbody tr').forEach(function(r) {
-        const no = r.querySelector('.alloc-no').value;
-        if (no) wbCount++;
-    });
-
-    // 柜量汇总文字
-    const cntrStr = Object.keys(cntrTypeCount).map(function(k) { return cntrTypeCount[k] + '×' + k; }).join(' / ') || '0';
-    document.getElementById('sumCntrs').textContent = cntrStr;
-    document.getElementById('sumPcs').textContent = totalPcs.toLocaleString();
-    document.getElementById('sumWeight').textContent = totalWeight.toLocaleString();
-    document.getElementById('sumVolume').textContent = totalVolume.toFixed(2);
-    document.getElementById('sumWaybills').textContent = wbCount;
-}
-
-// ========== 待配货运单选择模态框 ==========
-function openWaybillPicker() {
-    selectedWaybills.clear();
-    renderWaybillList('');
-    document.getElementById('selectedWbCount').textContent = '0';
-    document.getElementById('wbSearchInput').value = '';
-    openModal('waybillModal');
-}
-
-function renderWaybillList(filter) {
-    const list = document.getElementById('waybillSelectList');
-    list.innerHTML = '';
-    const f = (filter || '').toLowerCase();
-    mockWaybills.forEach(function(wb) {
-        if (f && wb.no.toLowerCase().indexOf(f) < 0 && wb.customer.toLowerCase().indexOf(f) < 0 && wb.product.toLowerCase().indexOf(f) < 0) return;
-        const item = document.createElement('div');
-        item.className = 'waybill-select-item' + (selectedWaybills.has(wb.no) ? ' selected' : '');
-        item.onclick = function() { toggleWaybillSelect(wb.no, item); };
-        item.innerHTML = '<input type="checkbox" ' + (selectedWaybills.has(wb.no) ? 'checked' : '') + ' style="pointer-events:none;">' +
-            '<div class="wb-info">' +
-            '<div class="wb-no">' + wb.no + '</div>' +
-            '<div class="wb-meta"><span><b>客户：</b>' + wb.customer + '</span><span><b>品名：</b>' + wb.product + '</span>' +
-            '<span><b>件数：</b>' + wb.pcs + '</span><span><b>重量：</b>' + wb.weight + 'KG</span><span><b>体积：</b>' + wb.volume + 'CBM</span></div>' +
-            '</div>';
-        list.appendChild(item);
-    });
-}
-
-function filterWaybills() {
-    renderWaybillList(document.getElementById('wbSearchInput').value);
-}
-
-function toggleWaybillSelect(no, el) {
-    if (selectedWaybills.has(no)) {
-        selectedWaybills.delete(no);
-        el.classList.remove('selected');
-        el.querySelector('input').checked = false;
-    } else {
-        selectedWaybills.add(no);
-        el.classList.add('selected');
-        el.querySelector('input').checked = true;
-    }
-    document.getElementById('selectedWbCount').textContent = selectedWaybills.size;
-}
-
-function confirmSelectWaybills() {
-    if (selectedWaybills.size === 0) {
-        toast('请至少选择一票运单', 'warning');
-        return;
-    }
-    // 清除之前的空行
-    const tbody = document.getElementById('allocationTbody');
-    const emptyRows = [];
-    tbody.querySelectorAll('tr').forEach(function(r) {
-        if (!r.querySelector('.alloc-no').value) emptyRows.push(r);
-    });
-    emptyRows.forEach(function(r) { r.remove(); });
-
-    selectedWaybills.forEach(function(no) {
-        const wb = mockWaybills.find(function(w) { return w.no === no; });
-        if (wb) addAllocationRow(wb);
-    });
-    // 重排序号
-    tbody.querySelectorAll('tr').forEach(function(r, i) {
-        r.querySelector('.alloc-idx').textContent = i + 1;
-    });
-    recalcCargo();
-    refreshAllocationCntrOptions();
-    closeModal('waybillModal');
-    toast('成功添加 ' + selectedWaybills.size + ' 票运单', 'success');
-}
-
-// ========== 费用行 ==========
-function initFeeRows() {
-    defaultSeaFees.forEach(function(f) { addFeeRow(f); });
-    recalcFees();
-}
-
-function addFeeRow(data) {
-    feeRowIdx++;
-    const tbody = document.getElementById('feeTbody');
-    const tr = document.createElement('tr');
-    tr.dataset.idx = feeRowIdx;
-    const d = data || { name: '', type: 'payable', amount: '', currency: 'USD', party: '', remark: '' };
-    const typeStyle = d.type === 'receivable' ? 'color:var(--tms-success);' : 'color:var(--tms-error);';
-    tr.innerHTML = '<td class="text-center fee-idx"></td>' +
-        '<td><input type="text" class="form-control fee-name" value="' + d.name + '" placeholder="费用项目"></td>' +
-        '<td><select class="form-control fee-type" onchange="onFeeTypeChange(this);recalcFees();" style="' + typeStyle + '">' +
-            '<option value="payable"' + (d.type==='payable'?' selected':'') + ' style="color:var(--tms-error);">应付</option>' +
-            '<option value="receivable"' + (d.type==='receivable'?' selected':'') + ' style="color:var(--tms-success);">应收</option>' +
-        '</select></td>' +
-        '<td><input type="number" class="form-control fee-amount" value="' + d.amount + '" placeholder="0.00" step="0.01" oninput="recalcFees()"></td>' +
-        '<td><select class="form-control fee-currency" onchange="recalcFees()"><option value="USD"' + (d.currency==='USD'?' selected':'') + '>USD</option><option value="CNY"' + (d.currency==='CNY'?' selected':'') + '>CNY</option></select></td>' +
-        '<td><input type="text" class="form-control fee-party" value="' + d.party + '" placeholder="结算对象"></td>' +
-        '<td><input type="text" class="form-control fee-remark" value="' + d.remark + '" placeholder="备注"></td>' +
-        '<td class="col-action"><button class="btn-link text-red" onclick="removeFeeRow(this)">删除</button></td>';
-    tbody.appendChild(tr);
-    tbody.querySelectorAll('tr').forEach(function(r, i) { r.querySelector('.fee-idx').textContent = i + 1; });
-}
-
-function onFeeTypeChange(sel) {
-    sel.style.color = sel.value === 'receivable' ? 'var(--tms-success)' : 'var(--tms-error)';
-}
-
-function removeFeeRow(btn) {
-    const tr = btn.closest('tr');
-    tr.remove();
-    document.querySelectorAll('#feeTbody tr').forEach(function(r, i) {
-        r.querySelector('.fee-idx').textContent = i + 1;
-    });
-    recalcFees();
-}
-
-function recalcFees() {
-    let payable = 0, receivable = 0;
-    const currency = document.getElementById('feeCurrency').value;
-    const symbol = currency === 'USD' ? '$' : '¥';
-    document.querySelectorAll('#feeTbody tr').forEach(function(r) {
-        const type = r.querySelector('.fee-type').value;
-        const amt = parseFloat(r.querySelector('.fee-amount').value) || 0;
-        // 简单处理：仅累加当前币别（演示用）
-        if (type === 'payable') payable += amt;
-        else receivable += amt;
-    });
-    const profit = receivable - payable;
-    const rate = receivable > 0 ? (profit / receivable * 100) : 0;
-
-    document.getElementById('sumPayable').textContent = symbol + payable.toFixed(2);
-    document.getElementById('sumReceivable').textContent = symbol + receivable.toFixed(2);
-    document.getElementById('sumProfit').textContent = symbol + profit.toFixed(2);
-    document.getElementById('profitRate').textContent = rate.toFixed(1) + '%';
-
-    const profitRow = document.getElementById('profitRow');
-    profitRow.classList.toggle('negative', profit < 0);
-    updateIssueBtn();
-}
-
-// ========== 签单方式选择 ==========
-function selectSignMethod(el, method) {
-    document.querySelectorAll('.sign-method-card').forEach(function(c) { c.classList.remove('selected'); });
-    el.classList.add('selected');
-    el.querySelector('input').checked = true;
-}
-
-function updateIssueBtn() {
-    const confirmed = document.getElementById('signConfirm').checked;
-    document.getElementById('issueBtn').disabled = !confirmed;
-}
-
-// ========== 文件上传 ==========
-function setupUpload() {
-    const zone = document.getElementById('uploadZone');
-    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
-    zone.addEventListener('dragleave', function(e) { e.preventDefault(); zone.classList.remove('dragover'); });
-    zone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        zone.classList.remove('dragover');
-        handleFiles(e.dataTransfer.files);
-    });
-}
-
-function handleFileSelect(e) {
-    handleFiles(e.target.files);
-    e.target.value = '';
-}
-
-function handleFiles(files) {
-    for (let i = 0; i < files.length; i++) {
-        const f = files[i];
-        uploadedFiles.push({ name: f.name, size: f.size });
-    }
-    renderFileList();
-    toast('已上传 ' + files.length + ' 个文件', 'success');
-}
-
-function renderFileList() {
-    const list = document.getElementById('fileList');
-    list.innerHTML = '';
-    uploadedFiles.forEach(function(f, i) {
-        const item = document.createElement('div');
-        item.className = 'upload-file-item';
-        const sizeKB = (f.size / 1024).toFixed(1);
-        const sizeStr = sizeKB > 1024 ? (sizeKB/1024).toFixed(2) + ' MB' : sizeKB + ' KB';
-        item.innerHTML = '<span>📄</span><span class="file-name">' + f.name + '</span><span class="file-size">' + sizeStr + '</span><span class="file-remove" onclick="removeFile(' + i + ')">✕</span>';
-        list.appendChild(item);
-    });
-}
-
-function removeFile(idx) {
-    uploadedFiles.splice(idx, 1);
-    renderFileList();
-}
-
-// ========== 折叠 ==========
-function toggleCollapsible(el) {
-    el.classList.toggle('open');
-    const body = el.nextElementSibling;
-    body.classList.toggle('open');
-}
-
-// ========== 地址簿 ==========
-function openAddrBook(target) {
-    currentAddrTarget = target;
-    openModal('addrBookModal');
-}
-
-// ========== Modal ==========
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
 // ========== Toast ==========
 function toast(msg, type) {
@@ -2196,50 +1519,14 @@ function toast(msg, type) {
     }, 2500);
 }
 
-// ========== 操作：保存/签发/取消 ==========
+// ========== 操作：保存/签发 ==========
 function saveDraft() {
     toast('草稿已保存', 'success');
 }
 
-function cancelForm() {
-    if (confirm('确定要取消吗？未保存的内容将丢失。')) {
-        window.location.href = 'bill-list.html';
-    }
-}
-
 function confirmIssue() {
-    if (currentStep < totalSteps) {
-        nextStep();
-        return;
-    }
-    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
-        toast('请先完善所有必填信息', 'error');
-        return;
-    }
-    if (!document.getElementById('signConfirm').checked) {
-        toast('请先勾选确认条款', 'warning');
-        return;
-    }
-    document.getElementById('confirmBillNo').textContent = document.getElementById('billNo').value || 'COSU6234567890';
-    openModal('confirmDialog');
+    toast('提单已签发', 'success');
 }
-
-function doIssue() {
-    closeModal('confirmDialog');
-    const billNo = document.getElementById('billNo').value || 'COSU' + Math.floor(Math.random()*900000000+100000000);
-    document.getElementById('billNo').value = billNo;
-    toast('提单 ' + billNo + ' 签发成功！正在跳转...', 'success');
-    setTimeout(function() {
-        window.location.href = 'bill-list.html';
-    }, 1500);
-}
-
-// 点击遮罩关闭
-document.querySelectorAll('.modal-mask').forEach(function(mask) {
-    mask.addEventListener('click', function(e) {
-        if (e.target === mask) mask.classList.remove('show');
-    });
-});
 </script>
 <script>
 // Fallback: if lucide doesn't load, show emoji/text placeholders

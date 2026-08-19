@@ -911,6 +911,24 @@ th.sortable:hover { color: var(--tms-primary); }
         <a href="#" class="submenu-item" onclick="toast('超限审批开发中','info')">超限审批</a>
       </div>
 
+      <div class="nav-group-title">仓库作业</div>
+      <a href="document-loading.html" class="nav-item">
+        <span class="nav-icon">📦</span>
+        <span>单证装柜</span>
+      </a>
+      <a href="warehouse-receiving.html" class="nav-item">
+        <span class="nav-icon">📥</span>
+        <span>到仓收货</span>
+      </a>
+      <a href="warehouse-inbound.html" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span>拣货入库</span>
+      </a>
+      <a href="warehouse-outbound.html" class="nav-item">
+        <span class="nav-icon">🚚</span>
+        <span>出库盘点</span>
+      </a>
+
       <div class="nav-group-title">财务管理</div>
       <div class="nav-item has-sub expanded" onclick="void(0)">
         <span class="nav-icon">💰</span>
@@ -1160,8 +1178,8 @@ th.sortable:hover { color: var(--tms-primary); }
             <button class="btn btn-sm" id="btnBatchAssignRep" disabled onclick="openBatchAssignRepModal()">批量修改客户财务代表</button>
             <button class="btn btn-sm" id="btnBatchRemark" onclick="openBatchRemarkModal()">📝 批量修改备注</button>
             <button class="btn btn-sm btn-primary" onclick="openStatsModal()">📊 查看统计</button>
-            <button class="btn btn-sm btn-primary" id="btnRechargeWriteOff" data-dom-id="btnRechargeWriteOff" onclick="openRechargeModal()">💰 充值核销</button>
-            <button class="btn btn-sm" id="btnRechargeRecords" data-dom-id="btnRechargeRecords" onclick="openRechargeRecordsModal()">📒 充值记录</button>
+            <button class="btn btn-sm btn-primary" id="btnRechargeWriteOff" data-dom-id="btnRechargeWriteOff" onclick="openRechargeModal()">💰 回款核销</button>
+            <button class="btn btn-sm" id="btnRechargeRecords" data-dom-id="btnRechargeRecords" onclick="openRechargeRecordsModal()">📒 核销记录</button>
             <button class="btn btn-sm btn-primary" id="btnAllDiscount" data-dom-id="btnAllDiscount" onclick="openAllDiscountModal()">🎁 查看全部优惠</button>
             <button class="btn btn-sm btn-danger" id="btnBatchDelete" disabled onclick="batchAction('delete')">批量删除</button>
           </div>
@@ -3527,11 +3545,11 @@ th.sortable:hover { color: var(--tms-primary); }
   </div>
 </div>
 
-<!-- Modal: 充值核销 -->
+<!-- Modal: 回款核销 -->
 <div class="modal-mask" id="rechargeWriteOffModal" data-dom-id="rechargeWriteOffModal">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">💰 充值核销</span>
+      <span class="modal-title">💰 回款核销</span>
       <button class="modal-close" data-close="rechargeWriteOffModal">×</button>
     </div>
     <div class="modal-body">
@@ -3565,12 +3583,30 @@ th.sortable:hover { color: var(--tms-primary); }
           </div>
         </div>
       </div>
-      <p style="font-size:12px;color:var(--tms-text-3);margin-top:6px;">提示：请上传发票或流水截图（至少其一），作为本次充值核销凭证。</p>
+      <p style="font-size:12px;color:var(--tms-text-3);margin-top:6px;">提示：请上传发票或流水截图（至少其一），作为本次回款核销凭证。</p>
 
       <!-- 充值金额 -->
       <div class="desc-section-title">充值金额</div>
       <div class="form-group">
         <input type="number" class="form-control" id="rechargeAmount" min="0.01" step="0.01" placeholder="请输入充值金额（元）" style="width:280px;" oninput="renderRechargePreview()">
+      </div>
+
+      <!-- 回款信息（流水号 + 生成账单号） -->
+      <div class="desc-section-title">回款信息</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group">
+          <label class="form-label"><span class="required">*</span>回款流水号</label>
+          <input type="text" class="form-control" id="rechargeFlowNo" placeholder="请输入银行/支付流水号" oninput="renderRechargePreview()">
+          <div class="form-help">填写本次回款对应的银行或支付流水号，供应收财务核对</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="required">*</span>回款账单号</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" class="form-control" id="rechargeBillNo" readonly placeholder="点击右侧按钮生成账单号">
+            <button type="button" class="btn btn-sm" onclick="genRechargeBillNo()">生成账单号</button>
+          </div>
+          <div class="form-help" id="rechargeBillNoHelp">生成回款核销账单号后，方可执行核销操作</div>
+        </div>
       </div>
 
       <!-- 核销方式 -->
@@ -3602,16 +3638,16 @@ th.sortable:hover { color: var(--tms-primary); }
     </div>
     <div class="modal-footer">
       <button class="btn" data-close="rechargeWriteOffModal">取消</button>
-      <button class="btn btn-primary" onclick="doRechargeWriteOff()">确认充值核销</button>
+      <button class="btn btn-primary" onclick="doRechargeWriteOff()">确认回款核销</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: 充值记录 -->
+<!-- Modal: 核销记录 -->
 <div class="modal-mask" id="rechargeRecordsModal" data-dom-id="rechargeRecordsModal">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">📒 充值记录</span>
+      <span class="modal-title">📒 核销记录</span>
       <button class="modal-close" data-close="rechargeRecordsModal">×</button>
     </div>
     <div class="modal-body">
@@ -3644,16 +3680,16 @@ th.sortable:hover { color: var(--tms-primary); }
       <div style="border:1px solid var(--tms-border-2);border-radius:var(--tms-radius);overflow:hidden;">
         <table class="data-table" style="font-size:13px;">
           <thead>
-            <tr><th>充值单号</th><th>客户</th><th>充值金额</th><th>凭证</th><th>核销方式</th><th>核销运单</th><th>本次核销</th><th>剩余余额</th><th>操作人</th><th>时间</th></tr>
+            <tr><th>核销单号</th><th>客户</th><th>回款流水号</th><th>回款账单号</th><th>充值金额</th><th>凭证</th><th>核销方式</th><th>核销运单</th><th>本次核销</th><th>剩余余额</th><th>操作人</th><th>时间</th></tr>
           </thead>
           <tbody id="rechargeRecordsTbody">
-            <tr><td colspan="10" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无充值记录</td></tr>
+            <tr><td colspan="12" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无核销记录</td></tr>
           </tbody>
         </table>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="toast('充值记录已导出，请到下载中心查看','success')">📤 导出记录</button>
+      <button class="btn" onclick="toast('核销记录已导出，请到下载中心查看','success')">📤 导出记录</button>
       <button class="btn" data-close="rechargeRecordsModal">关闭</button>
     </div>
   </div>
@@ -4057,12 +4093,13 @@ th.sortable:hover { color: var(--tms-primary); }
 </script>
 
 <script>
-/* ========== 充值核销 / 充值记录 ========== */
+/* ========== 回款核销 / 核销记录 ========== */
 (function(){
   'use strict';
 
   var rechargeStore = [];
   var rechargeSeq = 1001;
+  var billSeq = 9001;
 
   function fmtM(n){ return '¥' + Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2, maximumFractionDigits:2}); }
   function parseNum(v){
@@ -4071,7 +4108,22 @@ th.sortable:hover { color: var(--tms-primary); }
   }
   function nowStr(){ return new Date().toLocaleString('zh-CN',{hour12:false}); }
   function rechargeNo(){ return 'RC2026-' + (rechargeSeq++); }
+  function genBillNo(){ return 'WR2026-' + (billSeq++); }
   function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // 生成回款账单号
+  window.genRechargeBillNo = function(){
+    var customer = document.getElementById('rechargeCustomer').value;
+    if(!customer){ toast('请先选择客户', 'warning'); return; }
+    var amount = getRechargeAmount();
+    if(amount <= 0){ toast('请先填写充值金额', 'warning'); return; }
+    var billNo = genBillNo();
+    document.getElementById('rechargeBillNo').value = billNo;
+    var help = document.getElementById('rechargeBillNoHelp');
+    if(help) help.textContent = '已生成回款账单号：' + billNo;
+    renderRechargePreview();
+    toast('已生成回款账单号 ' + billNo, 'success');
+  };
 
   function getCustomerRows(customer){
     return Array.prototype.slice.call(document.querySelectorAll('#receivableTbody tr')).filter(function(tr){
@@ -4145,6 +4197,10 @@ th.sortable:hover { color: var(--tms-primary); }
     var flowP = document.getElementById('rechargeFlowPreview');
     flowP.style.display = 'none'; flowP.removeAttribute('src');
     document.getElementById('rechargeFlowName').textContent = '';
+    document.getElementById('rechargeFlowNo').value = '';
+    document.getElementById('rechargeBillNo').value = '';
+    var billHelp = document.getElementById('rechargeBillNoHelp');
+    if(billHelp) billHelp.textContent = '生成回款核销账单号后，方可执行核销操作';
     document.getElementById('rechargeModeTotal').checked = true;
     document.getElementById('rechargeWaybillSection').style.display = 'none';
 
@@ -4154,6 +4210,10 @@ th.sortable:hover { color: var(--tms-primary); }
 
   window.onRechargeCustomerChange = function(){
     var customer = document.getElementById('rechargeCustomer').value;
+    // 切换客户后重置已生成的账单号，避免账单号与客户不匹配
+    document.getElementById('rechargeBillNo').value = '';
+    var billHelp = document.getElementById('rechargeBillNoHelp');
+    if(billHelp) billHelp.textContent = '生成回款核销账单号后，方可执行核销操作';
     document.getElementById('rechargeCustTotal').textContent = customer ? fmtM(getCustomerTotalUnpaid(customer)) : '¥0.00';
 
     var tbody = document.getElementById('rechargeWaybillTbody');
@@ -4223,8 +4283,8 @@ th.sortable:hover { color: var(--tms-primary); }
     var ar = window.getAr ? window.getAr(arNo) : null;
     if(ar){
       ar.paid = parseNum(ar.paid) + deduct;
-      ar.payments.push({ time: time, amount: deduct, method: '充值核销', operator: '王财务', remark: mode === 'total' ? '按客户总金额充值核销' : '充值核销运单 ' + arNo });
-      ar.logs.unshift({ time: time, operator: '王财务', change: '充值核销：' + (mode === 'total' ? '按客户总金额核销 ' : '核销运单 ' + arNo + ' ') + fmtM(deduct) });
+      ar.payments.push({ time: time, amount: deduct, method: '回款核销', operator: '王财务', remark: mode === 'total' ? '按客户总金额回款核销' : '回款核销运单 ' + arNo });
+      ar.logs.unshift({ time: time, operator: '王财务', change: '回款核销：' + (mode === 'total' ? '按客户总金额核销 ' : '核销运单 ' + arNo + ' ') + fmtM(deduct) });
       ar.status = ar.paid >= ar.amount ? 'settled' : (ar.paid > 0 ? 'partial' : ar.status);
     }
 
@@ -4272,6 +4332,11 @@ th.sortable:hover { color: var(--tms-primary); }
     if(amount <= 0){ toast('请输入大于 0 的充值金额', 'warning'); return; }
     if(mode === 'waybill' && !waybillNo){ toast('请选择需要核销的运单账单', 'warning'); return; }
 
+    var flowNo = document.getElementById('rechargeFlowNo').value.trim();
+    if(!flowNo){ toast('请填写回款流水号，供应收财务核对', 'warning'); return; }
+    var billNo = document.getElementById('rechargeBillNo').value.trim();
+    if(!billNo){ toast('请先生成回款账单号，方可核销账单', 'warning'); return; }
+
     var invoiceName = (document.getElementById('rechargeInvoiceInput').files && document.getElementById('rechargeInvoiceInput').files[0]) ? document.getElementById('rechargeInvoiceInput').files[0].name : '';
     var flowName = (document.getElementById('rechargeFlowInput').files && document.getElementById('rechargeFlowInput').files[0]) ? document.getElementById('rechargeFlowInput').files[0].name : '';
     if(!invoiceName && !flowName) toast('请至少上传发票或流水截图作为核销凭证，本次核销仍将继续', 'warning');
@@ -4304,6 +4369,8 @@ th.sortable:hover { color: var(--tms-primary); }
     rechargeStore.push({
       no: rechargeNo(),
       customer: customer,
+      flowNo: flowNo,
+      billNo: billNo,
       amount: amount,
       invoice: invoiceName,
       flow: flowName,
@@ -4315,13 +4382,13 @@ th.sortable:hover { color: var(--tms-primary); }
       time: time
     });
 
-    toast('充值核销成功：本次核销 ' + fmtM(appliedTotal) + (amount - appliedTotal > 0 ? '，剩余余额 ' + fmtM(amount - appliedTotal) : ''), 'success');
+    toast('回款核销成功：本次核销 ' + fmtM(appliedTotal) + (amount - appliedTotal > 0 ? '，剩余余额 ' + fmtM(amount - appliedTotal) : ''), 'success');
     closeModal('rechargeWriteOffModal');
     var recordsModal = document.getElementById('rechargeRecordsModal');
     if(recordsModal && recordsModal.classList.contains('show')) renderRechargeRecords();
   };
 
-  // ---------- 充值记录弹窗 ----------
+  // ---------- 核销记录弹窗 ----------
   window.openRechargeRecordsModal = function(){
     renderRechargeRecords();
     openModal('rechargeRecordsModal');
@@ -4344,7 +4411,7 @@ th.sortable:hover { color: var(--tms-primary); }
     });
 
     if(list.length === 0){
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无充值记录</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--tms-text-3);padding:32px 0;">暂无核销记录</td></tr>';
       return;
     }
     tbody.innerHTML = list.map(function(r){
@@ -4355,6 +4422,8 @@ th.sortable:hover { color: var(--tms-primary); }
       return '<tr>' +
         '<td><span class="mono">' + esc(r.no) + '</span></td>' +
         '<td>' + esc(r.customer) + '</td>' +
+        '<td><span class="mono">' + esc(r.flowNo || '—') + '</span></td>' +
+        '<td><span class="mono">' + esc(r.billNo || '—') + '</span></td>' +
         '<td style="font-weight:600;">' + fmtM(r.amount) + '</td>' +
         '<td>' + certs + '</td>' +
         '<td>' + (r.mode === 'waybill' ? '<span class="tag tag-orange">运单核销</span>' : '<span class="tag tag-blue">总金额核销</span>') + '</td>' +
