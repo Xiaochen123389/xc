@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>库存查询</title>
+    <style id="theme-vars">
+/* Foreign Trade Order & Inventory Management System — Brand Tokens */
+
+:root {
+  /* Primary scale — Indigo (professional B2B admin) */
+  --fto-primary-50: #eef2ff;
+  --fto-primary-100: #e0e7ff;
+  --fto-primary-200: #c7d2fe;
+  --fto-primary-300: #a5b4fc;
+  --fto-primary-400: #818cf8;
+  --fto-primary-500: #6366f1;
+  --fto-primary-600: #4f46e5;
+  --fto-primary-700: #4338ca;
+  --fto-primary-800: #3730a3;
+  --fto-primary-900: #312e81;
+
+  /* Neutral scale — Slate */
+  --fto-slate-50: #f8fafc;
+  --fto-slate-100: #f1f5f9;
+  --fto-slate-200: #e2e8f0;
+  --fto-slate-300: #cbd5e1;
+  --fto-slate-400: #94a3b8;
+  --fto-slate-500: #64748b;
+  --fto-slate-600: #475569;
+  --fto-slate-700: #334155;
+  --fto-slate-800: #1e293b;
+  --fto-slate-900: #0f172a;
+
+  /* Semantic aliases */
+  --fto-background: #ffffff;
+  --fto-foreground: #0f172a;
+  --fto-card: #ffffff;
+  --fto-card-foreground: #0f172a;
+  --fto-popover: #ffffff;
+  --fto-popover-foreground: #0f172a;
+  --fto-primary: #4f46e5;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #f1f5f9;
+  --fto-secondary-foreground: #334155;
+  --fto-muted: #f1f5f9;
+  --fto-muted-foreground: #64748b;
+  --fto-accent: #eef2ff;
+  --fto-accent-foreground: #4338ca;
+  --fto-border: #e2e8f0;
+  --fto-input: #e2e8f0;
+  --fto-ring: #4f46e5;
+
+  /* State colors */
+  --fto-state-success: #16a34a;
+  --fto-state-success-bg: #dcfce7;
+  --fto-state-warning: #d97706;
+  --fto-state-warning-bg: #fef3c7;
+  --fto-state-error: #dc2626;
+  --fto-state-error-bg: #fee2e2;
+  --fto-state-info: #2563eb;
+  --fto-state-info-bg: #dbeafe;
+
+  /* Surface/depth */
+  --fto-surface: #ffffff;
+  --fto-surface-2: #f8fafc;
+  --fto-surface-3: #f1f5f9;
+  --fto-ink: #0f172a;
+  --fto-ink-2: #475569;
+  --fto-ink-3: #94a3b8;
+  --fto-line: #e2e8f0;
+
+  /* Radius */
+  --fto-radius-small: 4px;
+  --fto-radius-medium: 8px;
+  --fto-radius-large: 12px;
+  --fto-radius-full: 9999px;
+
+  /* Shadows */
+  --fto-shadow-1: 0 1px 2px 0 rgba(15, 23, 42, 0.05), 0 1px 1px 0 rgba(15, 23, 42, 0.03);
+  --fto-shadow-2: 0 8px 24px -8px rgba(15, 23, 42, 0.18);
+  --fto-shadow-3: 0 24px 60px -20px rgba(15, 23, 42, 0.30);
+
+  /* Typography */
+  --fto-font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --fto-font-mono: "SF Mono", "Fira Code", "Noto Sans Mono", monospace;
+}
+
+.dark {
+  --fto-background: #0b0b0f;
+  --fto-foreground: #f8fafc;
+  --fto-card: #14141a;
+  --fto-card-foreground: #f8fafc;
+  --fto-popover: #14141a;
+  --fto-popover-foreground: #f8fafc;
+  --fto-primary: #6366f1;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #1e293b;
+  --fto-secondary-foreground: #cbd5e1;
+  --fto-muted: #1e293b;
+  --fto-muted-foreground: #94a3b8;
+  --fto-accent: #312e81;
+  --fto-accent-foreground: #c7d2fe;
+  --fto-border: #334155;
+  --fto-input: #334155;
+  --fto-ring: #6366f1;
+  --fto-surface: #14141a;
+  --fto-surface-2: #1e293b;
+  --fto-surface-3: #0f172a;
+  --fto-ink: #f8fafc;
+  --fto-ink-2: #cbd5e1;
+  --fto-ink-3: #64748b;
+  --fto-line: #334155;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--fto-background);
+    --color-foreground: var(--fto-foreground);
+    --color-card: var(--fto-card);
+    --color-card-foreground: var(--fto-card-foreground);
+    --color-popover: var(--fto-popover);
+    --color-popover-foreground: var(--fto-popover-foreground);
+    --color-primary: var(--fto-primary);
+    --color-primary-foreground: var(--fto-primary-foreground);
+    --color-secondary: var(--fto-secondary);
+    --color-secondary-foreground: var(--fto-secondary-foreground);
+    --color-muted: var(--fto-muted);
+    --color-muted-foreground: var(--fto-muted-foreground);
+    --color-accent: var(--fto-accent);
+    --color-accent-foreground: var(--fto-accent-foreground);
+    --color-border: var(--fto-border);
+    --color-input: var(--fto-input);
+    --color-ring: var(--fto-ring);
+    --radius-sm: var(--fto-radius-small);
+    --radius-md: var(--fto-radius-medium);
+    --radius-lg: var(--fto-radius-large);
+  }
+  @layer base {
+    body { background: var(--fto-background); color: var(--fto-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--fto-background); }
+      .text-background { color: var(--fto-background); }
+      .border-background { border-color: var(--fto-background); }
+      .ring-background { --tw-ring-color: var(--fto-background); }
+      .bg-foreground { background-color: var(--fto-foreground); }
+      .text-foreground { color: var(--fto-foreground); }
+      .border-foreground { border-color: var(--fto-foreground); }
+      .ring-foreground { --tw-ring-color: var(--fto-foreground); }
+      .bg-card { background-color: var(--fto-card); }
+      .text-card { color: var(--fto-card); }
+      .border-card { border-color: var(--fto-card); }
+      .ring-card { --tw-ring-color: var(--fto-card); }
+      .bg-card-foreground { background-color: var(--fto-card-foreground); }
+      .text-card-foreground { color: var(--fto-card-foreground); }
+      .border-card-foreground { border-color: var(--fto-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--fto-card-foreground); }
+      .bg-popover { background-color: var(--fto-popover); }
+      .text-popover { color: var(--fto-popover); }
+      .border-popover { border-color: var(--fto-popover); }
+      .ring-popover { --tw-ring-color: var(--fto-popover); }
+      .bg-popover-foreground { background-color: var(--fto-popover-foreground); }
+      .text-popover-foreground { color: var(--fto-popover-foreground); }
+      .border-popover-foreground { border-color: var(--fto-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--fto-popover-foreground); }
+      .bg-primary { background-color: var(--fto-primary); }
+      .text-primary { color: var(--fto-primary); }
+      .border-primary { border-color: var(--fto-primary); }
+      .ring-primary { --tw-ring-color: var(--fto-primary); }
+      .bg-primary-foreground { background-color: var(--fto-primary-foreground); }
+      .text-primary-foreground { color: var(--fto-primary-foreground); }
+      .border-primary-foreground { border-color: var(--fto-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--fto-primary-foreground); }
+      .bg-secondary { background-color: var(--fto-secondary); }
+      .text-secondary { color: var(--fto-secondary); }
+      .border-secondary { border-color: var(--fto-secondary); }
+      .ring-secondary { --tw-ring-color: var(--fto-secondary); }
+      .bg-secondary-foreground { background-color: var(--fto-secondary-foreground); }
+      .text-secondary-foreground { color: var(--fto-secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--fto-secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--fto-secondary-foreground); }
+      .bg-muted { background-color: var(--fto-muted); }
+      .text-muted { color: var(--fto-muted); }
+      .border-muted { border-color: var(--fto-muted); }
+      .ring-muted { --tw-ring-color: var(--fto-muted); }
+      .bg-muted-foreground { background-color: var(--fto-muted-foreground); }
+      .text-muted-foreground { color: var(--fto-muted-foreground); }
+      .border-muted-foreground { border-color: var(--fto-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--fto-muted-foreground); }
+      .bg-accent { background-color: var(--fto-accent); }
+      .text-accent { color: var(--fto-accent); }
+      .border-accent { border-color: var(--fto-accent); }
+      .ring-accent { --tw-ring-color: var(--fto-accent); }
+      .bg-accent-foreground { background-color: var(--fto-accent-foreground); }
+      .text-accent-foreground { color: var(--fto-accent-foreground); }
+      .border-accent-foreground { border-color: var(--fto-accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--fto-accent-foreground); }
+      .bg-border { background-color: var(--fto-border); }
+      .text-border { color: var(--fto-border); }
+      .border-border { border-color: var(--fto-border); }
+      .ring-border { --tw-ring-color: var(--fto-border); }
+      .bg-input { background-color: var(--fto-input); }
+      .text-input { color: var(--fto-input); }
+      .border-input { border-color: var(--fto-input); }
+      .ring-input { --tw-ring-color: var(--fto-input); }
+      .bg-ring { background-color: var(--fto-ring); }
+      .text-ring { color: var(--fto-ring); }
+      .border-ring { border-color: var(--fto-ring); }
+      .ring-ring { --tw-ring-color: var(--fto-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+  <!-- Sidebar -->
+  <aside
+    class="fixed top-0 left-0 bottom-0 z-40 flex flex-col"
+    style="width: var(--shell-sidebar-width); background-color: var(--fto-surface-2); border-right: 1px solid var(--fto-line);"
+  >
+    <!-- Logo / App Name -->
+    <div
+      class="flex h-[64px] items-center gap-3 px-6"
+      style="border-bottom: 1px solid var(--fto-line);"
+    >
+      <i data-lucide="package" class="h-6 w-6" style="color: var(--fto-primary);"></i>
+      <span class="text-base font-semibold" style="color: var(--fto-ink);">外贸订单与库存一体化管理系统</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4">
+      <ul class="flex flex-col gap-1">
+        <li>
+          <a
+            href="products-v4.html"
+            data-nav-key="products"
+            data-dom-id="nav-products"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="package" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>商品总表</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="supplier-management.html"
+            data-nav-key="supplier-management"
+            data-dom-id="nav-supplier-management"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="factory" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>供应商管理</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="supplier-orders-v2.html"
+            data-nav-key="supplier-orders"
+            data-dom-id="nav-supplier-orders"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="truck" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>订单汇总/供应商订货</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="warehouse-inbound.html"
+            data-nav-key="warehouse-inbound"
+            data-dom-id="nav-warehouse-inbound"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="scan-barcode" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>入库管理</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="inventory.html"
+            data-nav-key="inventory"
+            data-dom-id="nav-inventory"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);"
+          >
+            <i data-lucide="warehouse" class="h-5 w-5" ></i>
+            <span>库存查询</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="outbound.html"
+            data-nav-key="outbound"
+            data-dom-id="nav-outbound"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="arrow-right-from-line" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>出库管理</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Top Toolbar -->
+  <header
+    class="fixed top-0 right-0 z-30 flex items-center justify-between px-6"
+    style="left: var(--shell-sidebar-width); height: var(--shell-toolbar-height); background-color: var(--fto-surface); border-bottom: 1px solid var(--fto-line);"
+  >
+    <div class="flex items-center gap-4">
+      <button type="button" class="rounded-md p-2 transition-colors hover:opacity-80" style="color: var(--fto-ink-2);">
+        <i data-lucide="menu" class="h-5 w-5"></i>
+      </button>
+      <h1 class="text-lg font-semibold" style="color: var(--fto-ink);">
+        库存查询
+      </h1>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Global Search -->
+      <div class="relative hidden sm:block">
+        <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style="color: var(--fto-ink-3);"></i>
+        <input
+          type="text"
+          placeholder="全局搜索..."
+          class="h-9 w-64 rounded-lg pl-9 pr-3 text-sm outline-none focus:ring-2"
+          style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-input); color: var(--fto-ink); --tw-ring-color: var(--fto-ring);"
+        />
+      </div>
+
+      <!-- Notifications -->
+      <button type="button" class="relative rounded-md p-2 transition-colors hover:opacity-80" style="color: var(--fto-ink-2);">
+        <i data-lucide="bell" class="h-5 w-5"></i>
+        <span
+          class="absolute right-1.5 top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-semibold"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >3</span>
+      </button>
+
+      <!-- User -->
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >管</div>
+        <span class="hidden text-sm font-medium md:block" style="color: var(--fto-ink);">管理员</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main
+    class="min-h-screen"
+    style="margin-left: var(--shell-sidebar-width); padding-top: var(--shell-toolbar-height); background-color: var(--fto-background);"
+  >
+    <div class="p-6">
+      <div
+        class="rounded-xl p-6"
+        style="background-color: var(--fto-card); border: 1px solid var(--fto-line); border-radius: var(--fto-radius-large); box-shadow: var(--fto-shadow-1);"
+      >
+        <!-- SLOT: pageHeaderActions -->
+        <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div class="relative w-full max-w-md">
+            <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style="color: var(--fto-ink-3);"></i>
+            <input
+              id="inventory-search"
+              type="text"
+              placeholder="按 SKU / 名称 / 条码搜索..."
+              class="h-10 w-full rounded-lg pl-9 pr-3 text-sm outline-none focus:ring-2"
+              style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-input); color: var(--fto-ink); --tw-ring-color: var(--fto-ring);"
+            />
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="inline-flex rounded-lg p-1" style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-line);">
+              <button type="button" data-filter="all" class="filter-btn rounded-md px-3 py-1.5 text-sm font-medium transition-colors" style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);">全部</button>
+              <button type="button" data-filter="received" class="filter-btn rounded-md px-3 py-1.5 text-sm font-medium transition-colors" style="color: var(--fto-ink-2);">已齐</button>
+              <button type="button" data-filter="shortage" class="filter-btn rounded-md px-3 py-1.5 text-sm font-medium transition-colors" style="color: var(--fto-ink-2);">欠交</button>
+              <button type="button" data-filter="low" class="filter-btn rounded-md px-3 py-1.5 text-sm font-medium transition-colors" style="color: var(--fto-ink-2);">低库存</button>
+            </div>
+            <button id="refresh-btn" type="button" class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:opacity-90" style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);">
+              <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+              <span>刷新</span>
+            </button>
+          </div>
+        </div>
+        <!-- /SLOT: pageHeaderActions -->
+
+        <!-- SLOT: mainContent -->
+        <div class="space-y-6">
+          <!-- 统计卡片 -->
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-xl p-5" style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-line);">
+              <div class="mb-3 flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                  <i data-lucide="package" class="h-5 w-5"></i>
+                </div>
+                <span class="text-sm font-medium" style="color: var(--fto-ink-2);">SKU 总数</span>
+              </div>
+              <p class="text-2xl font-bold" style="color: var(--fto-ink);">8</p>
+              <p class="mt-1 text-xs" style="color: var(--fto-ink-3);">当前在库商品规格数</p>
+            </div>
+            <div class="rounded-xl p-5" style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-line);">
+              <div class="mb-3 flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-state-info-bg); color: var(--fto-state-info);">
+                  <i data-lucide="boxes" class="h-5 w-5"></i>
+                </div>
+                <span class="text-sm font-medium" style="color: var(--fto-ink-2);">库存总箱数</span>
+              </div>
+              <p class="text-2xl font-bold" style="color: var(--fto-ink);">1,425</p>
+              <p class="mt-1 text-xs" style="color: var(--fto-ink-3);">实际入库合计（箱）</p>
+            </div>
+            <div class="rounded-xl p-5" style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-line);">
+              <div class="mb-3 flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-state-success-bg); color: var(--fto-state-success);">
+                  <i data-lucide="clipboard-check" class="h-5 w-5"></i>
+                </div>
+                <span class="text-sm font-medium" style="color: var(--fto-ink-2);">应到总数</span>
+              </div>
+              <p class="text-2xl font-bold" style="color: var(--fto-ink);">1,540</p>
+              <p class="mt-1 text-xs" style="color: var(--fto-ink-3);">采购订单应到合计（箱）</p>
+            </div>
+            <div class="rounded-xl p-5" style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-line);">
+              <div class="mb-3 flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-state-error-bg); color: var(--fto-state-error);">
+                  <i data-lucide="alert-circle" class="h-5 w-5"></i>
+                </div>
+                <span class="text-sm font-medium" style="color: var(--fto-ink-2);">欠交总数</span>
+              </div>
+              <p class="text-2xl font-bold" style="color: var(--fto-ink);">115</p>
+              <p class="mt-1 text-xs" style="color: var(--fto-ink-3);">待补货/未到货合计（箱）</p>
+            </div>
+          </div>
+
+          <!-- 库存明细表 -->
+          <div class="overflow-hidden rounded-xl" style="border: 1px solid var(--fto-line);">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead style="background-color: var(--fto-surface-2);">
+                  <tr>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">SKU 编号</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">产品图片</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">产品名称</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">规格</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">当前库存（箱）</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">应到数量（箱）</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">欠交数量（箱）</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">到货状态</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">最后入库时间</th>
+                    <th class="px-4 py-3 font-semibold" style="color: var(--fto-ink-2);">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body" style="background-color: var(--fto-card);">
+                  <tr data-status="received" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-001</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="speaker" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">蓝牙音箱</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">BT-SPK / 黑色</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-ink);">200</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">200</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">0</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-success-bg); color: var(--fto-state-success);">已到货</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-10</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-status="shortage" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-002</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="headphones" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">无线降噪耳机</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">WH-ANC / 白色</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-ink);">150</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">180</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-state-error);">30</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-error-bg); color: var(--fto-state-error);">欠交</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-11</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-status="received" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-003</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="battery-charging" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">移动电源</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">PW-100 / 20000mAh</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-ink);">300</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">300</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">0</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-success-bg); color: var(--fto-state-success);">已到货</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-09</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-status="partial" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-004</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="smartphone" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">铝合金手机支架</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">ST-ALU / 银色</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-ink);">80</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">100</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-state-warning);">20</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-warning-bg); color: var(--fto-state-warning);">部分到货</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-12</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-status="received" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-005</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="usb" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">Type-C 快充线缆</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">CB-TC / 1.2m</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-ink);">500</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">500</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">0</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-success-bg); color: var(--fto-state-success);">已到货</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-08</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-status="low" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-006</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="keyboard" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">机械键盘</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">KB-MEC / 87键</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-state-error);">45</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">60</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-state-error);">15</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-error-bg); color: var(--fto-state-error);">低库存</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-13</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-status="received" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-007</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="lamp" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">护眼台灯</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">TL-LED / 白色</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-ink);">120</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">120</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">0</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-success-bg); color: var(--fto-state-success);">已到货</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-07</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-status="shortage" class="inventory-row border-b" style="border-color: var(--fto-line);">
+                    <td class="px-4 py-3 font-mono" style="color: var(--fto-ink);">SKU-20240801-008</td>
+                    <td class="px-4 py-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: var(--fto-primary-100); color: var(--fto-primary-600);">
+                        <i data-lucide="watch" class="h-5 w-5"></i>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-medium" style="color: var(--fto-ink);">智能运动手表</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">SW-FIT / 黑色</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-ink);">30</td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">80</td>
+                    <td class="px-4 py-3 font-semibold" style="color: var(--fto-state-error);">50</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" style="background-color: var(--fto-state-error-bg); color: var(--fto-state-error);">欠交</span></td>
+                    <td class="px-4 py-3" style="color: var(--fto-ink-2);">2024-08-14</td>
+                    <td class="px-4 py-3">
+                      <button type="button" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">
+                        <i data-lucide="list" class="h-3.5 w-3.5"></i>
+                        查看流水
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between px-4 py-3" style="background-color: var(--fto-surface-2); border-top: 1px solid var(--fto-line);">
+              <p class="text-xs" style="color: var(--fto-ink-3);">共 8 条记录</p>
+              <div class="flex items-center gap-2">
+                <button type="button" class="rounded-md px-3 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-card); border: 1px solid var(--fto-line); color: var(--fto-ink-2);" disabled>上一页</button>
+                <button type="button" class="rounded-md px-3 py-1.5 text-xs font-medium transition-colors hover:opacity-80" style="background-color: var(--fto-card); border: 1px solid var(--fto-line); color: var(--fto-ink-2);" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /SLOT: mainContent -->
+      </div>
+    </div>
+  </main>
+
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+
+    (function () {
+      const rows = document.querySelectorAll('.inventory-row');
+      const buttons = document.querySelectorAll('.filter-btn');
+      const searchInput = document.getElementById('inventory-search');
+      const refreshBtn = document.getElementById('refresh-btn');
+      let currentFilter = 'all';
+
+      function applyFilter() {
+        const term = (searchInput.value || '').trim().toLowerCase();
+        rows.forEach(function (row) {
+          const status = row.getAttribute('data-status') || '';
+          const text = row.innerText.toLowerCase();
+          const matchesFilter = currentFilter === 'all' || status === currentFilter || (currentFilter === 'received' && status === 'received');
+          const matchesSearch = term === '' || text.indexOf(term) !== -1;
+          row.style.display = (matchesFilter && matchesSearch) ? '' : 'none';
+        });
+      }
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          currentFilter = btn.getAttribute('data-filter') || 'all';
+          buttons.forEach(function (b) {
+            b.style.backgroundColor = '';
+            b.style.color = 'var(--fto-ink-2)';
+          });
+          btn.style.backgroundColor = 'var(--fto-primary)';
+          btn.style.color = 'var(--fto-primary-foreground)';
+          applyFilter();
+        });
+      });
+
+      searchInput.addEventListener('input', applyFilter);
+
+      refreshBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        currentFilter = 'all';
+        buttons.forEach(function (b) {
+          b.style.backgroundColor = '';
+          b.style.color = 'var(--fto-ink-2)';
+        });
+        const allBtn = document.querySelector('[data-filter="all"]');
+        if (allBtn) {
+          allBtn.style.backgroundColor = 'var(--fto-primary)';
+          allBtn.style.color = 'var(--fto-primary-foreground)';
+        }
+        applyFilter();
+      });
+    })();
+  </script>
+
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+      :root {
+        --shell-sidebar-width: 240px;
+        --shell-toolbar-height: 64px;
+      }
+      body {
+        font-family: var(--fto-font-sans);
+      }
+    </style>
+</body>
+</html>
