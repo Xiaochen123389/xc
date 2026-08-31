@@ -1,0 +1,107 @@
+/* Foreign Trade Order & Inventory Management System — Brand Tokens */
+
+:root {
+  /* Primary scale — Indigo (professional B2B admin) */
+  --fto-primary-50: #eef2ff;
+  --fto-primary-100: #e0e7ff;
+  --fto-primary-200: #c7d2fe;
+  --fto-primary-300: #a5b4fc;
+  --fto-primary-400: #818cf8;
+  --fto-primary-500: #6366f1;
+  --fto-primary-600: #4f46e5;
+  --fto-primary-700: #4338ca;
+  --fto-primary-800: #3730a3;
+  --fto-primary-900: #312e81;
+
+  /* Neutral scale — Slate */
+  --fto-slate-50: #f8fafc;
+  --fto-slate-100: #f1f5f9;
+  --fto-slate-200: #e2e8f0;
+  --fto-slate-300: #cbd5e1;
+  --fto-slate-400: #94a3b8;
+  --fto-slate-500: #64748b;
+  --fto-slate-600: #475569;
+  --fto-slate-700: #334155;
+  --fto-slate-800: #1e293b;
+  --fto-slate-900: #0f172a;
+
+  /* Semantic aliases */
+  --fto-background: #ffffff;
+  --fto-foreground: #0f172a;
+  --fto-card: #ffffff;
+  --fto-card-foreground: #0f172a;
+  --fto-popover: #ffffff;
+  --fto-popover-foreground: #0f172a;
+  --fto-primary: #4f46e5;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #f1f5f9;
+  --fto-secondary-foreground: #334155;
+  --fto-muted: #f1f5f9;
+  --fto-muted-foreground: #64748b;
+  --fto-accent: #eef2ff;
+  --fto-accent-foreground: #4338ca;
+  --fto-border: #e2e8f0;
+  --fto-input: #e2e8f0;
+  --fto-ring: #4f46e5;
+
+  /* State colors */
+  --fto-state-success: #16a34a;
+  --fto-state-success-bg: #dcfce7;
+  --fto-state-warning: #d97706;
+  --fto-state-warning-bg: #fef3c7;
+  --fto-state-error: #dc2626;
+  --fto-state-error-bg: #fee2e2;
+  --fto-state-info: #2563eb;
+  --fto-state-info-bg: #dbeafe;
+
+  /* Surface/depth */
+  --fto-surface: #ffffff;
+  --fto-surface-2: #f8fafc;
+  --fto-surface-3: #f1f5f9;
+  --fto-ink: #0f172a;
+  --fto-ink-2: #475569;
+  --fto-ink-3: #94a3b8;
+  --fto-line: #e2e8f0;
+
+  /* Radius */
+  --fto-radius-small: 4px;
+  --fto-radius-medium: 8px;
+  --fto-radius-large: 12px;
+  --fto-radius-full: 9999px;
+
+  /* Shadows */
+  --fto-shadow-1: 0 1px 2px 0 rgba(15, 23, 42, 0.05), 0 1px 1px 0 rgba(15, 23, 42, 0.03);
+  --fto-shadow-2: 0 8px 24px -8px rgba(15, 23, 42, 0.18);
+  --fto-shadow-3: 0 24px 60px -20px rgba(15, 23, 42, 0.30);
+
+  /* Typography */
+  --fto-font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --fto-font-mono: "SF Mono", "Fira Code", "Noto Sans Mono", monospace;
+}
+
+.dark {
+  --fto-background: #0b0b0f;
+  --fto-foreground: #f8fafc;
+  --fto-card: #14141a;
+  --fto-card-foreground: #f8fafc;
+  --fto-popover: #14141a;
+  --fto-popover-foreground: #f8fafc;
+  --fto-primary: #6366f1;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #1e293b;
+  --fto-secondary-foreground: #cbd5e1;
+  --fto-muted: #1e293b;
+  --fto-muted-foreground: #94a3b8;
+  --fto-accent: #312e81;
+  --fto-accent-foreground: #c7d2fe;
+  --fto-border: #334155;
+  --fto-input: #334155;
+  --fto-ring: #6366f1;
+  --fto-surface: #14141a;
+  --fto-surface-2: #1e293b;
+  --fto-surface-3: #0f172a;
+  --fto-ink: #f8fafc;
+  --fto-ink-2: #cbd5e1;
+  --fto-ink-3: #64748b;
+  --fto-line: #334155;
+}
