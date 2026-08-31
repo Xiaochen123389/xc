@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>供应商管理</title>
+    <style id="theme-vars">
+/* Foreign Trade Order & Inventory Management System — Brand Tokens */
+
+:root {
+  /* Primary scale — Indigo (professional B2B admin) */
+  --fto-primary-50: #eef2ff;
+  --fto-primary-100: #e0e7ff;
+  --fto-primary-200: #c7d2fe;
+  --fto-primary-300: #a5b4fc;
+  --fto-primary-400: #818cf8;
+  --fto-primary-500: #6366f1;
+  --fto-primary-600: #4f46e5;
+  --fto-primary-700: #4338ca;
+  --fto-primary-800: #3730a3;
+  --fto-primary-900: #312e81;
+
+  /* Neutral scale — Slate */
+  --fto-slate-50: #f8fafc;
+  --fto-slate-100: #f1f5f9;
+  --fto-slate-200: #e2e8f0;
+  --fto-slate-300: #cbd5e1;
+  --fto-slate-400: #94a3b8;
+  --fto-slate-500: #64748b;
+  --fto-slate-600: #475569;
+  --fto-slate-700: #334155;
+  --fto-slate-800: #1e293b;
+  --fto-slate-900: #0f172a;
+
+  /* Semantic aliases */
+  --fto-background: #ffffff;
+  --fto-foreground: #0f172a;
+  --fto-card: #ffffff;
+  --fto-card-foreground: #0f172a;
+  --fto-popover: #ffffff;
+  --fto-popover-foreground: #0f172a;
+  --fto-primary: #4f46e5;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #f1f5f9;
+  --fto-secondary-foreground: #334155;
+  --fto-muted: #f1f5f9;
+  --fto-muted-foreground: #64748b;
+  --fto-accent: #eef2ff;
+  --fto-accent-foreground: #4338ca;
+  --fto-border: #e2e8f0;
+  --fto-input: #e2e8f0;
+  --fto-ring: #4f46e5;
+
+  /* State colors */
+  --fto-state-success: #16a34a;
+  --fto-state-success-bg: #dcfce7;
+  --fto-state-warning: #d97706;
+  --fto-state-warning-bg: #fef3c7;
+  --fto-state-error: #dc2626;
+  --fto-state-error-bg: #fee2e2;
+  --fto-state-info: #2563eb;
+  --fto-state-info-bg: #dbeafe;
+
+  /* Surface/depth */
+  --fto-surface: #ffffff;
+  --fto-surface-2: #f8fafc;
+  --fto-surface-3: #f1f5f9;
+  --fto-ink: #0f172a;
+  --fto-ink-2: #475569;
+  --fto-ink-3: #94a3b8;
+  --fto-line: #e2e8f0;
+
+  /* Radius */
+  --fto-radius-small: 4px;
+  --fto-radius-medium: 8px;
+  --fto-radius-large: 12px;
+  --fto-radius-full: 9999px;
+
+  /* Shadows */
+  --fto-shadow-1: 0 1px 2px 0 rgba(15, 23, 42, 0.05), 0 1px 1px 0 rgba(15, 23, 42, 0.03);
+  --fto-shadow-2: 0 8px 24px -8px rgba(15, 23, 42, 0.18);
+  --fto-shadow-3: 0 24px 60px -20px rgba(15, 23, 42, 0.30);
+
+  /* Typography */
+  --fto-font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --fto-font-mono: "SF Mono", "Fira Code", "Noto Sans Mono", monospace;
+}
+
+.dark {
+  --fto-background: #0b0b0f;
+  --fto-foreground: #f8fafc;
+  --fto-card: #14141a;
+  --fto-card-foreground: #f8fafc;
+  --fto-popover: #14141a;
+  --fto-popover-foreground: #f8fafc;
+  --fto-primary: #6366f1;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #1e293b;
+  --fto-secondary-foreground: #cbd5e1;
+  --fto-muted: #1e293b;
+  --fto-muted-foreground: #94a3b8;
+  --fto-accent: #312e81;
+  --fto-accent-foreground: #c7d2fe;
+  --fto-border: #334155;
+  --fto-input: #334155;
+  --fto-ring: #6366f1;
+  --fto-surface: #14141a;
+  --fto-surface-2: #1e293b;
+  --fto-surface-3: #0f172a;
+  --fto-ink: #f8fafc;
+  --fto-ink-2: #cbd5e1;
+  --fto-ink-3: #64748b;
+  --fto-line: #334155;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--fto-background);
+    --color-foreground: var(--fto-foreground);
+    --color-card: var(--fto-card);
+    --color-card-foreground: var(--fto-card-foreground);
+    --color-popover: var(--fto-popover);
+    --color-popover-foreground: var(--fto-popover-foreground);
+    --color-primary: var(--fto-primary);
+    --color-primary-foreground: var(--fto-primary-foreground);
+    --color-secondary: var(--fto-secondary);
+    --color-secondary-foreground: var(--fto-secondary-foreground);
+    --color-muted: var(--fto-muted);
+    --color-muted-foreground: var(--fto-muted-foreground);
+    --color-accent: var(--fto-accent);
+    --color-accent-foreground: var(--fto-accent-foreground);
+    --color-border: var(--fto-border);
+    --color-input: var(--fto-input);
+    --color-ring: var(--fto-ring);
+    --radius-sm: var(--fto-radius-small);
+    --radius-md: var(--fto-radius-medium);
+    --radius-lg: var(--fto-radius-large);
+  }
+  @layer base {
+    body { background: var(--fto-background); color: var(--fto-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--fto-background); }
+      .text-background { color: var(--fto-background); }
+      .border-background { border-color: var(--fto-background); }
+      .ring-background { --tw-ring-color: var(--fto-background); }
+      .bg-foreground { background-color: var(--fto-foreground); }
+      .text-foreground { color: var(--fto-foreground); }
+      .border-foreground { border-color: var(--fto-foreground); }
+      .ring-foreground { --tw-ring-color: var(--fto-foreground); }
+      .bg-card { background-color: var(--fto-card); }
+      .text-card { color: var(--fto-card); }
+      .border-card { border-color: var(--fto-card); }
+      .ring-card { --tw-ring-color: var(--fto-card); }
+      .bg-card-foreground { background-color: var(--fto-card-foreground); }
+      .text-card-foreground { color: var(--fto-card-foreground); }
+      .border-card-foreground { border-color: var(--fto-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--fto-card-foreground); }
+      .bg-popover { background-color: var(--fto-popover); }
+      .text-popover { color: var(--fto-popover); }
+      .border-popover { border-color: var(--fto-popover); }
+      .ring-popover { --tw-ring-color: var(--fto-popover); }
+      .bg-popover-foreground { background-color: var(--fto-popover-foreground); }
+      .text-popover-foreground { color: var(--fto-popover-foreground); }
+      .border-popover-foreground { border-color: var(--fto-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--fto-popover-foreground); }
+      .bg-primary { background-color: var(--fto-primary); }
+      .text-primary { color: var(--fto-primary); }
+      .border-primary { border-color: var(--fto-primary); }
+      .ring-primary { --tw-ring-color: var(--fto-primary); }
+      .bg-primary-foreground { background-color: var(--fto-primary-foreground); }
+      .text-primary-foreground { color: var(--fto-primary-foreground); }
+      .border-primary-foreground { border-color: var(--fto-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--fto-primary-foreground); }
+      .bg-secondary { background-color: var(--fto-secondary); }
+      .text-secondary { color: var(--fto-secondary); }
+      .border-secondary { border-color: var(--fto-secondary); }
+      .ring-secondary { --tw-ring-color: var(--fto-secondary); }
+      .bg-secondary-foreground { background-color: var(--fto-secondary-foreground); }
+      .text-secondary-foreground { color: var(--fto-secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--fto-secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--fto-secondary-foreground); }
+      .bg-muted { background-color: var(--fto-muted); }
+      .text-muted { color: var(--fto-muted); }
+      .border-muted { border-color: var(--fto-muted); }
+      .ring-muted { --tw-ring-color: var(--fto-muted); }
+      .bg-muted-foreground { background-color: var(--fto-muted-foreground); }
+      .text-muted-foreground { color: var(--fto-muted-foreground); }
+      .border-muted-foreground { border-color: var(--fto-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--fto-muted-foreground); }
+      .bg-accent { background-color: var(--fto-accent); }
+      .text-accent { color: var(--fto-accent); }
+      .border-accent { border-color: var(--fto-accent); }
+      .ring-accent { --tw-ring-color: var(--fto-accent); }
+      .bg-accent-foreground { background-color: var(--fto-accent-foreground); }
+      .text-accent-foreground { color: var(--fto-accent-foreground); }
+      .border-accent-foreground { border-color: var(--fto-accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--fto-accent-foreground); }
+      .bg-border { background-color: var(--fto-border); }
+      .text-border { color: var(--fto-border); }
+      .border-border { border-color: var(--fto-border); }
+      .ring-border { --tw-ring-color: var(--fto-border); }
+      .bg-input { background-color: var(--fto-input); }
+      .text-input { color: var(--fto-input); }
+      .border-input { border-color: var(--fto-input); }
+      .ring-input { --tw-ring-color: var(--fto-input); }
+      .bg-ring { background-color: var(--fto-ring); }
+      .text-ring { color: var(--fto-ring); }
+      .border-ring { border-color: var(--fto-ring); }
+      .ring-ring { --tw-ring-color: var(--fto-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+  <!-- Sidebar -->
+  <aside
+    class="fixed top-0 left-0 bottom-0 z-40 flex flex-col"
+    style="width: var(--shell-sidebar-width); background-color: var(--fto-surface-2); border-right: 1px solid var(--fto-line);"
+  >
+    <!-- Logo / App Name -->
+    <div
+      class="flex h-[64px] items-center gap-3 px-6"
+      style="border-bottom: 1px solid var(--fto-line);"
+    >
+      <i data-lucide="package" class="h-6 w-6" style="color: var(--fto-primary);"></i>
+      <span class="text-base font-semibold" style="color: var(--fto-ink);">外贸订单与库存一体化管理系统</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4">
+      <ul class="flex flex-col gap-1">
+        <li>
+          <a
+            href="products-v4.html"
+            data-nav-key="products"
+            data-dom-id="nav-products"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="package" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>商品总表</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="supplier-management.html"
+            data-nav-key="supplier-management"
+            data-dom-id="nav-supplier-management"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);"
+          >
+            <i data-lucide="factory" class="h-5 w-5"></i>
+            <span>供应商管理</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="supplier-orders-v2.html"
+            data-nav-key="supplier-orders"
+            data-dom-id="nav-supplier-orders"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="truck" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>订单汇总/供应商订货</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="warehouse-inbound.html"
+            data-nav-key="warehouse-inbound"
+            data-dom-id="nav-warehouse-inbound"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="scan-barcode" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>入库管理</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="inventory.html"
+            data-nav-key="inventory"
+            data-dom-id="nav-inventory"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="warehouse" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>库存查询</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="outbound.html"
+            data-nav-key="outbound"
+            data-dom-id="nav-outbound"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="arrow-right-from-line" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>出库管理</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Top Toolbar -->
+  <header
+    class="fixed top-0 right-0 z-30 flex items-center justify-between px-6"
+    style="left: var(--shell-sidebar-width); height: var(--shell-toolbar-height); background-color: var(--fto-surface); border-bottom: 1px solid var(--fto-line);"
+  >
+    <div class="flex items-center gap-4">
+      <button type="button" class="rounded-md p-2 transition-colors hover:opacity-80" style="color: var(--fto-ink-2);">
+        <i data-lucide="menu" class="h-5 w-5"></i>
+      </button>
+      <h1 class="text-lg font-semibold" style="color: var(--fto-ink);">供应商管理</h1>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Global Search -->
+      <div class="relative hidden sm:block">
+        <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style="color: var(--fto-ink-3);"></i>
+        <input
+          type="text"
+          placeholder="全局搜索..."
+          class="h-9 w-64 rounded-lg pl-9 pr-3 text-sm outline-none focus:ring-2"
+          style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-input); color: var(--fto-ink); --tw-ring-color: var(--fto-ring);"
+        />
+      </div>
+
+      <!-- Notifications -->
+      <button type="button" class="relative rounded-md p-2 transition-colors hover:opacity-80" style="color: var(--fto-ink-2);">
+        <i data-lucide="bell" class="h-5 w-5"></i>
+        <span
+          class="absolute right-1.5 top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-semibold"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >3</span>
+      </button>
+
+      <!-- User -->
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >管</div>
+        <span class="hidden text-sm font-medium md:block" style="color: var(--fto-ink);">管理员</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main
+    class="min-h-screen"
+    style="margin-left: var(--shell-sidebar-width); padding-top: var(--shell-toolbar-height); background-color: var(--fto-background);"
+  >
+    <div class="p-6">
+      <div
+        class="rounded-xl p-6"
+        style="background-color: var(--fto-card); border: 1px solid var(--fto-line); border-radius: var(--fto-radius-large); box-shadow: var(--fto-shadow-1);"
+      >
+        <!-- 业务提示条 -->
+        <div
+          class="mb-5 flex items-start gap-2 rounded-lg px-4 py-3 text-sm"
+          style="background-color: var(--fto-state-info-bg); color: var(--fto-state-info);"
+        >
+          <i data-lucide="info" class="mt-0.5 h-4 w-4 shrink-0"></i>
+          <span>在订单汇总模块按供应商拆分订货单时，将依据本模块的供应商-产品对应关系自动分配。</span>
+        </div>
+
+        <!-- 页头操作区 -->
+        <div class="mb-5">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="relative w-full md:w-80">
+              <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style="color: var(--fto-ink-3);"></i>
+              <input
+                id="search-input"
+                type="text"
+                placeholder="按供应商编号/名称/联系人搜索"
+                class="h-9 w-full rounded-lg pl-9 pr-3 text-sm outline-none focus:ring-2"
+                style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-input); color: var(--fto-ink); --tw-ring-color: var(--fto-ring);"
+              />
+            </div>
+            <button
+              id="btn-add-supplier"
+              type="button"
+              class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:opacity-90"
+              style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+            >
+              <i data-lucide="plus" class="h-4 w-4"></i>
+              新增供应商
+            </button>
+          </div>
+        </div>
+
+        <!-- 统计卡片行（JS 动态更新） -->
+        <div class="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="stat-card">
+            <div class="flex items-center gap-2">
+              <span class="stat-icon" style="background-color: var(--fto-primary-100); color: var(--fto-primary-700);">
+                <i data-lucide="factory" class="h-4 w-4"></i>
+              </span>
+              <span class="stat-label">供应商总数</span>
+            </div>
+            <div id="stat-total" class="mt-3 text-2xl font-semibold" style="color: var(--fto-ink);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center gap-2">
+              <span class="stat-icon" style="background-color: var(--fto-state-info-bg); color: var(--fto-state-info);">
+                <i data-lucide="package-check" class="h-4 w-4"></i>
+              </span>
+              <span class="stat-label">已关联产品 SKU 数</span>
+            </div>
+            <div id="stat-sku" class="mt-3 text-2xl font-semibold" style="color: var(--fto-ink);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center gap-2">
+              <span class="stat-icon" style="background-color: var(--fto-state-success-bg); color: var(--fto-state-success);">
+                <i data-lucide="boxes" class="h-4 w-4"></i>
+              </span>
+              <span class="stat-label">覆盖商品数</span>
+            </div>
+            <div id="stat-covered" class="mt-3 text-2xl font-semibold" style="color: var(--fto-ink);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center gap-2">
+              <span class="stat-icon" style="background-color: var(--fto-state-warning-bg); color: var(--fto-state-warning);">
+                <i data-lucide="circle-alert" class="h-4 w-4"></i>
+              </span>
+              <span class="stat-label">无供应商商品数</span>
+            </div>
+            <div id="stat-uncovered" class="mt-3 text-2xl font-semibold" style="color: var(--fto-ink);">0</div>
+          </div>
+        </div>
+
+        <!-- 供应商列表表格 -->
+        <div class="overflow-x-auto rounded-lg" style="border: 1px solid var(--fto-line);">
+          <table class="data-table w-full border-collapse" style="min-width: 1000px;">
+            <thead style="color: var(--fto-ink-2);">
+              <tr>
+                <th class="text-left font-medium" style="min-width: 110px;">供应商编号</th>
+                <th class="text-left font-medium" style="min-width: 160px;">供应商名称</th>
+                <th class="text-left font-medium" style="min-width: 100px;">联系人</th>
+                <th class="text-left font-medium" style="min-width: 130px;">联系电话</th>
+                <th class="text-center font-medium" style="min-width: 90px;">提供产品数</th>
+                <th class="text-center font-medium" style="min-width: 80px;">状态</th>
+                <th class="text-left font-medium" style="min-width: 110px;">创建时间</th>
+                <th class="text-center font-medium" style="min-width: 220px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="supplier-tbody" class="divide-y" style="color: var(--fto-ink-2); border-color: var(--fto-line);">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 分页信息（单页展示） -->
+        <div class="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <span id="page-info" class="text-sm" style="color: var(--fto-ink-3);">共 0 条</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 新增/编辑供应商模态弹窗 -->
+  <div id="supplier-modal" class="modal-overlay hidden">
+    <div class="modal-dialog modal-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="supplier-modal-title">
+      <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid var(--fto-line);">
+        <h2 id="supplier-modal-title" class="text-base font-semibold" style="color: var(--fto-ink);">新增供应商</h2>
+        <button id="supplier-modal-close" type="button" class="rounded-md p-1.5 transition-colors hover:opacity-80" style="color: var(--fto-ink-3);" aria-label="关闭">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div class="px-6 py-5">
+        <div class="form-grid">
+          <div class="form-field form-field-full">
+            <label for="sf-id">供应商编号（自动生成/只读）</label>
+            <input id="sf-id" type="text" readonly style="background-color: var(--fto-surface-2); color: var(--fto-ink-3);" />
+          </div>
+          <div class="form-field form-field-full">
+            <label for="sf-name"><span class="req">*</span>供应商名称</label>
+            <input id="sf-name" type="text" placeholder="请输入供应商名称" />
+          </div>
+          <div class="form-field">
+            <label for="sf-contact">联系人</label>
+            <input id="sf-contact" type="text" placeholder="如 陈经理" />
+          </div>
+          <div class="form-field">
+            <label for="sf-phone">联系电话</label>
+            <input id="sf-phone" type="text" placeholder="如 139****8001" />
+          </div>
+          <div class="form-field form-field-full">
+            <label for="sf-address">地址</label>
+            <input id="sf-address" type="text" placeholder="请输入供应商地址" />
+          </div>
+          <div class="form-field form-field-full">
+            <label for="sf-note">备注</label>
+            <textarea id="sf-note" rows="2" placeholder="选填，如合作方式、结算周期等"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 px-6 py-4" style="border-top: 1px solid var(--fto-line);">
+        <button
+          id="supplier-modal-cancel"
+          type="button"
+          class="inline-flex h-9 items-center rounded-lg border px-4 text-sm font-medium transition-colors hover:opacity-80"
+          style="background-color: var(--fto-card); border-color: var(--fto-border); color: var(--fto-ink);"
+        >取消</button>
+        <button
+          id="supplier-modal-save"
+          type="button"
+          class="inline-flex h-9 items-center rounded-lg px-4 text-sm font-medium transition-colors hover:opacity-90"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 供应商内新增产品模态弹窗 -->
+  <div id="product-modal" class="modal-overlay hidden">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
+      <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid var(--fto-line);">
+        <h2 id="product-modal-title" class="text-base font-semibold" style="color: var(--fto-ink);">新增产品</h2>
+        <button id="product-modal-close" type="button" class="rounded-md p-1.5 transition-colors hover:opacity-80" style="color: var(--fto-ink-3);" aria-label="关闭">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div class="px-6 py-5">
+        <!-- 供应商名称展示 -->
+        <div class="mb-4 flex items-center gap-2 text-sm" style="color: var(--fto-ink-2);">
+          <i data-lucide="factory" class="h-4 w-4" style="color: var(--fto-primary);"></i>
+          <span>为供应商</span>
+          <span id="product-modal-supplier" class="font-semibold" style="color: var(--fto-ink);"></span>
+          <span>添加产品</span>
+        </div>
+
+        <!-- 产品选择行 -->
+        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <select id="product-select" class="h-9 flex-1 rounded-lg px-3 text-sm outline-none focus:ring-2" style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-input); color: var(--fto-ink); --tw-ring-color: var(--fto-ring);">
+          </select>
+          <button
+            id="btn-add-product"
+            type="button"
+            class="inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors hover:opacity-90"
+            style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+          >
+            <i data-lucide="plus" class="h-4 w-4"></i>
+            添加产品
+          </button>
+        </div>
+
+        <!-- 已选产品列表表格 -->
+        <div class="overflow-x-auto rounded-lg" style="border: 1px solid var(--fto-line);">
+          <table class="data-table w-full border-collapse" style="min-width: 640px;">
+            <thead style="color: var(--fto-ink-2);">
+              <tr>
+                <th class="text-left font-medium" style="min-width: 110px;">SKU 编号</th>
+                <th class="text-left font-medium" style="min-width: 140px;">产品名称</th>
+                <th class="text-left font-medium" style="min-width: 140px;">规格</th>
+                <th class="text-right font-medium" style="min-width: 80px;">箱装数量</th>
+                <th class="text-right font-medium" style="min-width: 120px;">供应价 (元/箱)</th>
+                <th class="text-center font-medium" style="min-width: 80px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="product-tbody" class="divide-y" style="color: var(--fto-ink-2); border-color: var(--fto-line);">
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-2 text-xs" style="color: var(--fto-ink-3);">供应价默认等于商品总表价格，可在此调整；同一 SKU 不可重复添加。</p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 px-6 py-4" style="border-top: 1px solid var(--fto-line);">
+        <button
+          id="product-modal-cancel"
+          type="button"
+          class="inline-flex h-9 items-center rounded-lg border px-4 text-sm font-medium transition-colors hover:opacity-80"
+          style="background-color: var(--fto-card); border-color: var(--fto-border); color: var(--fto-ink);"
+        >取消</button>
+        <button
+          id="product-modal-save"
+          type="button"
+          class="inline-flex h-9 items-center rounded-lg px-4 text-sm font-medium transition-colors hover:opacity-90"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------------- 商品总表 SKU 目录（只读来源） ---------------- */
+      var catalog = [
+        { id: 'SP-2025-001', name: '柠檬味气泡水', spec: '330ml×24瓶/箱', boxQty: 24, price: 45.00 },
+        { id: 'SP-2025-002', name: '燕麦谷物棒', spec: '35g×12支/箱', boxQty: 12, price: 38.00 },
+        { id: 'SP-2025-003', name: '特级初榨橄榄油', spec: '500ml×12瓶/箱', boxQty: 12, price: 120.00 },
+        { id: 'SP-2025-004', name: '有机绿茶', spec: '250g×20袋/箱', boxQty: 20, price: 55.00 },
+        { id: 'SP-2025-005', name: '婴幼儿纸尿裤', spec: 'M码60片×6包/箱', boxQty: 6, price: 90.00 },
+        { id: 'SP-2025-006', name: '罐装咖啡饮料', spec: '240ml×30罐/箱', boxQty: 30, price: 62.00 }
+      ];
+
+      /* ---------------- 供应商内存数据 ---------------- */
+      var suppliers = [
+        {
+          id: 'SUP-001', name: '广东食品厂 A', contact: '陈经理', phone: '139****8001',
+          address: '广东省广州市白云区食品工业园 8 号', note: '罐头/饮料类主力供应商，月结 30 天',
+          status: '启用', createdAt: '2025-04-01',
+          products: [
+            { sku: 'SP-2025-001', supplyPrice: 45.00 },
+            { sku: 'SP-2025-002', supplyPrice: 38.00 },
+            { sku: 'SP-2025-003', supplyPrice: 120.00 }
+          ]
+        },
+        {
+          id: 'SUP-002', name: '浙江包装厂 B', contact: '王经理', phone: '139****8002',
+          address: '浙江省杭州市萧山区包装产业园 12 栋', note: '包装材料长期合作',
+          status: '启用', createdAt: '2025-04-02',
+          products: [
+            { sku: 'SP-2025-004', supplyPrice: 55.00 },
+            { sku: 'SP-2025-005', supplyPrice: 90.00 }
+          ]
+        },
+        {
+          id: 'SUP-003', name: '山东原料厂 C', contact: '李经理', phone: '139****8003',
+          address: '山东省济宁市兖州区原料基地', note: '农产品原料直供',
+          status: '启用', createdAt: '2025-04-03',
+          products: [
+            { sku: 'SP-2025-006', supplyPrice: 62.00 }
+          ]
+        }
+      ];
+
+      /* ---------------- DOM 引用 ---------------- */
+      var tbody = document.getElementById('supplier-tbody');
+      var searchInput = document.getElementById('search-input');
+      var statTotal = document.getElementById('stat-total');
+      var statSku = document.getElementById('stat-sku');
+      var statCovered = document.getElementById('stat-covered');
+      var statUncovered = document.getElementById('stat-uncovered');
+      var pageInfo = document.getElementById('page-info');
+
+      var btnAddSupplier = document.getElementById('btn-add-supplier');
+
+      var supplierModal = document.getElementById('supplier-modal');
+      var supplierModalTitle = document.getElementById('supplier-modal-title');
+      var supplierModalClose = document.getElementById('supplier-modal-close');
+      var supplierModalCancel = document.getElementById('supplier-modal-cancel');
+      var supplierModalSave = document.getElementById('supplier-modal-save');
+
+      var productModal = document.getElementById('product-modal');
+      var productModalTitle = document.getElementById('product-modal-title');
+      var productModalSupplier = document.getElementById('product-modal-supplier');
+      var productModalClose = document.getElementById('product-modal-close');
+      var productModalCancel = document.getElementById('product-modal-cancel');
+      var productModalSave = document.getElementById('product-modal-save');
+      var productSelect = document.getElementById('product-select');
+      var btnAddProduct = document.getElementById('btn-add-product');
+      var productTbody = document.getElementById('product-tbody');
+
+      /* ---------------- 工具函数 ---------------- */
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function toNum(v) {
+        var n = Number(v);
+        return isNaN(n) ? 0 : n;
+      }
+
+      function today() {
+        var d = new Date();
+        return d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0');
+      }
+
+      function nextSupplierId() {
+        var max = 0;
+        suppliers.forEach(function (s) {
+          var m = /SUP-(\d+)/.exec(s.id || '');
+          if (m) {
+            var n = parseInt(m[1], 10);
+            if (n > max) max = n;
+          }
+        });
+        return 'SUP-' + String(max + 1).padStart(3, '0');
+      }
+
+      function findSupplierById(id) {
+        for (var i = 0; i < suppliers.length; i++) {
+          if (suppliers[i].id === id) return suppliers[i];
+        }
+        return null;
+      }
+
+      function findCatalogById(id) {
+        for (var i = 0; i < catalog.length; i++) {
+          if (catalog[i].id === id) return catalog[i];
+        }
+        return null;
+      }
+
+      /* ---------------- 统计卡片计算 ---------------- */
+      function updateStats() {
+        var unique = {};
+        suppliers.forEach(function (s) {
+          (s.products || []).forEach(function (p) {
+            unique[p.sku] = true;
+          });
+        });
+        var skuCount = Object.keys(unique).length;
+        var covered = 0;
+        var uncovered = 0;
+        catalog.forEach(function (c) {
+          if (unique[c.id]) covered++;
+          else uncovered++;
+        });
+        statTotal.textContent = String(suppliers.length);
+        statSku.textContent = String(skuCount);
+        statCovered.textContent = String(covered);
+        statUncovered.textContent = String(uncovered);
+      }
+
+      /* ---------------- 供应商表格渲染 ---------------- */
+      function render() {
+        var kw = (searchInput.value || '').trim().toLowerCase();
+        var rows = suppliers.filter(function (s) {
+          if (!kw) return true;
+          return (s.id + ' ' + s.name + ' ' + s.contact).toLowerCase().indexOf(kw) > -1;
+        });
+
+        var html = rows.map(function (s) {
+          var count = (s.products || []).length;
+          var statusBadge = s.status === '停用'
+            ? '<span class="badge" style="background-color: var(--fto-surface-3); color: var(--fto-ink-2);">停用</span>'
+            : '<span class="badge" style="background-color: var(--fto-state-success-bg); color: var(--fto-state-success);">启用</span>';
+          return '' +
+            '<tr style="background-color: var(--fto-card);">' +
+              '<td class="font-mono font-medium" style="color: var(--fto-ink);">' + esc(s.id) + '</td>' +
+              '<td class="font-medium" style="color: var(--fto-ink);">' + esc(s.name) + '</td>' +
+              '<td>' + esc(s.contact) + '</td>' +
+              '<td class="font-mono">' + esc(s.phone) + '</td>' +
+              '<td class="text-center">' +
+                '<span class="badge" style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);">' + count + ' 项</span>' +
+              '</td>' +
+              '<td class="text-center">' + statusBadge + '</td>' +
+              '<td>' + esc(s.createdAt) + '</td>' +
+              '<td>' +
+                '<div class="flex items-center justify-center gap-1.5">' +
+                  '<button type="button" class="row-products inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors hover:opacity-80" data-id="' + esc(s.id) + '" style="background-color: var(--fto-primary-50); color: var(--fto-primary-700);">' +
+                    '<i data-lucide="package-plus" class="h-3.5 w-3.5"></i>新增产品' +
+                  '</button>' +
+                  '<button type="button" class="row-edit rounded-md p-1.5 transition-colors hover:opacity-80" data-id="' + esc(s.id) + '" title="编辑" style="color: var(--fto-state-info);"><i data-lucide="edit" class="h-4 w-4"></i></button>' +
+                  '<button type="button" class="row-del rounded-md p-1.5 transition-colors hover:opacity-80" data-id="' + esc(s.id) + '" title="删除" style="color: var(--fto-state-error);"><i data-lucide="trash-2" class="h-4 w-4"></i></button>' +
+                '</div>' +
+              '</td>' +
+            '</tr>';
+        }).join('');
+
+        tbody.innerHTML = html;
+        pageInfo.textContent = '共 ' + suppliers.length + ' 条';
+        updateStats();
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
+
+      /* ---------------- 新增 / 编辑供应商弹窗 ---------------- */
+      var editingSupplierId = null;
+
+      function openSupplierModal(record) {
+        editingSupplierId = record ? record.id : null;
+        supplierModalTitle.textContent = record ? '编辑供应商' : '新增供应商';
+
+        if (record) {
+          document.getElementById('sf-id').value = record.id;
+          document.getElementById('sf-name').value = record.name || '';
+          document.getElementById('sf-contact').value = record.contact || '';
+          document.getElementById('sf-phone').value = record.phone || '';
+          document.getElementById('sf-address').value = record.address || '';
+          document.getElementById('sf-note').value = record.note || '';
+        } else {
+          document.getElementById('sf-id').value = nextSupplierId();
+          document.getElementById('sf-name').value = '';
+          document.getElementById('sf-contact').value = '';
+          document.getElementById('sf-phone').value = '';
+          document.getElementById('sf-address').value = '';
+          document.getElementById('sf-note').value = '';
+        }
+
+        supplierModal.classList.remove('hidden');
+      }
+
+      function closeSupplierModal() {
+        supplierModal.classList.add('hidden');
+        editingSupplierId = null;
+      }
+
+      function saveSupplier() {
+        var name = document.getElementById('sf-name').value.trim();
+        if (!name) {
+          alert('供应商名称为必填项');
+          return;
+        }
+
+        var data = {
+          id: document.getElementById('sf-id').value.trim() || nextSupplierId(),
+          name: name,
+          contact: document.getElementById('sf-contact').value.trim(),
+          phone: document.getElementById('sf-phone').value.trim(),
+          address: document.getElementById('sf-address').value.trim(),
+          note: document.getElementById('sf-note').value.trim(),
+          status: '启用',
+          createdAt: today(),
+          products: []
+        };
+
+        if (editingSupplierId) {
+          var rec = findSupplierById(editingSupplierId);
+          if (rec) {
+            data.status = rec.status || '启用';
+            data.createdAt = rec.createdAt;
+            data.products = rec.products || [];
+            Object.keys(rec).forEach(function (k) { delete rec[k]; });
+            for (var k in data) { rec[k] = data[k]; }
+          }
+        } else {
+          suppliers.push(data);
+        }
+
+        closeSupplierModal();
+        render();
+      }
+
+      /* ---------------- 供应商内新增产品弹窗 ---------------- */
+      var activeSupplier = null;
+
+      function openProductModal(sup) {
+        activeSupplier = sup;
+        productModalSupplier.textContent = sup.name;
+        renderProductSelect();
+        renderProductTable();
+        productModal.classList.remove('hidden');
+      }
+
+      function closeProductModal() {
+        productModal.classList.add('hidden');
+        activeSupplier = null;
+      }
+
+      function renderProductSelect() {
+        var selected = {};
+        (activeSupplier.products || []).forEach(function (p) {
+          selected[p.sku] = true;
+        });
+        var opts = catalog
+          .filter(function (c) { return !selected[c.id]; })
+          .map(function (c) {
+            return '<option value="' + esc(c.id) + '">' + esc(c.id) + ' - ' + esc(c.name) + '（' + esc(c.spec) + '）</option>';
+          })
+          .join('');
+        productSelect.innerHTML = opts || '<option value="">暂无可添加的产品</option>';
+      }
+
+      function renderProductTable() {
+        var rows = (activeSupplier.products || []).map(function (p) {
+          var c = findCatalogById(p.sku);
+          var name = c ? c.name : p.sku;
+          var spec = c ? c.spec : '—';
+          var boxQty = c ? c.boxQty : '—';
+          return '' +
+            '<tr style="background-color: var(--fto-card);">' +
+              '<td class="font-mono font-medium" style="color: var(--fto-ink);">' + esc(p.sku) + '</td>' +
+              '<td class="font-medium" style="color: var(--fto-ink);">' + esc(name) + '</td>' +
+              '<td>' + esc(spec) + '</td>' +
+              '<td class="text-right">' + boxQty + '</td>' +
+              '<td class="text-right">' +
+                '<input type="number" min="0" step="0.01" class="price-input font-mono" data-sku="' + esc(p.sku) + '" value="' + esc(p.supplyPrice) + '" />' +
+              '</td>' +
+              '<td class="text-center">' +
+                '<button type="button" class="row-remove-product rounded-md p-1.5 transition-colors hover:opacity-80" data-sku="' + esc(p.sku) + '" title="移除" style="color: var(--fto-state-error);"><i data-lucide="trash-2" class="h-4 w-4"></i></button>' +
+              '</td>' +
+            '</tr>';
+        }).join('');
+        productTbody.innerHTML = rows || '<tr><td colspan="6" class="text-center py-6" style="color: var(--fto-ink-3);">该供应商尚未关联产品，请从上方选择商品后点击「添加产品」</td></tr>';
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
+
+      function addProduct() {
+        var sku = productSelect.value;
+        if (!sku) {
+          alert('请先选择要添加的商品');
+          return;
+        }
+        var exists = (activeSupplier.products || []).some(function (p) { return p.sku === sku; });
+        if (exists) {
+          alert('该商品（' + sku + '）已在此供应商产品列表中，不可重复添加');
+          return;
+        }
+        var c = findCatalogById(sku);
+        activeSupplier.products.push({ sku: sku, supplyPrice: c ? c.price : 0 });
+        renderProductSelect();
+        renderProductTable();
+      }
+
+      function removeProduct(sku) {
+        var list = activeSupplier.products || [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].sku === sku) {
+            list.splice(i, 1);
+            break;
+          }
+        }
+        renderProductSelect();
+        renderProductTable();
+      }
+
+      function updateSupplyPrice(sku, value) {
+        var list = activeSupplier.products || [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].sku === sku) {
+            list[i].supplyPrice = toNum(value);
+            break;
+          }
+        }
+      }
+
+      /* ---------------- 事件绑定 ---------------- */
+      btnAddSupplier.addEventListener('click', function () {
+        openSupplierModal(null);
+      });
+
+      searchInput.addEventListener('input', function () {
+        render();
+      });
+
+      tbody.addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        var id = btn.getAttribute('data-id');
+        if (btn.classList.contains('row-products')) {
+          var sup = findSupplierById(id);
+          if (sup) openProductModal(sup);
+        } else if (btn.classList.contains('row-edit')) {
+          var sup2 = findSupplierById(id);
+          if (sup2) openSupplierModal(sup2);
+        } else if (btn.classList.contains('row-del')) {
+          var sup3 = findSupplierById(id);
+          if (sup3 && confirm('确定删除供应商「' + sup3.name + '」（' + id + '）吗？将同时移除其产品关联。')) {
+            for (var i = 0; i < suppliers.length; i++) {
+              if (suppliers[i].id === id) {
+                suppliers.splice(i, 1);
+                break;
+              }
+            }
+            render();
+          }
+        }
+      });
+
+      /* 供应商弹窗 */
+      supplierModalClose.addEventListener('click', closeSupplierModal);
+      supplierModalCancel.addEventListener('click', closeSupplierModal);
+      supplierModalSave.addEventListener('click', saveSupplier);
+
+      supplierModal.addEventListener('click', function (e) {
+        if (e.target === supplierModal) closeSupplierModal();
+      });
+
+      /* 产品弹窗 */
+      productModalClose.addEventListener('click', closeProductModal);
+      productModalCancel.addEventListener('click', closeProductModal);
+      productModalSave.addEventListener('click', function () {
+        closeProductModal();
+        render();
+      });
+
+      btnAddProduct.addEventListener('click', addProduct);
+
+      productModal.addEventListener('click', function (e) {
+        if (e.target === productModal) closeProductModal();
+      });
+
+      productTbody.addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        if (btn.classList.contains('row-remove-product')) {
+          removeProduct(btn.getAttribute('data-sku'));
+        }
+      });
+
+      /* 供应价编辑：input 事件直接写回内存，不重建表格以免失焦 */
+      productTbody.addEventListener('input', function (e) {
+        if (e.target.classList && e.target.classList.contains('price-input')) {
+          updateSupplyPrice(e.target.getAttribute('data-sku'), e.target.value);
+        }
+      });
+
+      /* Esc 关闭弹窗 */
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if (!productModal.classList.contains('hidden')) {
+            closeProductModal();
+          } else if (!supplierModal.classList.contains('hidden')) {
+            closeSupplierModal();
+          }
+        }
+      });
+
+      /* ---------------- 初始化 ---------------- */
+      render();
+    })();
+  </script>
+
+  <style id="page-custom-style">
+    :root {
+      --shell-sidebar-width: 240px;
+      --shell-toolbar-height: 64px;
+    }
+    .data-table th,
+    .data-table td {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      line-height: 1rem;
+      vertical-align: middle;
+    }
+    .data-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: var(--fto-surface-2);
+    }
+    .data-table tbody tr:hover {
+      background-color: var(--fto-surface-2);
+    }
+
+    /* 统计卡片 */
+    .stat-card {
+      padding: 0.875rem 1rem;
+      border-radius: var(--fto-radius-large);
+      background-color: var(--fto-card);
+      border: 1px solid var(--fto-line);
+      box-shadow: var(--fto-shadow-1);
+    }
+    .stat-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--fto-radius-medium);
+      flex-shrink: 0;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--fto-ink-3);
+    }
+
+    /* 状态徽章 */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.125rem 0.5rem;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      line-height: 1.125rem;
+      border-radius: var(--fto-radius-full);
+      white-space: nowrap;
+    }
+
+    /* 模态弹窗 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background-color: color-mix(in srgb, var(--fto-slate-900) 45%, transparent);
+    }
+    .modal-overlay.hidden {
+      display: none;
+    }
+    .modal-dialog {
+      width: 100%;
+      max-width: 920px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background-color: var(--fto-card);
+      border: 1px solid var(--fto-line);
+      border-radius: var(--fto-radius-large);
+      box-shadow: var(--fto-shadow-3);
+    }
+    .modal-dialog-sm {
+      max-width: 560px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.875rem 1rem;
+    }
+    .form-field-full {
+      grid-column: 1 / -1;
+    }
+    .form-field label {
+      display: block;
+      margin-bottom: 0.375rem;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fto-ink-2);
+    }
+    .form-field .req {
+      color: var(--fto-state-error);
+      margin-right: 2px;
+    }
+    .form-field input,
+    .form-field textarea {
+      width: 100%;
+      padding: 0 0.75rem;
+      font-size: 13px;
+      border-radius: var(--fto-radius-medium);
+      outline: none;
+      background-color: var(--fto-surface);
+      border: 1px solid var(--fto-input);
+      color: var(--fto-ink);
+      font-family: var(--fto-font-sans);
+    }
+    .form-field input {
+      height: 36px;
+    }
+    .form-field textarea {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      line-height: 1.25rem;
+      resize: vertical;
+    }
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: var(--fto-ring);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--fto-ring) 20%, transparent);
+    }
+    .form-field input[readonly] {
+      cursor: not-allowed;
+    }
+
+    /* 供应价输入框 */
+    .price-input {
+      width: 96px;
+      height: 30px;
+      padding: 0 0.5rem;
+      text-align: right;
+      font-size: 0.75rem;
+      border-radius: var(--fto-radius-medium);
+      outline: none;
+      background-color: var(--fto-surface);
+      border: 1px solid var(--fto-input);
+      color: var(--fto-ink);
+    }
+    .price-input:focus {
+      border-color: var(--fto-ring);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--fto-ring) 20%, transparent);
+    }
+
+    @media (max-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</body>
+</html>
