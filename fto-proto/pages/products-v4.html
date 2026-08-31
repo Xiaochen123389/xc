@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品总表管理 - 精简版</title>
+    <style id="theme-vars">
+/* Foreign Trade Order & Inventory Management System — Brand Tokens */
+
+:root {
+  /* Primary scale — Indigo (professional B2B admin) */
+  --fto-primary-50: #eef2ff;
+  --fto-primary-100: #e0e7ff;
+  --fto-primary-200: #c7d2fe;
+  --fto-primary-300: #a5b4fc;
+  --fto-primary-400: #818cf8;
+  --fto-primary-500: #6366f1;
+  --fto-primary-600: #4f46e5;
+  --fto-primary-700: #4338ca;
+  --fto-primary-800: #3730a3;
+  --fto-primary-900: #312e81;
+
+  /* Neutral scale — Slate */
+  --fto-slate-50: #f8fafc;
+  --fto-slate-100: #f1f5f9;
+  --fto-slate-200: #e2e8f0;
+  --fto-slate-300: #cbd5e1;
+  --fto-slate-400: #94a3b8;
+  --fto-slate-500: #64748b;
+  --fto-slate-600: #475569;
+  --fto-slate-700: #334155;
+  --fto-slate-800: #1e293b;
+  --fto-slate-900: #0f172a;
+
+  /* Semantic aliases */
+  --fto-background: #ffffff;
+  --fto-foreground: #0f172a;
+  --fto-card: #ffffff;
+  --fto-card-foreground: #0f172a;
+  --fto-popover: #ffffff;
+  --fto-popover-foreground: #0f172a;
+  --fto-primary: #4f46e5;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #f1f5f9;
+  --fto-secondary-foreground: #334155;
+  --fto-muted: #f1f5f9;
+  --fto-muted-foreground: #64748b;
+  --fto-accent: #eef2ff;
+  --fto-accent-foreground: #4338ca;
+  --fto-border: #e2e8f0;
+  --fto-input: #e2e8f0;
+  --fto-ring: #4f46e5;
+
+  /* State colors */
+  --fto-state-success: #16a34a;
+  --fto-state-success-bg: #dcfce7;
+  --fto-state-warning: #d97706;
+  --fto-state-warning-bg: #fef3c7;
+  --fto-state-error: #dc2626;
+  --fto-state-error-bg: #fee2e2;
+  --fto-state-info: #2563eb;
+  --fto-state-info-bg: #dbeafe;
+
+  /* Surface/depth */
+  --fto-surface: #ffffff;
+  --fto-surface-2: #f8fafc;
+  --fto-surface-3: #f1f5f9;
+  --fto-ink: #0f172a;
+  --fto-ink-2: #475569;
+  --fto-ink-3: #94a3b8;
+  --fto-line: #e2e8f0;
+
+  /* Radius */
+  --fto-radius-small: 4px;
+  --fto-radius-medium: 8px;
+  --fto-radius-large: 12px;
+  --fto-radius-full: 9999px;
+
+  /* Shadows */
+  --fto-shadow-1: 0 1px 2px 0 rgba(15, 23, 42, 0.05), 0 1px 1px 0 rgba(15, 23, 42, 0.03);
+  --fto-shadow-2: 0 8px 24px -8px rgba(15, 23, 42, 0.18);
+  --fto-shadow-3: 0 24px 60px -20px rgba(15, 23, 42, 0.30);
+
+  /* Typography */
+  --fto-font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --fto-font-mono: "SF Mono", "Fira Code", "Noto Sans Mono", monospace;
+}
+
+.dark {
+  --fto-background: #0b0b0f;
+  --fto-foreground: #f8fafc;
+  --fto-card: #14141a;
+  --fto-card-foreground: #f8fafc;
+  --fto-popover: #14141a;
+  --fto-popover-foreground: #f8fafc;
+  --fto-primary: #6366f1;
+  --fto-primary-foreground: #ffffff;
+  --fto-secondary: #1e293b;
+  --fto-secondary-foreground: #cbd5e1;
+  --fto-muted: #1e293b;
+  --fto-muted-foreground: #94a3b8;
+  --fto-accent: #312e81;
+  --fto-accent-foreground: #c7d2fe;
+  --fto-border: #334155;
+  --fto-input: #334155;
+  --fto-ring: #6366f1;
+  --fto-surface: #14141a;
+  --fto-surface-2: #1e293b;
+  --fto-surface-3: #0f172a;
+  --fto-ink: #f8fafc;
+  --fto-ink-2: #cbd5e1;
+  --fto-ink-3: #64748b;
+  --fto-line: #334155;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--fto-background);
+    --color-foreground: var(--fto-foreground);
+    --color-card: var(--fto-card);
+    --color-card-foreground: var(--fto-card-foreground);
+    --color-popover: var(--fto-popover);
+    --color-popover-foreground: var(--fto-popover-foreground);
+    --color-primary: var(--fto-primary);
+    --color-primary-foreground: var(--fto-primary-foreground);
+    --color-secondary: var(--fto-secondary);
+    --color-secondary-foreground: var(--fto-secondary-foreground);
+    --color-muted: var(--fto-muted);
+    --color-muted-foreground: var(--fto-muted-foreground);
+    --color-accent: var(--fto-accent);
+    --color-accent-foreground: var(--fto-accent-foreground);
+    --color-border: var(--fto-border);
+    --color-input: var(--fto-input);
+    --color-ring: var(--fto-ring);
+    --radius-sm: var(--fto-radius-small);
+    --radius-md: var(--fto-radius-medium);
+    --radius-lg: var(--fto-radius-large);
+  }
+  @layer base {
+    body { background: var(--fto-background); color: var(--fto-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--fto-background); }
+      .text-background { color: var(--fto-background); }
+      .border-background { border-color: var(--fto-background); }
+      .ring-background { --tw-ring-color: var(--fto-background); }
+      .bg-foreground { background-color: var(--fto-foreground); }
+      .text-foreground { color: var(--fto-foreground); }
+      .border-foreground { border-color: var(--fto-foreground); }
+      .ring-foreground { --tw-ring-color: var(--fto-foreground); }
+      .bg-card { background-color: var(--fto-card); }
+      .text-card { color: var(--fto-card); }
+      .border-card { border-color: var(--fto-card); }
+      .ring-card { --tw-ring-color: var(--fto-card); }
+      .bg-card-foreground { background-color: var(--fto-card-foreground); }
+      .text-card-foreground { color: var(--fto-card-foreground); }
+      .border-card-foreground { border-color: var(--fto-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--fto-card-foreground); }
+      .bg-popover { background-color: var(--fto-popover); }
+      .text-popover { color: var(--fto-popover); }
+      .border-popover { border-color: var(--fto-popover); }
+      .ring-popover { --tw-ring-color: var(--fto-popover); }
+      .bg-popover-foreground { background-color: var(--fto-popover-foreground); }
+      .text-popover-foreground { color: var(--fto-popover-foreground); }
+      .border-popover-foreground { border-color: var(--fto-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--fto-popover-foreground); }
+      .bg-primary { background-color: var(--fto-primary); }
+      .text-primary { color: var(--fto-primary); }
+      .border-primary { border-color: var(--fto-primary); }
+      .ring-primary { --tw-ring-color: var(--fto-primary); }
+      .bg-primary-foreground { background-color: var(--fto-primary-foreground); }
+      .text-primary-foreground { color: var(--fto-primary-foreground); }
+      .border-primary-foreground { border-color: var(--fto-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--fto-primary-foreground); }
+      .bg-secondary { background-color: var(--fto-secondary); }
+      .text-secondary { color: var(--fto-secondary); }
+      .border-secondary { border-color: var(--fto-secondary); }
+      .ring-secondary { --tw-ring-color: var(--fto-secondary); }
+      .bg-secondary-foreground { background-color: var(--fto-secondary-foreground); }
+      .text-secondary-foreground { color: var(--fto-secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--fto-secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--fto-secondary-foreground); }
+      .bg-muted { background-color: var(--fto-muted); }
+      .text-muted { color: var(--fto-muted); }
+      .border-muted { border-color: var(--fto-muted); }
+      .ring-muted { --tw-ring-color: var(--fto-muted); }
+      .bg-muted-foreground { background-color: var(--fto-muted-foreground); }
+      .text-muted-foreground { color: var(--fto-muted-foreground); }
+      .border-muted-foreground { border-color: var(--fto-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--fto-muted-foreground); }
+      .bg-accent { background-color: var(--fto-accent); }
+      .text-accent { color: var(--fto-accent); }
+      .border-accent { border-color: var(--fto-accent); }
+      .ring-accent { --tw-ring-color: var(--fto-accent); }
+      .bg-accent-foreground { background-color: var(--fto-accent-foreground); }
+      .text-accent-foreground { color: var(--fto-accent-foreground); }
+      .border-accent-foreground { border-color: var(--fto-accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--fto-accent-foreground); }
+      .bg-border { background-color: var(--fto-border); }
+      .text-border { color: var(--fto-border); }
+      .border-border { border-color: var(--fto-border); }
+      .ring-border { --tw-ring-color: var(--fto-border); }
+      .bg-input { background-color: var(--fto-input); }
+      .text-input { color: var(--fto-input); }
+      .border-input { border-color: var(--fto-input); }
+      .ring-input { --tw-ring-color: var(--fto-input); }
+      .bg-ring { background-color: var(--fto-ring); }
+      .text-ring { color: var(--fto-ring); }
+      .border-ring { border-color: var(--fto-ring); }
+      .ring-ring { --tw-ring-color: var(--fto-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+  <!-- Sidebar -->
+  <aside
+    class="fixed top-0 left-0 bottom-0 z-40 flex flex-col"
+    style="width: var(--shell-sidebar-width); background-color: var(--fto-surface-2); border-right: 1px solid var(--fto-line);"
+  >
+    <!-- Logo / App Name -->
+    <div
+      class="flex h-[64px] items-center gap-3 px-6"
+      style="border-bottom: 1px solid var(--fto-line);"
+    >
+      <i data-lucide="package" class="h-6 w-6" style="color: var(--fto-primary);"></i>
+      <span class="text-base font-semibold" style="color: var(--fto-ink);">外贸订单与库存一体化管理系统</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4">
+      <ul class="flex flex-col gap-1">
+        <li>
+          <a
+            href="products-v4.html"
+            data-nav-key="products"
+            data-dom-id="nav-products"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="background-color: var(--fto-accent); color: var(--fto-accent-foreground);"
+          >
+            <i data-lucide="package" class="h-5 w-5" ></i>
+            <span>商品总表</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="supplier-management.html"
+            data-nav-key="supplier-management"
+            data-dom-id="nav-supplier-management"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="factory" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>供应商管理</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="supplier-orders-v2.html"
+            data-nav-key="supplier-orders"
+            data-dom-id="nav-supplier-orders"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="truck" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>订单汇总/供应商订货</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="warehouse-inbound-v3.html"
+            data-nav-key="warehouse-inbound"
+            data-dom-id="nav-warehouse-inbound"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="scan-barcode" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>入库管理</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="inventory-v2.html"
+            data-nav-key="inventory"
+            data-dom-id="nav-inventory"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="warehouse" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>库存查询</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="outbound.html"
+            data-nav-key="outbound"
+            data-dom-id="nav-outbound"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--fto-ink-2);"
+          >
+            <i data-lucide="arrow-right-from-line" class="h-5 w-5" style="color: var(--fto-ink-3);"></i>
+            <span>出库管理</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Top Toolbar -->
+  <header
+    class="fixed top-0 right-0 z-30 flex items-center justify-between px-6"
+    style="left: var(--shell-sidebar-width); height: var(--shell-toolbar-height); background-color: var(--fto-surface); border-bottom: 1px solid var(--fto-line);"
+  >
+    <div class="flex items-center gap-4">
+      <button type="button" class="rounded-md p-2 transition-colors hover:opacity-80" style="color: var(--fto-ink-2);">
+        <i data-lucide="menu" class="h-5 w-5"></i>
+      </button>
+      <h1 class="text-lg font-semibold" style="color: var(--fto-ink);">商品总表管理 - 精简版</h1>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Global Search -->
+      <div class="relative hidden sm:block">
+        <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style="color: var(--fto-ink-3);"></i>
+        <input
+          type="text"
+          placeholder="全局搜索..."
+          class="h-9 w-64 rounded-lg pl-9 pr-3 text-sm outline-none focus:ring-2"
+          style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-input); color: var(--fto-ink); --tw-ring-color: var(--fto-ring);"
+        />
+      </div>
+
+      <!-- Notifications -->
+      <button type="button" class="relative rounded-md p-2 transition-colors hover:opacity-80" style="color: var(--fto-ink-2);">
+        <i data-lucide="bell" class="h-5 w-5"></i>
+        <span
+          class="absolute right-1.5 top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-semibold"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >3</span>
+      </button>
+
+      <!-- User -->
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >管</div>
+        <span class="hidden text-sm font-medium md:block" style="color: var(--fto-ink);">管理员</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main
+    class="min-h-screen"
+    style="margin-left: var(--shell-sidebar-width); padding-top: var(--shell-toolbar-height); background-color: var(--fto-background);"
+  >
+    <div class="p-6">
+      <div
+        class="rounded-xl p-6"
+        style="background-color: var(--fto-card); border: 1px solid var(--fto-line); border-radius: var(--fto-radius-large); box-shadow: var(--fto-shadow-1);"
+      >
+        <!-- SLOT: pageHeaderActions -->
+        <div class="mb-5">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="relative w-full md:w-80">
+              <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style="color: var(--fto-ink-3);"></i>
+              <input
+                id="search-input"
+                type="text"
+                placeholder="按编号/产品名称/规格搜索"
+                class="h-9 w-full rounded-lg pl-9 pr-3 text-sm outline-none focus:ring-2"
+                style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-input); color: var(--fto-ink); --tw-ring-color: var(--fto-ring);"
+              />
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                id="btn-add"
+                type="button"
+                class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:opacity-90"
+                style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+              >
+                <i data-lucide="plus" class="h-4 w-4"></i>
+                新增商品
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- /SLOT: pageHeaderActions -->
+
+        <!-- SLOT: mainContent -->
+        <div>
+          <!-- 统计卡片（动态）：仅保留 SKU 总数 -->
+          <div class="mb-5 grid grid-cols-1 gap-4">
+            <div class="rounded-lg p-4" style="background-color: var(--fto-surface-2); border: 1px solid var(--fto-line);">
+              <div class="text-xs font-medium" style="color: var(--fto-ink-3);">商品 SKU 总数</div>
+              <div id="stat-sku" class="mt-1 text-2xl font-semibold" style="color: var(--fto-ink);">0</div>
+            </div>
+          </div>
+
+          <!-- 数据表格 -->
+          <div class="overflow-x-auto rounded-lg" style="border: 1px solid var(--fto-line);">
+            <table class="data-table w-full border-collapse" style="min-width: 2800px;">
+              <thead style="color: var(--fto-ink-2);">
+                <tr>
+                  <th class="text-left font-medium" style="min-width: 40px;"><input type="checkbox" /></th>
+                  <th class="text-left font-medium" style="min-width: 120px;">编号</th>
+                  <th class="text-left font-medium" style="min-width: 72px;">产品图片</th>
+                  <th class="text-left font-medium" style="min-width: 140px;">产品名称</th>
+                  <th class="text-left font-medium" style="min-width: 160px;">产品名称/规格</th>
+                  <th class="text-left font-medium" style="min-width: 120px;">海关编码</th>
+                  <th class="text-left font-medium" style="min-width: 140px;">单个条码</th>
+                  <th class="text-left font-medium" style="min-width: 140px;">中包条码</th>
+                  <th class="text-left font-medium" style="min-width: 140px;">纸箱条码</th>
+                  <th class="text-left font-medium" style="min-width: 110px;">生产日期</th>
+                  <th class="text-left font-medium" style="min-width: 200px;">配料表</th>
+                  <th class="text-left font-medium" style="min-width: 220px;">营养成分表</th>
+                  <th class="text-right font-medium" style="min-width: 80px;">箱装数量</th>
+                  <th class="text-right font-medium" style="min-width: 80px;">中包数量</th>
+                  <th class="text-right font-medium" style="min-width: 80px;">中包数</th>
+                  <th class="text-right font-medium" style="min-width: 60px;">长</th>
+                  <th class="text-right font-medium" style="min-width: 60px;">宽</th>
+                  <th class="text-right font-medium" style="min-width: 60px;">高</th>
+                  <th class="text-right font-medium" style="min-width: 70px;">净重</th>
+                  <th class="text-right font-medium" style="min-width: 70px;">毛重</th>
+                  <th class="text-right font-medium" style="min-width: 80px;">体积</th>
+                  <th class="text-right font-medium" style="min-width: 110px;">价格 (元/箱）</th>
+                  <th class="text-center font-medium" style="min-width: 50px;">U</th>
+                  <th class="text-center font-medium" style="min-width: 50px;">S</th>
+                  <th class="text-center font-medium" style="min-width: 50px;">T</th>
+                  <th class="text-center font-medium" style="min-width: 50px;">M</th>
+                  <th class="text-center font-medium" style="min-width: 50px;">B</th>
+                  <th class="text-center font-medium" style="min-width: 50px;">AZ</th>
+                  <th class="text-right font-medium" style="min-width: 80px;">总件数</th>
+                  <th class="text-right font-medium" style="min-width: 80px;">总件数</th>
+                  <th class="text-right font-medium" style="min-width: 100px;">金额</th>
+                  <th class="text-center font-medium" style="min-width: 140px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody" class="divide-y" style="color: var(--fto-ink-2); border-color: var(--fto-line);">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 分页 -->
+          <div class="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+            <span id="page-info" class="text-sm" style="color: var(--fto-ink-3);">共 0 条，第 1 / 1 页</span>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="inline-flex h-8 items-center rounded-lg border px-3 text-sm font-medium transition-colors hover:opacity-80 disabled:opacity-50"
+                style="background-color: var(--fto-card); border-color: var(--fto-border); color: var(--fto-ink-2);"
+                disabled
+              >上一页</button>
+              <button
+                type="button"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium"
+                style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+              >1</button>
+              <button
+                type="button"
+                class="inline-flex h-8 items-center rounded-lg border px-3 text-sm font-medium transition-colors hover:opacity-80 disabled:opacity-50"
+                style="background-color: var(--fto-card); border-color: var(--fto-border); color: var(--fto-ink-2);"
+                disabled
+              >下一页</button>
+            </div>
+          </div>
+        </div>
+        <!-- /SLOT: mainContent -->
+      </div>
+    </div>
+  </main>
+
+  <!-- 隐藏文件输入（导入用） -->
+  <input id="import-file" type="file" accept=".csv,.txt" class="hidden" />
+
+  <!-- 新增/编辑商品模态弹窗 -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <!-- 弹窗头部 -->
+      <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid var(--fto-line);">
+        <h2 id="modal-title" class="text-base font-semibold" style="color: var(--fto-ink);">新增商品</h2>
+        <button id="modal-close" type="button" class="rounded-md p-1.5 transition-colors hover:opacity-80" style="color: var(--fto-ink-3);" aria-label="关闭">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- 弹窗表单 -->
+      <div class="px-6 py-5">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="f-id">编号（自动生成/只读）</label>
+            <input id="f-id" type="text" readonly style="background-color: var(--fto-surface-2); color: var(--fto-ink-3);" />
+          </div>
+          <div class="form-field">
+            <label for="f-name"><span class="req">*</span>产品名称</label>
+            <input id="f-name" type="text" placeholder="请输入产品名称" />
+          </div>
+          <div class="form-field">
+            <label for="f-spec"><span class="req">*</span>产品名称/规格</label>
+            <input id="f-spec" type="text" placeholder="如 330ml×24瓶/箱" />
+          </div>
+          <div class="form-field">
+            <label for="f-hsCode">海关编码 <span class="opt-hint">无需填写</span></label>
+            <input id="f-hsCode" type="text" placeholder="可选" />
+          </div>
+          <div class="form-field">
+            <label for="f-unitBarcode">单个条码 <span class="opt-hint">无需填写</span></label>
+            <input id="f-unitBarcode" type="text" placeholder="可选" />
+          </div>
+          <div class="form-field">
+            <label for="f-midBarcode">中包条码 <span class="opt-hint">无需填写</span></label>
+            <input id="f-midBarcode" type="text" placeholder="可选" />
+          </div>
+          <div class="form-field">
+            <label for="f-cartonBarcode">纸箱条码 <span class="opt-hint">无需填写</span></label>
+            <input id="f-cartonBarcode" type="text" placeholder="可选" />
+          </div>
+          <div class="form-field">
+            <label for="f-prodDate">生产日期 <span class="opt-hint">无需填写</span></label>
+            <input id="f-prodDate" type="text" placeholder="如 2025-06-01" />
+          </div>
+          <div class="form-field">
+            <label for="f-ingredients">配料表 <span class="opt-hint">无需填写</span></label>
+            <input id="f-ingredients" type="text" placeholder="可选" />
+          </div>
+          <div class="form-field">
+            <label for="f-nutrition">营养成分表 <span class="opt-hint">无需填写</span></label>
+            <input id="f-nutrition" type="text" placeholder="可选" />
+          </div>
+          <div class="form-field">
+            <label for="f-boxQty"><span class="req">*</span>箱装数量</label>
+            <input id="f-boxQty" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-midQty">中包数量</label>
+            <input id="f-midQty" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-midCount">中包数</label>
+            <input id="f-midCount" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-len"><span class="req">*</span>长 (cm)</label>
+            <input id="f-len" type="number" min="0" step="0.1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-width"><span class="req">*</span>宽 (cm)</label>
+            <input id="f-width" type="number" min="0" step="0.1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-height"><span class="req">*</span>高 (cm)</label>
+            <input id="f-height" type="number" min="0" step="0.1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-netWeight"><span class="req">*</span>净重 (kg)</label>
+            <input id="f-netWeight" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-grossWeight"><span class="req">*</span>毛重 (kg)</label>
+            <input id="f-grossWeight" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-volume"><span class="req">*</span>体积 (m³)</label>
+            <input id="f-volume" type="number" min="0" step="0.001" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-price"><span class="req">*</span>价格 (元/箱）</label>
+            <input id="f-price" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-U">U</label>
+            <input id="f-U" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-S">S</label>
+            <input id="f-S" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-T">T</label>
+            <input id="f-T" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-M">M</label>
+            <input id="f-M" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-B">B</label>
+            <input id="f-B" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-AZ">AZ</label>
+            <input id="f-AZ" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-total1">总件数</label>
+            <input id="f-total1" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-total2">总件数</label>
+            <input id="f-total2" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="form-field">
+            <label for="f-amount">金额 (元)</label>
+            <input id="f-amount" type="number" min="0" step="0.01" value="0" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 弹窗底部 -->
+      <div class="flex items-center justify-end gap-2 px-6 py-4" style="border-top: 1px solid var(--fto-line);">
+        <button
+          id="modal-cancel"
+          type="button"
+          class="inline-flex h-9 items-center rounded-lg border px-4 text-sm font-medium transition-colors hover:opacity-80"
+          style="background-color: var(--fto-card); border-color: var(--fto-border); color: var(--fto-ink);"
+        >取消</button>
+        <button
+          id="modal-save"
+          type="button"
+          class="inline-flex h-9 items-center rounded-lg px-4 text-sm font-medium transition-colors hover:opacity-90"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 商品详情只读弹窗 -->
+  <div id="detail-overlay" class="modal-overlay">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <!-- 弹窗头部 -->
+      <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid var(--fto-line);">
+        <h2 id="detail-title" class="text-base font-semibold" style="color: var(--fto-ink);">商品详情</h2>
+        <button id="detail-close" type="button" class="rounded-md p-1.5 transition-colors hover:opacity-80" style="color: var(--fto-ink-3);" aria-label="关闭">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- 详情内容（两列只读） -->
+      <div class="px-6 py-5">
+        <div id="detail-body" class="detail-grid"></div>
+      </div>
+
+      <!-- 弹窗底部 -->
+      <div class="flex items-center justify-end px-6 py-4" style="border-top: 1px solid var(--fto-line);">
+        <button
+          id="detail-close-btn"
+          type="button"
+          class="inline-flex h-9 items-center rounded-lg px-4 text-sm font-medium transition-colors hover:opacity-90"
+          style="background-color: var(--fto-primary); color: var(--fto-primary-foreground);"
+        >关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------------- 初始数据（复用源页 6 条示例商品） ---------------- */
+      var products = [
+        {
+          id: 'SP-2025-001', name: '柠檬味气泡水', spec: '330ml×24瓶/箱',
+          hsCode: '2202100000', unitBarcode: '6901234567890', midBarcode: '16901234567897', cartonBarcode: '56901234567894',
+          prodDate: '2025-04-12', ingredients: '水、二氧化碳、柠檬汁、白砂糖、食用香精',
+          nutrition: '每100ml：能量180kJ，蛋白质0g，脂肪0g，碳水化合物10g，钠10mg',
+          boxQty: 24, midQty: 6, midCount: 4, len: 40, width: 30, height: 25,
+          netWeight: 8.50, grossWeight: 10.20, volume: 0.030, price: 45.00,
+          U: 12, S: 8, T: 6, M: 4, B: 2, AZ: 1, total1: 1000, total2: 1000, amount: 45000,
+          imgBg: 'var(--fto-primary-100)', imgFg: 'var(--fto-primary-700)'
+        },
+        {
+          id: 'SP-2025-002', name: '燕麦谷物棒', spec: '35g×12支/箱',
+          hsCode: '1905900000', unitBarcode: '6909876543210', midBarcode: '16909876543217', cartonBarcode: '56909876543214',
+          prodDate: '2025-03-28', ingredients: '燕麦、蜂蜜、蔓越莓干、葵花籽、食用盐',
+          nutrition: '每100g：能量1650kJ，蛋白质8g，脂肪12g，碳水化合物58g，钠120mg',
+          boxQty: 12, midQty: 3, midCount: 4, len: 35, width: 28, height: 22,
+          netWeight: 4.80, grossWeight: 6.10, volume: 0.022, price: 38.00,
+          U: 10, S: 6, T: 5, M: 3, B: 2, AZ: 1, total1: 850, total2: 850, amount: 32300,
+          imgBg: 'var(--fto-state-warning-bg)', imgFg: 'var(--fto-state-warning)'
+        },
+        {
+          id: 'SP-2025-003', name: '特级初榨橄榄油', spec: '500ml×12瓶/箱',
+          hsCode: '1509100000', unitBarcode: '6904567890123', midBarcode: '16904567890123', cartonBarcode: '56904567890120',
+          prodDate: '2025-02-15', ingredients: '100%特级初榨橄榄油',
+          nutrition: '每100ml：能量3700kJ，蛋白质0g，脂肪100g，碳水化合物0g，钠0mg',
+          boxQty: 12, midQty: 4, midCount: 3, len: 42, width: 32, height: 28,
+          netWeight: 12.00, grossWeight: 14.50, volume: 0.038, price: 120.00,
+          U: 8, S: 5, T: 4, M: 3, B: 2, AZ: 1, total1: 600, total2: 600, amount: 72000,
+          imgBg: 'var(--fto-state-success-bg)', imgFg: 'var(--fto-state-success)'
+        },
+        {
+          id: 'SP-2025-004', name: '有机绿茶', spec: '250g×20袋/箱',
+          hsCode: '0902109000', unitBarcode: '6907890123456', midBarcode: '16907890123456', cartonBarcode: '56907890123453',
+          prodDate: '2025-01-20', ingredients: '有机绿茶叶',
+          nutrition: '每100g：能量1200kJ，蛋白质25g，脂肪3g，碳水化合物40g，钠5mg',
+          boxQty: 20, midQty: 5, midCount: 4, len: 50, width: 38, height: 30,
+          netWeight: 10.00, grossWeight: 12.00, volume: 0.057, price: 55.00,
+          U: 15, S: 9, T: 7, M: 5, B: 3, AZ: 2, total1: 720, total2: 720, amount: 39600,
+          imgBg: 'var(--fto-state-info-bg)', imgFg: 'var(--fto-state-info)'
+        },
+        {
+          id: 'SP-2025-005', name: '婴幼儿纸尿裤', spec: 'M码60片×6包/箱',
+          hsCode: '9619001000', unitBarcode: '6903216549870', midBarcode: '16903216549877', cartonBarcode: '56903216549874',
+          prodDate: '2025-04-05', ingredients: '无纺布、吸水纸、高分子吸收树脂、PE膜',
+          nutrition: '产品规格及使用说明详见包装',
+          boxQty: 6, midQty: 2, midCount: 3, len: 55, width: 42, height: 38,
+          netWeight: 9.50, grossWeight: 11.80, volume: 0.088, price: 90.00,
+          U: 6, S: 4, T: 3, M: 2, B: 1, AZ: 1, total1: 500, total2: 500, amount: 45000,
+          imgBg: 'var(--fto-primary-100)', imgFg: 'var(--fto-primary-700)'
+        },
+        {
+          id: 'SP-2025-006', name: '罐装咖啡饮料', spec: '240ml×30罐/箱',
+          hsCode: '2202990090', unitBarcode: '6901472583690', midBarcode: '16901472583697', cartonBarcode: '56901472583694',
+          prodDate: '2025-03-10', ingredients: '水、白砂糖、全脂乳粉、速溶咖啡粉、食品添加剂',
+          nutrition: '每100ml：能量200kJ，蛋白质1g，脂肪1.5g，碳水化合物8g，钠30mg',
+          boxQty: 30, midQty: 6, midCount: 5, len: 45, width: 34, height: 30,
+          netWeight: 11.00, grossWeight: 13.50, volume: 0.046, price: 62.00,
+          U: 14, S: 10, T: 8, M: 5, B: 3, AZ: 2, total1: 1200, total2: 1200, amount: 74400,
+          imgBg: 'var(--fto-state-warning-bg)', imgFg: 'var(--fto-state-warning)'
+        }
+      ];
+
+      /* ---------------- DOM 引用 ---------------- */
+      var tbody = document.getElementById('products-tbody');
+      var searchInput = document.getElementById('search-input');
+      var statSku = document.getElementById('stat-sku');
+      var pageInfo = document.getElementById('page-info');
+
+      var btnAdd = document.getElementById('btn-add');
+      var btnImport = document.getElementById('btn-import');
+      var btnExport = document.getElementById('btn-export');
+      var importFile = document.getElementById('import-file');
+
+      var overlay = document.getElementById('modal-overlay');
+      var modalTitle = document.getElementById('modal-title');
+      var modalClose = document.getElementById('modal-close');
+      var modalCancel = document.getElementById('modal-cancel');
+      var modalSave = document.getElementById('modal-save');
+
+      var detailOverlay = document.getElementById('detail-overlay');
+      var detailBody = document.getElementById('detail-body');
+      var detailClose = document.getElementById('detail-close');
+      var detailCloseBtn = document.getElementById('detail-close-btn');
+
+      /* ---------------- 工具函数 ---------------- */
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function fmtNum(n) {
+        var v = Number(n);
+        return isNaN(v) ? '0' : v.toLocaleString('zh-CN');
+      }
+
+      function fmtMoney(n) {
+        return '¥' + fmtNum(n);
+      }
+
+      function toNum(v) {
+        var n = Number(v);
+        return isNaN(n) ? 0 : n;
+      }
+
+      function nextId() {
+        var max = 0;
+        products.forEach(function (p) {
+          var m = /SP-2025-(\d+)/.exec(p.id || '');
+          if (m) {
+            var n = parseInt(m[1], 10);
+            if (n > max) max = n;
+          }
+        });
+        return 'SP-2025-' + String(max + 1).padStart(3, '0');
+      }
+
+      function findById(id) {
+        for (var i = 0; i < products.length; i++) {
+          if (products[i].id === id) return products[i];
+        }
+        return null;
+      }
+
+      /* ---------------- 表格渲染 ---------------- */
+      function render() {
+        var kw = (searchInput.value || '').trim().toLowerCase();
+        var rows = products.filter(function (p) {
+          if (!kw) return true;
+          return (p.id + ' ' + p.name + ' ' + p.spec).toLowerCase().indexOf(kw) > -1;
+        });
+
+        var html = rows.map(function (p) {
+          return '' +
+            '<tr style="background-color: var(--fto-card);">' +
+              '<td><input type="checkbox" /></td>' +
+              '<td class="font-mono" style="color: var(--fto-ink);">' + esc(p.id) + '</td>' +
+              '<td>' +
+                '<div class="flex h-10 w-10 items-center justify-center rounded-md text-xs font-bold" style="background-color:' + p.imgBg + '; color:' + p.imgFg + ';">' + esc(String(p.name || '商').charAt(0)) + '</div>' +
+              '</td>' +
+              '<td class="font-medium" style="color: var(--fto-ink);">' + esc(p.name) + '</td>' +
+              '<td>' + esc(p.spec) + '</td>' +
+              '<td class="font-mono">' + esc(p.hsCode) + '</td>' +
+              '<td class="font-mono">' + esc(p.unitBarcode) + '</td>' +
+              '<td class="font-mono">' + esc(p.midBarcode) + '</td>' +
+              '<td class="font-mono">' + esc(p.cartonBarcode) + '</td>' +
+              '<td>' + esc(p.prodDate) + '</td>' +
+              '<td><div class="line-clamp-2" title="' + esc(p.ingredients) + '">' + esc(p.ingredients) + '</div></td>' +
+              '<td><div class="line-clamp-2" title="' + esc(p.nutrition) + '">' + esc(p.nutrition) + '</div></td>' +
+              '<td class="text-right">' + fmtNum(p.boxQty) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.midQty) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.midCount) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.len) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.width) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.height) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.netWeight) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.grossWeight) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.volume) + '</td>' +
+              '<td class="text-right" style="color: var(--fto-ink);">' + fmtNum(p.price) + '</td>' +
+              '<td class="text-center">' + fmtNum(p.U) + '</td>' +
+              '<td class="text-center">' + fmtNum(p.S) + '</td>' +
+              '<td class="text-center">' + fmtNum(p.T) + '</td>' +
+              '<td class="text-center">' + fmtNum(p.M) + '</td>' +
+              '<td class="text-center">' + fmtNum(p.B) + '</td>' +
+              '<td class="text-center">' + fmtNum(p.AZ) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.total1) + '</td>' +
+              '<td class="text-right">' + fmtNum(p.total2) + '</td>' +
+              '<td class="text-right font-medium" style="color: var(--fto-ink);">' + fmtMoney(p.amount) + '</td>' +
+              '<td>' +
+                '<div class="flex items-center justify-center gap-1">' +
+                  '<button type="button" class="row-view rounded-md p-1.5 transition-colors hover:opacity-80" data-id="' + esc(p.id) + '" title="查看" style="color: var(--fto-primary);"><i data-lucide="eye" class="h-4 w-4"></i></button>' +
+                  '<button type="button" class="row-edit rounded-md p-1.5 transition-colors hover:opacity-80" data-id="' + esc(p.id) + '" title="修改" style="color: var(--fto-state-info);"><i data-lucide="edit" class="h-4 w-4"></i></button>' +
+                  '<button type="button" class="row-del rounded-md p-1.5 transition-colors hover:opacity-80" data-id="' + esc(p.id) + '" title="删除" style="color: var(--fto-state-error);"><i data-lucide="trash-2" class="h-4 w-4"></i></button>' +
+                '</div>' +
+              '</td>' +
+            '</tr>';
+        }).join('');
+
+        tbody.innerHTML = html;
+
+        /* 统计卡片：实时计算（仅 SKU 总数） */
+        statSku.textContent = String(products.length);
+
+        pageInfo.textContent = '共 ' + products.length + ' 条，第 1 / 1 页';
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
+
+      /* ---------------- 只读详情弹窗 ---------------- */
+      var DETAIL_FIELDS = [
+        { label: '编号', key: 'id', mono: true },
+        { label: '产品名称', key: 'name' },
+        { label: '产品名称/规格', key: 'spec' },
+        { label: '海关编码', key: 'hsCode', mono: true },
+        { label: '单个条码', key: 'unitBarcode', mono: true },
+        { label: '中包条码', key: 'midBarcode', mono: true },
+        { label: '纸箱条码', key: 'cartonBarcode', mono: true },
+        { label: '生产日期', key: 'prodDate' },
+        { label: '配料表', key: 'ingredients' },
+        { label: '营养成分表', key: 'nutrition' },
+        { label: '箱装数量', key: 'boxQty', num: true },
+        { label: '中包数量', key: 'midQty', num: true },
+        { label: '中包数', key: 'midCount', num: true },
+        { label: '长', key: 'len', num: true },
+        { label: '宽', key: 'width', num: true },
+        { label: '高', key: 'height', num: true },
+        { label: '净重', key: 'netWeight', num: true },
+        { label: '毛重', key: 'grossWeight', num: true },
+        { label: '体积', key: 'volume', num: true },
+        { label: '价格 (元/箱）', key: 'price', num: true },
+        { label: 'U', key: 'U', num: true },
+        { label: 'S', key: 'S', num: true },
+        { label: 'T', key: 'T', num: true },
+        { label: 'M', key: 'M', num: true },
+        { label: 'B', key: 'B', num: true },
+        { label: 'AZ', key: 'AZ', num: true },
+        { label: '总件数', key: 'total1', num: true },
+        { label: '总件数', key: 'total2', num: true },
+        { label: '金额', key: 'amount', money: true }
+      ];
+
+      function openDetail(record) {
+        var html = DETAIL_FIELDS.map(function (f) {
+          var raw = record[f.key];
+          var val;
+          if (raw == null || raw === '') {
+            val = '—';
+          } else if (f.money) {
+            val = fmtMoney(raw);
+          } else if (f.num) {
+            val = fmtNum(raw);
+          } else {
+            val = esc(String(raw));
+          }
+          return '<div class="detail-item">' +
+            '<div class="detail-label">' + esc(f.label) + '</div>' +
+            '<div class="detail-value' + (f.mono ? ' font-mono' : '') + '">' + val + '</div>' +
+            '</div>';
+        }).join('');
+
+        detailBody.innerHTML = html;
+        detailOverlay.classList.remove('hidden');
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
+
+      function closeDetail() {
+        detailOverlay.classList.add('hidden');
+      }
+
+      /* ---------------- 模态弹窗：新增 / 编辑 ---------------- */
+      var editingId = null;
+      var FIELD_IDS = [
+        'f-id', 'f-name', 'f-spec', 'f-hsCode', 'f-unitBarcode', 'f-midBarcode', 'f-cartonBarcode',
+        'f-prodDate', 'f-ingredients', 'f-nutrition', 'f-boxQty', 'f-midQty', 'f-midCount',
+        'f-len', 'f-width', 'f-height', 'f-netWeight', 'f-grossWeight', 'f-volume', 'f-price',
+        'f-U', 'f-S', 'f-T', 'f-M', 'f-B', 'f-AZ', 'f-total1', 'f-total2', 'f-amount'
+      ];
+
+      function openModal(record) {
+        editingId = record ? record.id : null;
+        modalTitle.textContent = record ? '编辑商品' : '新增商品';
+
+        if (record) {
+          document.getElementById('f-id').value = record.id;
+          document.getElementById('f-name').value = record.name || '';
+          document.getElementById('f-spec').value = record.spec || '';
+          document.getElementById('f-hsCode').value = record.hsCode || '';
+          document.getElementById('f-unitBarcode').value = record.unitBarcode || '';
+          document.getElementById('f-midBarcode').value = record.midBarcode || '';
+          document.getElementById('f-cartonBarcode').value = record.cartonBarcode || '';
+          document.getElementById('f-prodDate').value = record.prodDate || '';
+          document.getElementById('f-ingredients').value = record.ingredients || '';
+          document.getElementById('f-nutrition').value = record.nutrition || '';
+          document.getElementById('f-boxQty').value = record.boxQty || 0;
+          document.getElementById('f-midQty').value = record.midQty || 0;
+          document.getElementById('f-midCount').value = record.midCount || 0;
+          document.getElementById('f-len').value = record.len || 0;
+          document.getElementById('f-width').value = record.width || 0;
+          document.getElementById('f-height').value = record.height || 0;
+          document.getElementById('f-netWeight').value = record.netWeight || 0;
+          document.getElementById('f-grossWeight').value = record.grossWeight || 0;
+          document.getElementById('f-volume').value = record.volume || 0;
+          document.getElementById('f-price').value = record.price || 0;
+          document.getElementById('f-U').value = record.U || 0;
+          document.getElementById('f-S').value = record.S || 0;
+          document.getElementById('f-T').value = record.T || 0;
+          document.getElementById('f-M').value = record.M || 0;
+          document.getElementById('f-B').value = record.B || 0;
+          document.getElementById('f-AZ').value = record.AZ || 0;
+          document.getElementById('f-total1').value = record.total1 || 0;
+          document.getElementById('f-total2').value = record.total2 || 0;
+          document.getElementById('f-amount').value = record.amount || 0;
+        } else {
+          FIELD_IDS.forEach(function (id) {
+            document.getElementById(id).value = '';
+          });
+          /* 数字字段默认 0 */
+          ['f-boxQty', 'f-midQty', 'f-midCount', 'f-len', 'f-width', 'f-height',
+           'f-netWeight', 'f-grossWeight', 'f-volume', 'f-price',
+           'f-U', 'f-S', 'f-T', 'f-M', 'f-B', 'f-AZ', 'f-total1', 'f-total2', 'f-amount'
+          ].forEach(function (id) {
+            document.getElementById(id).value = 0;
+          });
+          document.getElementById('f-id').value = nextId();
+        }
+
+        overlay.classList.remove('hidden');
+      }
+
+      function closeModal() {
+        overlay.classList.add('hidden');
+        editingId = null;
+      }
+
+      function saveRecord() {
+        var name = document.getElementById('f-name').value.trim();
+        var spec = document.getElementById('f-spec').value.trim();
+        if (!name || !spec) {
+          alert('产品名称与产品名称/规格为必填项');
+          return;
+        }
+
+        var data = {
+          id: document.getElementById('f-id').value.trim() || nextId(),
+          name: name,
+          spec: spec,
+          hsCode: document.getElementById('f-hsCode').value.trim(),
+          unitBarcode: document.getElementById('f-unitBarcode').value.trim(),
+          midBarcode: document.getElementById('f-midBarcode').value.trim(),
+          cartonBarcode: document.getElementById('f-cartonBarcode').value.trim(),
+          prodDate: document.getElementById('f-prodDate').value.trim(),
+          ingredients: document.getElementById('f-ingredients').value.trim(),
+          nutrition: document.getElementById('f-nutrition').value.trim(),
+          boxQty: toNum(document.getElementById('f-boxQty').value),
+          midQty: toNum(document.getElementById('f-midQty').value),
+          midCount: toNum(document.getElementById('f-midCount').value),
+          len: toNum(document.getElementById('f-len').value),
+          width: toNum(document.getElementById('f-width').value),
+          height: toNum(document.getElementById('f-height').value),
+          netWeight: toNum(document.getElementById('f-netWeight').value),
+          grossWeight: toNum(document.getElementById('f-grossWeight').value),
+          volume: toNum(document.getElementById('f-volume').value),
+          price: toNum(document.getElementById('f-price').value),
+          U: toNum(document.getElementById('f-U').value),
+          S: toNum(document.getElementById('f-S').value),
+          T: toNum(document.getElementById('f-T').value),
+          M: toNum(document.getElementById('f-M').value),
+          B: toNum(document.getElementById('f-B').value),
+          AZ: toNum(document.getElementById('f-AZ').value),
+          total1: toNum(document.getElementById('f-total1').value),
+          total2: toNum(document.getElementById('f-total2').value),
+          amount: toNum(document.getElementById('f-amount').value),
+          imgBg: 'var(--fto-primary-100)',
+          imgFg: 'var(--fto-primary-700)'
+        };
+
+        if (editingId) {
+          var rec = findById(editingId);
+          if (rec) {
+            data.imgBg = rec.imgBg;
+            data.imgFg = rec.imgFg;
+            Object.keys(rec).forEach(function (k) { delete rec[k]; });
+            for (var k in data) { rec[k] = data[k]; }
+          }
+        } else {
+          products.push(data);
+        }
+
+        closeModal();
+        render();
+      }
+
+      /* ---------------- 导出 CSV（UTF-8 BOM） ---------------- */
+      function csvField(v) {
+        var s = String(v == null ? '' : v);
+        if (/[",\r\n]/.test(s)) {
+          s = '"' + s.replace(/"/g, '""') + '"';
+        }
+        return s;
+      }
+
+      function exportCSV() {
+        var header = ['编号', '产品图片', '产品名称', '产品名称/规格', '海关编码', '单个条码', '中包条码', '纸箱条码',
+          '生产日期', '配料表', '营养成分表', '箱装数量', '中包数量', '中包数', '长', '宽', '高',
+          '净重', '毛重', '体积', '价格(元/箱）', 'U', 'S', 'T', 'M', 'B', 'AZ',
+          '总件数', '总件数', '金额'];
+
+        var lines = [header.map(csvField).join(',')];
+        products.forEach(function (p) {
+          var row = [
+            p.id, String(p.name || '').charAt(0), p.name, p.spec, p.hsCode, p.unitBarcode, p.midBarcode, p.cartonBarcode,
+            p.prodDate, p.ingredients, p.nutrition, p.boxQty, p.midQty, p.midCount, p.len, p.width, p.height,
+            p.netWeight, p.grossWeight, p.volume, p.price, p.U, p.S, p.T, p.M, p.B, p.AZ,
+            p.total1, p.total2, p.amount
+          ];
+          lines.push(row.map(csvField).join(','));
+        });
+
+        var csv = '\uFEFF' + lines.join('\r\n');
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        var d = new Date();
+        var ymd = d.getFullYear() +
+          String(d.getMonth() + 1).padStart(2, '0') +
+          String(d.getDate()).padStart(2, '0');
+        a.href = url;
+        a.download = 'products_' + ymd + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        alert('已导出 ' + products.length + ' 条商品记录');
+      }
+
+      /* ---------------- 导入 CSV ---------------- */
+      function parseCSV(text) {
+        var rows = [], row = [], field = '', inQuotes = false;
+        for (var i = 0; i < text.length; i++) {
+          var c = text[i];
+          if (inQuotes) {
+            if (c === '"') {
+              if (text[i + 1] === '"') { field += '"'; i++; }
+              else { inQuotes = false; }
+            } else {
+              field += c;
+            }
+          } else {
+            if (c === '"') { inQuotes = true; }
+            else if (c === ',') { row.push(field); field = ''; }
+            else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+            else if (c === '\r') { /* 忽略，\r\n 由 \n 统一处理 */ }
+            else { field += c; }
+          }
+        }
+        if (field !== '' || row.length) { row.push(field); rows.push(row); }
+        return rows;
+      }
+
+      function mapRow(header, r) {
+        function col(name) {
+          var i = header.indexOf(name);
+          return i > -1 ? String(r[i] || '').trim() : '';
+        }
+        /* 两个「总件数」列按出现顺序区分 */
+        var totalIdx = [];
+        header.forEach(function (h, i) { if (h === '总件数') totalIdx.push(i); });
+        var total1 = totalIdx.length > 0 ? String(r[totalIdx[0]] || '').trim() : '';
+        var total2 = totalIdx.length > 1 ? String(r[totalIdx[1]] || '').trim() : '';
+
+        return {
+          id: col('编号') || '',
+          name: col('产品名称'),
+          spec: col('产品名称/规格'),
+          hsCode: col('海关编码'),
+          unitBarcode: col('单个条码'),
+          midBarcode: col('中包条码'),
+          cartonBarcode: col('纸箱条码'),
+          prodDate: col('生产日期'),
+          ingredients: col('配料表'),
+          nutrition: col('营养成分表'),
+          boxQty: toNum(col('箱装数量')),
+          midQty: toNum(col('中包数量')),
+          midCount: toNum(col('中包数')),
+          len: toNum(col('长')),
+          width: toNum(col('宽')),
+          height: toNum(col('高')),
+          netWeight: toNum(col('净重')),
+          grossWeight: toNum(col('毛重')),
+          volume: toNum(col('体积')),
+          price: toNum(col('价格(元/箱）')),
+          U: toNum(col('U')), S: toNum(col('S')), T: toNum(col('T')),
+          M: toNum(col('M')), B: toNum(col('B')), AZ: toNum(col('AZ')),
+          total1: toNum(total1),
+          total2: toNum(total2),
+          amount: toNum(col('金额')),
+          imgBg: 'var(--fto-primary-100)',
+          imgFg: 'var(--fto-primary-700)'
+        };
+      }
+
+      function importCSV(file) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var text = String(e.target.result || '').replace(/^\uFEFF/, '');
+          if (!text.trim()) {
+            alert('文件内容为空，未能解析出数据');
+            return;
+          }
+          try {
+            var rows = parseCSV(text);
+            if (!rows.length) {
+              alert('未能从文件中解析出数据，请检查文件格式');
+              return;
+            }
+            var header = rows[0].map(function (h) { return String(h || '').trim(); });
+            var dataRows = rows.slice(1).filter(function (r) {
+              return r.some(function (c) { return String(c || '').trim() !== ''; });
+            });
+            if (!dataRows.length) {
+              alert('未能从文件中解析出数据，请检查文件格式');
+              return;
+            }
+            var count = 0;
+            dataRows.forEach(function (r) {
+              var obj = mapRow(header, r);
+              if (!obj.name && !obj.spec) return;
+              if (!obj.id) obj.id = nextId();
+              products.push(obj);
+              count++;
+            });
+            if (count > 0) {
+              render();
+              alert('成功导入 ' + count + ' 条记录');
+            } else {
+              alert('未能从文件中解析出数据，请检查文件格式');
+            }
+          } catch (err) {
+            alert('文件格式无法解析：' + (err && err.message ? err.message : '未知错误'));
+          }
+        };
+        reader.onerror = function () {
+          alert('文件读取失败，请重试');
+        };
+        reader.readAsText(file);
+      }
+
+      /* ---------------- 事件绑定 ---------------- */
+      btnAdd.addEventListener('click', function () {
+        openModal(null);
+      });
+
+      /* 精简版已移除「导入 Excel / 导出 Excel」按钮；
+         以下绑定保留但做空值守卫，避免脚本报错（不触发不影响界面） */
+      if (btnExport) {
+        btnExport.addEventListener('click', function () {
+          exportCSV();
+        });
+      }
+
+      if (btnImport) {
+        btnImport.addEventListener('click', function () {
+          importFile.click();
+        });
+      }
+
+      if (importFile) {
+        importFile.addEventListener('change', function () {
+          var file = importFile.files && importFile.files[0];
+          if (file) {
+            importCSV(file);
+          }
+          importFile.value = '';
+        });
+      }
+
+      searchInput.addEventListener('input', function () {
+        render();
+      });
+
+      tbody.addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        var id = btn.getAttribute('data-id');
+        if (btn.classList.contains('row-view')) {
+          var rec = findById(id);
+          if (rec) openDetail(rec);
+        } else if (btn.classList.contains('row-edit')) {
+          var rec2 = findById(id);
+          if (rec2) openModal(rec2);
+        } else if (btn.classList.contains('row-del')) {
+          if (confirm('确定删除该商品（' + id + '）吗？')) {
+            for (var i = 0; i < products.length; i++) {
+              if (products[i].id === id) {
+                products.splice(i, 1);
+                break;
+              }
+            }
+            render();
+          }
+        }
+      });
+
+      modalClose.addEventListener('click', closeModal);
+      modalCancel.addEventListener('click', closeModal);
+      modalSave.addEventListener('click', saveRecord);
+
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeModal();
+      });
+
+      detailClose.addEventListener('click', closeDetail);
+      detailCloseBtn.addEventListener('click', closeDetail);
+
+      detailOverlay.addEventListener('click', function (e) {
+        if (e.target === detailOverlay) closeDetail();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if (!detailOverlay.classList.contains('hidden')) {
+            closeDetail();
+          } else if (!overlay.classList.contains('hidden')) {
+            closeModal();
+          }
+        }
+      });
+
+      /* ---------------- 初始化 ---------------- */
+      render();
+    })();
+  </script>
+
+  <style id="page-custom-style">
+    :root {
+      --shell-sidebar-width: 240px;
+      --shell-toolbar-height: 64px;
+    }
+    .data-table th,
+    .data-table td {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      line-height: 1rem;
+      vertical-align: middle;
+    }
+    .data-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: var(--fto-surface-2);
+    }
+    .data-table tbody tr:hover {
+      background-color: var(--fto-surface-2);
+    }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 模态弹窗（新增/编辑/详情共用） */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background-color: color-mix(in srgb, var(--fto-slate-900) 45%, transparent);
+    }
+    .modal-overlay.hidden {
+      display: none;
+    }
+    .modal-dialog {
+      width: 100%;
+      max-width: 960px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background-color: var(--fto-card);
+      border: 1px solid var(--fto-line);
+      border-radius: var(--fto-radius-large);
+      box-shadow: var(--fto-shadow-3);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.875rem 1rem;
+    }
+    .form-field label {
+      display: block;
+      margin-bottom: 0.375rem;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fto-ink-2);
+    }
+    .form-field .req {
+      color: var(--fto-state-error);
+      margin-right: 2px;
+    }
+    .form-field .opt-hint {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--fto-ink-3);
+    }
+    .form-field input {
+      width: 100%;
+      height: 36px;
+      padding: 0 0.75rem;
+      font-size: 13px;
+      border-radius: var(--fto-radius-medium);
+      outline: none;
+      background-color: var(--fto-surface);
+      border: 1px solid var(--fto-input);
+      color: var(--fto-ink);
+    }
+    .form-field input:focus {
+      border-color: var(--fto-ring);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--fto-ring) 20%, transparent);
+    }
+    .form-field input[readonly] {
+      cursor: not-allowed;
+    }
+
+    /* 详情只读两列网格 */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.875rem 1rem;
+    }
+    .detail-item {
+      padding: 0.625rem 0.75rem;
+      border-radius: var(--fto-radius-medium);
+      background-color: var(--fto-surface-2);
+      border: 1px solid var(--fto-line);
+    }
+    .detail-label {
+      margin-bottom: 0.25rem;
+      font-size: 12px;
+      color: var(--fto-ink-3);
+    }
+    .detail-value {
+      font-size: 13px;
+      line-height: 1.35rem;
+      color: var(--fto-ink);
+      word-break: break-all;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid,
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>
